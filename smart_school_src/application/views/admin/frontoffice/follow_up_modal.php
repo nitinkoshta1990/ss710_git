@@ -124,17 +124,28 @@ if (!empty($next_date)) {
                 <h5><span class="text-dark"><?php echo $this->lang->line('note'); ?>:</span> <?php echo $enquiry_data['note']; ?></h5>
                 <h5><span class="text-dark"><?php echo $this->lang->line('created_by'); ?>:</span>
 
-                <?php if ($staff_role == 7) {?>
-
-                    <?php echo $created_by['name'] . ' ' . $created_by['surname']; ?> <?php if ($created_by['employee_id'] != '') {echo ' (' . $created_by['employee_id'] . ')';}?>
-
-                <?php } elseif ($staff_role != 7) {?>
-                    <?php if ($superadmin_rest == 'enabled') {?>
-                        <?php echo $created_by['name'] . ' ' . $created_by['surname']; ?> <?php if ($created_by['employee_id'] != '') {echo ' (' . $created_by['employee_id'] . ')';}?>
-                    <?php } elseif ($login_staff_id == $created_by['id']) {?>
-                        <?php echo $created_by['name'] . ' ' . $created_by['surname']; ?> <?php if ($created_by['employee_id'] != '') {echo ' (' . $created_by['employee_id'] . ')';}?>
-                    <?php }?>
-                <?php }?>
+                <?php 
+				if ($staff_role == 7) {
+					
+					echo $created_by['name'] . ' ' . $created_by['surname']; 
+					if ($created_by['employee_id'] != '') { echo ' (' . $created_by['employee_id'] . ')'; } 
+					
+				} else { 
+				
+					if ($superadmin_rest == 'enabled') {
+						
+						echo $created_by['name'] . ' ' . $created_by['surname']; 
+						if ($created_by['employee_id'] != '') { echo ' (' . $created_by['employee_id'] . ')'; }
+						
+					} elseif (!empty($created_by['id'])){ 
+					
+						if($login_staff_id == $created_by['id']) { 
+							echo $created_by['name'] . ' ' . $created_by['surname']; ?> <?php if ($created_by['employee_id'] != '') {echo ' (' . $created_by['employee_id'] . ')';}
+						} 
+						
+					} 
+				}
+				?>
                 </h5>
             </div>
         </div>

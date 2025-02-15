@@ -4,6 +4,14 @@
 </div>
 <div class="spacet30 spaceb50">
     <h1><?php echo $page['title']; ?></h1>
+	<p>
+		<?php if($page['event_venue']){ echo $this->lang->line('venue') .': '. $page['event_venue']; } ?>
+		<br>
+		<?php 
+			if($page['event_start']){ echo $this->lang->line('date') .': '. date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($page['event_start'])); } 
+			if($page['event_end']){ echo ' - '. date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($page['event_end'])); } 
+		?>
+	</p>
     <p><?php echo $page['description']; ?></p>
     <div class="mediarow spacet50">
         <div class="row">

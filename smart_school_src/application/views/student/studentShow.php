@@ -146,18 +146,18 @@ $currency_symbol = $admin_session['currency_symbol'];
                             <?php if ($sch_setting->student_barcode == 1) { ?>
                                 <li class="list-group-item listnoback">
                                     <b><?php echo $this->lang->line('barcode'); ?></b>
-                                    <?php if (file_exists("./uploads/student_id_card/barcodes/" . $student['admission_no'] . ".png")) { ?>
-                                        <a class="pull-right text-aqua">
-                                            <img class="h-36" src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/barcodes/' . $student['admission_no'] . '.png'); ?>" width="auto" height="auto" /></a>
+                                    <?php if (file_exists("uploads/student_id_card/barcodes/" . $student['id'] . ".png")) { ?>
+                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/barcodes/' . $student['id'] . '.png'); ?>" target="_blank">
+                                            <img class="h-36" src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/barcodes/' . $student['id'] . '.png'); ?>" width="auto" height="auto" /></a>
                                     <?php } ?>
                                 </li>
                             <?php } ?>
                             <?php if ($sch_setting->student_barcode == 1) { ?>
                                 <li class="list-group-item listnoback">
                                     <b><?php echo $this->lang->line('qrcode'); ?></b>
-                                    <?php if (file_exists("./uploads/student_id_card/qrcode/" . $student['admission_no'] . ".png")) { ?>
-                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['admission_no'] . '.png'); ?>" target="_blank">
-                                            <img class="h-50" src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['admission_no'] . '.png'); ?>" width="auto" height="auto" /></a>
+                                    <?php if (file_exists("./uploads/student_id_card/qrcode/" . $student['id'] . ".png")) { ?>
+                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['id'] . '.png'); ?>" target="_blank">
+                                            <img class="h-50" src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['id'] . '.png'); ?>" width="auto" height="auto" /></a>
                                     <?php } ?>
                                 </li>
                             <?php } ?>
@@ -396,6 +396,11 @@ $currency_symbol = $admin_session['currency_symbol'];
                                 </a>
                             </li>
                         <?php } ?>
+						
+							<li class="pull-right">
+								<a type="button" class="btn btn-default btn-xs print_student_details shadow-none" data-student_id="<?php echo $student['id'] ?>" data-student_name="<?php echo $this->customlib->getFullName($student['firstname'], $student['middlename'], $student['lastname'], $sch_setting->middlename, $sch_setting->lastname); ?>" data-admission_no="<?php echo $student['admission_no']; ?>" data-action="download" data-placement="bottom" data-toggle="tooltip" data-original-title="print" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>" autocomplete="off"><i class="fa fa-print"></i></a>
+							</li>
+						
                     </ul>
 
                     <div class="tab-content">
@@ -1012,8 +1017,9 @@ $currency_symbol = $admin_session['currency_symbol'];
 
 
                         <div class="tab-pane" id="fee">
+                           
                             <?php
-                            if (empty($student_due_fee) && empty($student_discount_fee)) {
+                            if (empty($student_due_fee) && empty($student_discount_fee) && empty($transport_fees)) {
                             ?>
                                 <div class="alert alert-danger">
                                     <?php echo $this->lang->line('no_record_found'); ?>
@@ -1025,8 +1031,9 @@ $currency_symbol = $admin_session['currency_symbol'];
                                     <table class="table table-hover table-striped">
                                         <thead>
                                             <tr>
-                                                <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                                <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                                <th><?php echo $this->lang->line('fees'); ?></th>
+                                                <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                                <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                                 <th class="text text-left"><?php echo $this->lang->line('due_date'); ?></th>
                                                 <th class="text text-left"><?php echo $this->lang->line('status'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('amount'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
@@ -1056,6 +1063,7 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                     $fee_discount      = 0;
                                                     $fee_fine          = 0;
                                                     $alot_fee_discount = 0;
+                                                    $fees_fine_amount = 0;
 
                                                     if (!empty($fee_value->amount_detail)) {
                                                         $fee_deposits = json_decode(($fee_value->amount_detail));
@@ -1072,16 +1080,15 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                     $total_fine_amount      = $total_fine_amount + $fee_fine;
                                                     $feetype_balance        = $fee_value->amount - ($fee_paid + $fee_discount);
                                                     $total_balance_amount   = $total_balance_amount + $feetype_balance;
-                                                    //$total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
 													
 													if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
             
-                                                        $total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
+                                                        //$total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
                                                     }
 		
 		
                                             ?>
-                                                    <?php
+                                                    <?php if($fee_value->due_date){
                                                     if ($feetype_balance > 0 && strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) {
                                                     ?>
                                                         <tr class="danger font12">
@@ -1090,26 +1097,22 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                         ?>
                                                         <tr class="dark-gray">
                                                         <?php
-                                                    }
+                                                    }}
                                                         ?>
+                                                    
+
                                                         <td>
                                                             <?php
                                                             if ($fee_value->is_system) {
-                                                                echo $this->lang->line($fee_value->name) . " (" . $this->lang->line($fee_value->type) . ")";
+                                                                echo $this->lang->line($fee_value->type) . " (" . $this->lang->line($fee_value->code) . ")";
                                                             } else {
-                                                                echo $fee_value->name . " (" . $fee_value->type . ")";
+                                                                echo $fee_value->type . " (" . $fee_value->code . ")";
                                                             }
                                                             ?>
                                                         </td>
-                                                        <td>
-                                                            <?php
-                                                            if ($fee_value->is_system) {
-                                                                echo $this->lang->line($fee_value->code);
-                                                            } else {
-                                                                echo $fee_value->code;
-                                                            }
-                                                            ?>
-                                                        </td>
+
+
+
                                                         <td class="text text-left">
                                                             <?php
                                                             if ($fee_value->due_date == "0000-00-00") {
@@ -1133,12 +1136,36 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                         </td>
                                                         <td class="text text-right"><?php echo amountFormat($fee_value->amount);
                                                                                     if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
+																										
+                                                                // get cumulative fine amount as delay days 
+                                                                if($fee_value->fine_type=='cumulative'){
+                                                                    $date1=date_create("$fee_value->due_date");
+                                                                    $date2=date_create(date('Y-m-d'));
+                                                                    $diff=date_diff($date1,$date2);
+                                                                    $due_days= $diff->format("%a");;
+                                                                    
+                                                                    if($this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days)){
+                                                                        $due_fine_amount=$this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days);
+                                                                    }else{
+                                                                        $due_fine_amount=0;
+                                                                    }
+                                                                    $fees_fine_amount       = $due_fine_amount;
+                                                                    $total_fees_fine_amount = $total_fees_fine_amount + $due_fine_amount;
+                                                    
+                                                                }else if($fee_value->fine_type=='fix' || $fee_value->fine_type=='percentage'){
+                                                                    $fees_fine_amount       = $fee_value->fine_amount;
+                                                                    $total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
+                                                                }
+                                                                // get cumulative fine amount as delay days		
+																						 
+																						
                                                                                     ?>
 
-                                                                <span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . amountFormat($fee_value->fine_amount); ?></span>
+                                                                <span data-toggle="popover" class="text text-danger detail_popover"><?php 
+                                                                echo " + " . amountFormat($fees_fine_amount); ?></span>
                                                                 <div class="fee_detail_popover" style="display: none">
                                                                     <?php
-                                                                                        if ($fee_value->fine_amount != "") {
+                                                                                        if ($fees_fine_amount != "") {
                                                                     ?>
                                                                         <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
                                                                     <?php
@@ -1178,7 +1205,7 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                             foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                         ?>
                                                                 <tr class="white-td">
-                                                                    <td class="text-left"></td>
+                                                                    <!-- <td class="text-left"></td> -->
                                                                     <td class="text-left"></td>
                                                                     <td class="text-left"></td>
                                                                     <td class="text-left"></td>
@@ -1262,8 +1289,11 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                             <?php
                                                         }
                                                             ?>
-                                                            <td align="left"><?php echo $this->lang->line('transport_fees'); ?></td>
-                                                            <td align="left"><?php echo $transport_fee_value->month; ?></td>
+                                                           <!--  <td align="left"><?php echo $this->lang->line('transport_fees'); ?></td>
+                                                            <td align="left"><?php echo $transport_fee_value->month; ?></td> -->
+
+                                                            <td align="left"><?php echo $this->lang->line('transport_fees')." (".$transport_fee_value->month.")"; ?></td>
+
                                                             <td align="left" class="text text-left">
                                                                 <?php echo $this->customlib->dateformat($transport_fee_value->due_date); ?> </td>
                                                             <td align="left" class="text text-left width85">
@@ -1324,7 +1354,7 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                                 foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                             ?>
                                                                     <tr class="white-td">
-                                                                        <td align="left"></td>
+                                                                        <!-- <td align="left"></td> -->
                                                                         <td align="left"></td>
                                                                         <td align="left"></td>
                                                                         <td align="left"></td>
@@ -1363,71 +1393,13 @@ $currency_symbol = $admin_session['currency_symbol'];
                                                     <?php
                                                     }
                                                 }
-
-                                                    ?>
-
-                                                    <?php
-                                                    if (!empty($student_discount_fee)) {
-
-                                                        foreach ($student_discount_fee as $discount_key => $discount_value) {
-                                                    ?>
-                                                            <tr class="dark-light">
-                                                                <td align="left"><?php echo $this->lang->line('discount'); ?></td>
-                                                                <td align="left"><?php echo $discount_value['code']; ?></td>
-                                                                <td align="left"></td>
-                                                                <td align="left" class="text text-left">
-                                                                    <?php
-                                                                    if ($discount_value['status'] == "applied") {
-                                                                    ?>
-                                                                        <a href="#" data-toggle="popover" class="detail_popover">
-
-
-                                                                            <?php echo $this->lang->line('discount_of') . " " . (($discount_value['type'] == "fix") ?  $currency_symbol . amountFormat($discount_value['amount']) : $discount_value['percentage'] . "%")  . " " . $this->lang->line($discount_value['status']) . " : " . $discount_value['payment_id']; ?>
-
-
-                                                                        </a>
-                                                                        <div class="fee_detail_popover" style="display: none">
-                                                                            <?php
-                                                                            if ($discount_value['student_fees_discount_description'] == "") {
-                                                                            ?>
-                                                                                <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
-                                                                            <?php
-                                                                            } else {
-                                                                            ?>
-                                                                                <p class="text text-danger"><?php echo $discount_value['student_fees_discount_description'] ?></p>
-                                                                            <?php
-                                                                            }
-                                                                            ?>
-
-                                                                        </div>
-                                                                    <?php
-                                                                    } else {
-                                                                        echo '<p class="text text-danger">' . $this->lang->line('discount_of') . " " . (($discount_value['type'] == "fix") ?  $currency_symbol . amountFormat($discount_value['amount']) : $discount_value['percentage'] . "%") . " " . $this->lang->line($discount_value['status']);
-                                                                    }
-                                                                    ?>
-                                                                </td>
-                                                                <td></td>
-                                                                <td class="text text-left"></td>
-                                                                <td class="text text-left"></td>
-                                                                <td class="text text-left"></td>
-                                                                <td class="text text-right">
-                                                                    <?php
-                                                                    $alot_fee_discount = $alot_fee_discount;
-                                                                    ?>
-                                                                </td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                            </tr>
-                                                    <?php
-                                                        }
-                                                    }
-                                                    ?>
+                                                ?>
+                                                
+                                            
                                                     <tr class="box box-solid total-bg">
                                                         <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td class="text text-right"> </td>
+                                                        <!-- <td></td> -->
+                                                        <td class="text text-right" colspan="2">Grand Total </td>
                                                         <td class="text text-right">
                                                             <?php echo $currency_symbol . amountFormat($total_amount) . "<span data-toggle='popover' class='text text-danger detail_popover'>+" . amountFormat($total_fees_fine_amount) . "</span>";
                                                             ?>
@@ -3555,6 +3527,52 @@ $currency_symbol = $admin_session['currency_symbol'];
         document.body.innerHTML = oldPage;
         location.reload(true);
     }
+</script>
+
+<script type="text/javascript">
+	$(document).on('click', '.print_student_details', function() {
+    let $button_ = $(this);
+    var student_id = "<?php echo $student["id"] ?>";
+    var admission_no = $(this).attr('data-admission_no');
+	var student_name = $(this).attr('data-student_name');
+    $.ajax({
+        type: 'POST',
+        url: baseurl + 'student/printStudentDetails',  // Assuming baseurl is defined elsewhere
+        data: {'student_id':student_id},  // Add any data you need to send here
+		 
+        beforeSend: function() {
+            $button_.button('loading');  // Change button state to loading
+        },
+        xhr: function() {
+            var xhr = new XMLHttpRequest();  // Fixed the typo here
+            xhr.responseType = 'blob';  // Set response type to blob
+            return xhr;
+        },
+        success: function(data, jqXHR, response) {
+            // Create a Blob with the response data (PDF)
+            var blob = new Blob([data], {type: 'application/pdf'});
+
+            // Create an anchor element to trigger the file download
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = student_name + '_' + admission_no + '.pdf';  // Assumes student_name and admission_no are defined
+            document.body.appendChild(link);  // Append to body to trigger download
+            link.click();
+            document.body.removeChild(link);  // Clean up by removing the link
+
+            $button_.button('reset');  // Reset the button to its original state
+        },
+        error: function(xhr, status, error) {
+            // If an error occurs, reset the button
+            console.error("Error occurred:", status, error);  // You can log errors for debugging
+            $button_.button('reset');
+        },
+        complete: function() {
+            // Reset the button regardless of success or failure
+            $button_.button('reset');
+        }
+    });
+});
 </script>
 
 <?php

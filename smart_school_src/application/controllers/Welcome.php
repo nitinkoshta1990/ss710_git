@@ -12,7 +12,7 @@ class Welcome extends Front_Controller
         $this->load->config('form-builder');
         $this->load->config('app-config');
         $this->load->library(array('mailer', 'form_builder', 'mailsmsconf'));
-        $this->load->model(array('frontcms_setting_model', 'complaint_Model', 'Visitors_model', 'onlinestudent_model', 'filetype_model', 'customfield_model', 'setting_model', 'examgroupstudent_model', 'examgroup_model', 'grade_model', 'marksdivision_model', 'currency_model', 'section_model'));
+        $this->load->model(array('frontcms_setting_model', 'complaint_Model', 'Visitors_model', 'onlinestudent_model', 'filetype_model', 'customfield_model', 'setting_model', 'examgroupstudent_model', 'examgroup_model', 'grade_model', 'marksdivision_model', 'currency_model', 'section_model','holiday_model'));
         $this->load->model('examstudent_model');
         $this->blood_group = $this->config->item('bloodgroup');
         $this->load->library('Ajax_pagination');
@@ -223,8 +223,9 @@ class Welcome extends Front_Controller
         $this->ajax_pagination->initialize($config);
         //get the posts data
         $data['category_content'] = $this->cms_program_model->getByCategory($page_content_type, array('start' => $offset, 'limit' => $this->perPage));
+        $frontcmslist       = $this->frontcms_setting_model->get();
         //load the view
-        $this->load->view('themes/default/pages/ajax-pagination-data', $data, false);
+        $this->load->view('themes/'.$frontcmslist->theme.'/pages/ajax-pagination-data', $data, false);
     }
 
     public function read($slug)
@@ -306,11 +307,46 @@ class Welcome extends Front_Controller
                 );
             }
 
-            $this->form_validation->set_rules('firstname', $this->lang->line('first_name'), 'trim|required|xss_clean');
-            $this->form_validation->set_rules('dob', $this->lang->line('date_of_birth'), 'trim|required|xss_clean');
             $this->form_validation->set_rules('class_id', $this->lang->line('class'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('firstname', $this->lang->line('first_name'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('dob', $this->lang->line('date_of_birth'), 'trim|required|xss_clean');          
             $this->form_validation->set_rules('section_id', $this->lang->line('section'), 'trim|required|xss_clean');
             $this->form_validation->set_rules('gender', $this->lang->line('gender'), 'trim|required|xss_clean');
+
+            //remove script from other fields
+                $this->form_validation->set_rules('middlename', $this->lang->line('middlename'), 'trim|xss_clean');
+                $this->form_validation->set_rules('lastname', $this->lang->line('lastname'), 'trim|xss_clean');
+                $this->form_validation->set_rules('mobileno', $this->lang->line('mobileno'), 'trim|xss_clean');
+                $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|xss_clean');
+                $this->form_validation->set_rules('category_id', $this->lang->line('category_id'), 'trim|xss_clean');
+                $this->form_validation->set_rules('religion', $this->lang->line('religion'), 'trim|xss_clean');
+                $this->form_validation->set_rules('cast', $this->lang->line('cast'), 'trim|xss_clean');;
+                $this->form_validation->set_rules('house', $this->lang->line('house'), 'trim|xss_clean');
+                $this->form_validation->set_rules('blood_group', $this->lang->line('blood_group'), 'trim|xss_clean');
+                $this->form_validation->set_rules('height', $this->lang->line('height'), 'trim|xss_clean');
+                $this->form_validation->set_rules('weight', $this->lang->line('weight'), 'trim|xss_clean');
+                $this->form_validation->set_rules('measure_date', $this->lang->line('measure_date'), 'trim|xss_clean');
+                $this->form_validation->set_rules('father_name', $this->lang->line('father_name'), 'trim|xss_clean');
+                $this->form_validation->set_rules('father_phone', $this->lang->line('father_phone'), 'trim|xss_clean');
+                $this->form_validation->set_rules('father_occupation', $this->lang->line('father_occupation'), 'trim|xss_clean');
+                $this->form_validation->set_rules('mother_name', $this->lang->line('mother_name'), 'trim|xss_clean');
+                $this->form_validation->set_rules('mother_phone', $this->lang->line('mother_phone'), 'trim|xss_clean');
+                $this->form_validation->set_rules('mother_occupation', $this->lang->line('mother_occupation'), 'trim|xss_clean');
+                $this->form_validation->set_rules('previous_school', $this->lang->line('previous_school'), 'trim|xss_clean');
+                $this->form_validation->set_rules('note', $this->lang->line('note'), 'trim|xss_clean');
+                $this->form_validation->set_rules('current_address', $this->lang->line('current_address'), 'trim|xss_clean');
+                $this->form_validation->set_rules('permanent_address', $this->lang->line('permanent_address'), 'trim|xss_clean');
+                $this->form_validation->set_rules('bank_account_no', $this->lang->line('bank_account_no'), 'trim|xss_clean');
+                $this->form_validation->set_rules('bank_name', $this->lang->line('bank_name'), 'trim|xss_clean');
+                $this->form_validation->set_rules('ifsc_code', $this->lang->line('ifsc_code'), 'trim|xss_clean');
+                $this->form_validation->set_rules('adhar_no', $this->lang->line('adhar_no'), 'trim|xss_clean');
+                $this->form_validation->set_rules('samagra_id', $this->lang->line('samagra_id'), 'trim|xss_clean');
+                $this->form_validation->set_rules('rte', $this->lang->line('rte'), 'trim|xss_clean');
+                $this->form_validation->set_rules('guardian_email', $this->lang->line('guardian_email'), 'trim|xss_clean');
+                $this->form_validation->set_rules('guardian_phone', $this->lang->line('guardian_phone'), 'trim|xss_clean');
+                $this->form_validation->set_rules('guardian_occupation', $this->lang->line('guardian_occupation'), 'trim|xss_clean');
+                $this->form_validation->set_rules('guardian_address', $this->lang->line('guardian_address'), 'trim|xss_clean');
+            //remove script from other fields
 
             if ($this->customlib->getfieldstatus('if_guardian_is')) {
                 $this->form_validation->set_rules('guardian_is', $this->lang->line('guardian'), 'trim|required|xss_clean');
@@ -344,7 +380,7 @@ class Welcome extends Front_Controller
                 if ($custom_fields_value['validation'] && $this->customlib->getfieldstatus($custom_fields_value['name'])) {
                     $custom_fields_id   = $custom_fields_value['id'];
                     $custom_fields_name = $custom_fields_value['name'];
-                    $this->form_validation->set_rules("custom_fields[students][" . $custom_fields_id . "]", $custom_fields_name, 'trim|required');
+                    $this->form_validation->set_rules("custom_fields[students][" . $custom_fields_id . "]", $custom_fields_name, 'trim|required|xss_clean');
                 }
             }
          
@@ -352,8 +388,6 @@ class Welcome extends Front_Controller
                  
                 $this->load_theme('pages/admission', $this->config->item('front_layout'));
             } else {
-                //==============
-                   
                 $document_validate  = true;
                 $custom_field_post  = $this->input->post("custom_fields[students]");
                 $custom_value_array = array();
@@ -371,7 +405,6 @@ class Welcome extends Front_Controller
                     }
                 }
 
-                //=====================
                 if ($document_validate) {
 
                     $class_id   = $this->input->post('class_id');
@@ -382,7 +415,6 @@ class Welcome extends Front_Controller
                         'class_section_id' => $this->input->post('section_id'),
                         'dob'              => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('dob'))),
                         'gender'           => $this->input->post('gender'),
-
                     );
                     // for inserting system fields
 
@@ -689,7 +721,6 @@ class Welcome extends Front_Controller
             $this->data['application_date'] = date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat(date("Y-m-d", strtotime($result['created_at']))));
 
             $this->data['student_pic'] = $result['image'];
-
             $this->data['father_name']       = $result['father_name'];
             $this->data['father_phone']      = $result['father_phone'];
             $this->data['father_occupation'] = $result['father_occupation'];
@@ -698,7 +729,6 @@ class Welcome extends Front_Controller
             $this->data['mother_phone']      = $result['mother_phone'];
             $this->data['mother_occupation'] = $result['mother_occupation'];
             $this->data['mother_pic']        = $result['mother_pic'];
-
             $this->data['guardian_is']         = $result['guardian_is'];
             $this->data['guardian_name']       = $result['guardian_name'];
             $this->data['guardian_relation']   = $result['guardian_relation'];
@@ -707,35 +737,28 @@ class Welcome extends Front_Controller
             $this->data['guardian_phone']      = $result['guardian_phone'];
             $this->data['guardian_occupation'] = $result['guardian_occupation'];
             $this->data['guardian_address']    = $result['guardian_address'];
-
             $this->data['current_address']   = $result['current_address'];
             $this->data['permanent_address'] = $result['permanent_address'];
-
             $this->data['bank_account_no'] = $result['bank_account_no'];
             $this->data['bank_name']       = $result['bank_name'];
             $this->data['ifsc_code']       = $result['ifsc_code'];
             $this->data['adhar_no']        = $result['adhar_no'];
             $this->data['samagra_id']      = $result['samagra_id'];
-
             $this->data['previous_school'] = $result['previous_school'];
             $this->data['note']            = $result['note'];
             $this->data['rte']             = $result['rte'];
             $this->data['reference_no']    = $result['reference_no'];
             $this->data['transaction_id']  = $this->customlib->gettransactionid($result['id']);
             $this->data['transaction_paid_amount']  = $this->customlib->gettransactionpaidamount($result['id']);
-
             $this->data['form_status']  = $result['form_status'];
             $this->data['paid_status']  = $result['paid_status'];
             $this->data['admission_id'] = $id;
             $this->data['reference_no'] = $result['reference_no'];
             $this->data['id']           = $id;
-
             $this->data['online_admission_payment'] = $this->sch_setting_detail->online_admission_payment;
             $this->data['online_admission_amount']  = $this->sch_setting_detail->online_admission_amount;
-
             $this->data['online_admission_conditions'] = $this->sch_setting_detail->online_admission_conditions;
             $setting_data                              = $this->setting_model->get();
-
             $this->data['setting_data'] = $setting_data;
             $this->data['currencies'] = $currencies;
             
@@ -758,8 +781,7 @@ class Welcome extends Front_Controller
         if ($this->module_lib->hasModule('online_course')) {
             $this->load->model('course_model');
             $this->data['course_setting'] = $this->course_model->getOnlineCourseSettings();
-        }
-        
+        }        
         
         if ($ref_status) {
              
@@ -807,11 +829,9 @@ class Welcome extends Front_Controller
             $custom_fields                = $this->customfield_model->getByBelong('students');
             //-------------------------------------
             $this->data['class_id'] = $class_section_id;
-
             $this->data['class_section_id'] = $result['section_id'];
             $this->data['class_name']       = $class;
             $this->data['section_id']       = $section_id;
-
             $this->data['firstname']  = $result['firstname'];
             $this->data['middlename'] = $result['middlename'];
             $this->data['lastname']   = $result['lastname'];
@@ -839,11 +859,9 @@ class Welcome extends Front_Controller
             $this->data['father_name']       = $result['father_name'];
             $this->data['father_phone']      = $result['father_phone'];
             $this->data['father_occupation'] = $result['father_occupation'];
-
             $this->data['mother_name']       = $result['mother_name'];
             $this->data['mother_phone']      = $result['mother_phone'];
             $this->data['mother_occupation'] = $result['mother_occupation'];
-
             $this->data['guardian_is']         = $result['guardian_is'];
             $this->data['guardian_name']       = $result['guardian_name'];
             $this->data['guardian_relation']   = $result['guardian_relation'];
@@ -851,10 +869,8 @@ class Welcome extends Front_Controller
             $this->data['guardian_phone']      = $result['guardian_phone'];
             $this->data['guardian_occupation'] = $result['guardian_occupation'];
             $this->data['guardian_address']    = $result['guardian_address'];
-
             $this->data['current_address']   = $result['current_address'];
             $this->data['permanent_address'] = $result['permanent_address'];
-
             $this->data['ifsc_code']               = $result['ifsc_code'];
             $this->data['bank_account_no']         = $result['bank_account_no'];
             $this->data['bank_name']               = $result['bank_name'];
@@ -984,14 +1000,12 @@ class Welcome extends Front_Controller
                         $height           = $this->input->post('height');
                         $weight           = $this->input->post('weight');
                         $measurement_date = $this->input->post('measure_date');
-
                         $father_name       = $this->input->post('father_name');
                         $father_phone      = $this->input->post('father_phone');
                         $father_occupation = $this->input->post('father_occupation');
                         $mother_name       = $this->input->post('mother_name');
                         $mother_phone      = $this->input->post('mother_phone');
                         $mother_occupation = $this->input->post('mother_occupation');
-
                         $bank_account_no   = $this->input->post('bank_account_no');
                         $ifsc_code         = $this->input->post('ifsc_code');
                         $bank_name         = $this->input->post('bank_name');
@@ -1000,7 +1014,6 @@ class Welcome extends Front_Controller
                         $previous_school   = $this->input->post('previous_school');
                         $note              = $this->input->post('note');
                         $rte               = $this->input->post('rte');
-                        
                         $adhar_no          = $this->input->post('adhar_no');
                         $samagra_id        = $this->input->post('samagra_id');
 
@@ -1377,7 +1390,6 @@ class Welcome extends Front_Controller
     
     public function changeCurrencyFormat()
     {
-
         $currency_id = $this->input->post('currency_id');
         //================
         $currency = $this->currency_model->get($currency_id);
@@ -1551,11 +1563,28 @@ class Welcome extends Front_Controller
             }
    
             $this->data['student_result'] = $student_result;
-
         }       
-    
         $this->load_theme('pages/cbseexam', $this->config->item('front_layout'));
+    }
 
+    public function annual_calendar(){
+        $holiday_arr    =   [];
+        $holiday_type   = $this->holiday_model->get_holiday_type();
+        foreach($holiday_type as $key=>$value){
+            $holidaylist   =   $this->holiday_model->get(null,$value['id'],1); 
+            $holiday_arr[$value['type']]=$holidaylist;
+        }
+        
+        $this->data['holiday_arr']   = $holiday_arr;
+		$setting_data                = $this->setting_model->get();
+        $this->data['setting_data']  = $setting_data;		
+        $setting                     = $this->frontcms_setting_model->get();
+       
+        $this->data['all_holidays']  = $this->holiday_model->get();
+        $this->data['page_side_bar'] = $setting->is_active_sidebar;
+        $this->data['active_menu']   = $this->lang->line("annual_calendar");
+        $this->data['page']          = array('title' => $this->lang->line("annual_calendar"), 'meta_title' => '', 'meta_keyword' => '', 'meta_description' => '');      
+        $this->load_theme('pages/annual_calendar', $this->config->item('front_layout'));
     }
 
 }

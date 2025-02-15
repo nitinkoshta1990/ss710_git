@@ -17,7 +17,7 @@ class QR_Code
         $CI = &get_instance();
     }
 
-    public function generate($upload_path,$text)
+    public function generate($upload_path,$text,$file_name)
     {
         $data = $text;
         $options = new QROptions([
@@ -37,7 +37,7 @@ class QR_Code
         $qrCode = new QRCode($options);
 
         // generating the QR code image happens here
-        $qrCodeImage = $qrCode->render($data, $upload_path.$text.'.png');
+        $qrCodeImage = $qrCode->render($data, $upload_path.$file_name.'.png');
       
 
     }

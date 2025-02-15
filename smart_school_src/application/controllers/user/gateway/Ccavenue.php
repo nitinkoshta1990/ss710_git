@@ -34,7 +34,7 @@ class Ccavenue extends Studentgateway_Controller {
             $details['tid']          = abs(crc32(uniqid()));
             $details['merchant_id']  = $pay_method->api_secret_key;
             $details['order_id']     = abs(crc32(uniqid()));
-            $details['amount']       = number_format((float) ($session_data['fine_amount_balance'] + $session_data['total']), 2, '.', '');
+            $details['amount']       = number_format((float) ($session_data['fine_amount_balance'] + $session_data['total'] - $session_data['applied_fee_discount']+ $session_data['gateway_processing_charge']), 2, '.', '');
             $details['currency']     = 'INR';
             $details['redirect_url'] = base_url('user/gateway/ccavenue/success');
             $details['cancel_url']   = base_url('user/gateway/ccavenue/cancel');
@@ -89,7 +89,9 @@ class Ccavenue extends Studentgateway_Controller {
              $json_array = array(
                 'amount'          =>  $fee_value['amount_balance'],
                 'date'            => date('Y-m-d'),
-                'amount_discount' => 0,
+                'amount_discount' => $fee_value['applied_fee_discount'],
+				'processing_charge_type'=>$params['processing_charge_type'],
+				'gateway_processing_charge'=>$params['gateway_processing_charge'],
                 'amount_fine'     => $fee_value['fine_balance'],
                 'description'     => $this->lang->line('online_fees_deposit_through_ccavenue_txn_id') . $tracking_id . " Bank Ref. No.: " . $bank_ref_no,
                 'received_by'     => '',
@@ -107,7 +109,7 @@ class Ccavenue extends Studentgateway_Controller {
             //========
             }
             $send_to     = $params['guardian_phone'];
-            $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+             $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
             //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();

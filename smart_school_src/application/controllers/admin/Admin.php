@@ -24,6 +24,28 @@ class Admin extends Admin_Controller
         $this->load->view('layout/footer', $data);
     }
 
+    public function updateAddonVerify()
+    {
+        $this->form_validation->set_rules('addon', 'Addon', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('addon_check_update_envato_market_purchase_code', 'Purchase Code', 'required|trim|xss_clean');
+
+        if ($this->form_validation->run() == false) {
+            $data = array(
+                'addon'                       => form_error('addon'),
+                'addon_check_update_envato_market_purchase_code' => form_error('addon_check_update_envato_market_purchase_code'),
+            );
+            $array = array('status' => '0', 'error' => $data);
+
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(200)
+                ->set_output(json_encode($array));
+        } else {
+            //==================
+            $response = $this->auth->addon_update_check(); 
+        }
+    }
+    
     public function dashboard()
     {       
         $role            = $this->customlib->getStaffRole();
@@ -49,6 +71,10 @@ class Admin extends Admin_Controller
         $current_date       = date('Y-m-d');
         $data['title']      = 'Dashboard';
         $Current_start_date = date('01');
+
+        $last_day_this_month        = date($Current_year.'-m-t');  //added
+        $total_students_heads       = 0; //added
+
         $Current_date       = date('d');
         $Current_month      = date('m');
         $month_collection   = 0;
@@ -62,12 +88,15 @@ class Admin extends Admin_Controller
         $student_transport_fee = $this->studenttransportfee_model->getTransportDepositAmountBetweenDate($year_str_month, $year_end_month);
         
         //======================Current Month Collection ==============================
-        $first_day_this_month     = date('Y-m-01');
+        
+        $first_day_this_month     = date('Y-m-01'); //comment
+        
         // $current_month_collection = $this->studentfeemaster_model->getDepositAmountBetweenDate($first_day_this_month, $current_date);
         $month_collection         = $this->whatever($getDepositeAmount, $first_day_this_month, $current_date);
         $month_transport_collection         = $this->whatever($student_transport_fee, $first_day_this_month, $current_date);
 
         $data['month_collection'] = $month_collection+$month_transport_collection;
+
 
         $tot_students = $this->studentsession_model->getTotalStudentBySession();
         if (!empty($tot_students)) {
@@ -178,10 +207,8 @@ class Admin extends Admin_Controller
         $start_date           = date('Y-m-01');
         $end_date             = date('Y-m-t');
         $current_month        = date('F');
-
         $student_due_fee       = $this->studentfeemaster_model->getFeesAwaiting($start_date, $end_date);
         $student_transport_fee = $this->studentfeemaster_model->getTransportFeesByDueDate($start_date, $end_date);
-
         $data['fees_awaiting'] = $student_due_fee;
 
         $total_fess    = 0;
@@ -375,8 +402,52 @@ class Admin extends Admin_Controller
         $data['percentTotalStaff_data'] = $percentTotalStaff_data;
         $data['sch_setting']            = $this->sch_setting_detail;
 
+    // new features code added
+        $input_session   = $this->setting_model->getCurrentSessionName();
+        list($a, $b)  = explode('-', $input_session);
+        $Current_year = $a;
+        if(date("m")>=1 && date("m")<=4 ){
+            $Current_year = $b;
+        }else{
+            $Current_year = $a;
+        }
+
+        $first_day_this_month  = date("20$Current_year".'-m-01'); //added
+        $last_day_this_month  = date("20$Current_year".'-m-t');  //added
+
+        $data['getStudentMonthlyLeave'] = $getStudentMonthlyLeave = count($this->apply_leave_model->getStudentMonthlyLeave($first_day_this_month,$last_day_this_month));
+        $data['getStudentApproveMonthlyLeave'] = $getStudentApproveMonthlyLeave =   count($this->apply_leave_model->getStudentApproveMonthlyLeave($first_day_this_month,$last_day_this_month));
+ 
+        if ($getStudentMonthlyLeave > 0) {
+            $data['studentapprovemonthlyleave'] = ($getStudentApproveMonthlyLeave * 100) / $getStudentMonthlyLeave;
+        } else {
+            $data['studentapprovemonthlyleave'] = 0;
+        }
+        $data['getStaffMonthlyLeave'] = $getStaffMonthlyLeave = count($this->apply_leave_model->getStaffMonthlyLeave($first_day_this_month, $last_day_this_month));
+        $data['getStaffApproveMonthlyLeave'] = $getStaffApproveMonthlyLeave =   count($this->apply_leave_model->getStaffApproveMonthlyLeave($first_day_this_month, $last_day_this_month));
+
+        if ($getStaffMonthlyLeave > 0) {
+            $data['staffapprovemonthlyleave'] = ($getStaffApproveMonthlyLeave * 100) / $getStaffMonthlyLeave;
+        } else {
+            $data['staffapprovemonthlyleave'] = 0;
+        }
+
+        $tot_head_students = $this->studentsession_model->getTotalHeadCountBySession();
+        $tot_students = $this->studentsession_model->getTotalStudentBySession();
+        if (!empty($tot_students)) {
+            $total_students = $tot_students->total_student;
+        }
+
+        if (!empty($tot_head_students)) {
+            $total_students_heads = count($tot_head_students);
+        } 
+
+        $data['total_students'] = $total_students;
+        $data['total_students_heads'] = $total_students_heads;
+    // new features code added
+
         if ($data['sch_setting']->attendence_type == 0) {
-            $data['std_graphclass'] = "col-lg-3 col-md-6 col-sm-6";
+            $data['std_graphclass'] = "col-lg-4 col-md-6 col-sm-6";
         } else {
             $data['std_graphclass'] = "col-lg-4 col-md-6 col-sm-6";
         }
@@ -385,7 +456,6 @@ class Admin extends Admin_Controller
         $this->load->view('admin/dashboard', $data);
         $this->load->view('layout/footer', $data);
     }
-
     public function getUserImage()
     {
         $id     = $this->session->userdata["admin"]["id"];
@@ -1020,10 +1090,8 @@ class Admin extends Admin_Controller
                         $display_field = "<a href=" . $student->$custom_name . " target='_blank'>" . $student->$custom_name . "</a>";
                     }
                     $row[] = $display_field;
-
                 }
                 $row[] = $viewbtn . '' . $editbtn . '' . $collectbtn;
-
                 $dt_data[] = $row;
             }
 

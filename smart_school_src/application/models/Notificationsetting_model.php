@@ -15,7 +15,7 @@ class Notificationsetting_model extends MY_Model {
         if ($id != null) {
             $this->db->where('notification_setting.id', $id);
         } else {
-            $this->db->order_by('notification_setting.id');
+            $this->db->order_by('notification_setting.notification_order');
         }
         $query = $this->db->get();
         if ($id != null) {

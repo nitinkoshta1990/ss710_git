@@ -110,7 +110,8 @@ if ($this->config->item('SSLK') == "") {
 
 </script>
        <div class="wrapper">
-
+			 <?php $result = $this->customlib->getLoggedInUserData(); 
+			  ?>
             <header class="main-header" id="alert">
                 <a href="<?php echo base_url(); ?>admin/admin/dashboard" class="logo">
                     <span class="logo-mini"><img src="<?php echo $this->customlib->getBaseUrl(); ?>uploads/school_content/admin_small_logo/<?php echo $this->setting_model->getAdminsmalllogo() . img_time();?>" alt="<?php echo $this->customlib->getAppName() ?>" /></span>
@@ -140,7 +141,6 @@ if ($this->config->item('SSLK') == "") {
                                             <button type="submit" name="search" id="search-btn" onclick="getstudentlist()" style="" class="btn btn-flat topsidesearchbtn"><i class="fa fa-search"></i></button>
                                         </span>
                                     </div>
-
                                 </form>
                             <?php }?>
                             <div class="navbar-custom-menu">
@@ -167,8 +167,7 @@ if ($this->config->item('SSLK') == "") {
                                     <?php
 }?>
 
-                                <ul class="nav navbar-nav headertopmenu">
-                                
+                                <ul class="nav navbar-nav headertopmenu">                                
                                     <?php $userdata = $this->customlib->getUserData();
                                     if($userdata["role_id"] ==7){                                    
                                         if (($this->module_lib->hasModule('multi_branch') && $this->module_lib->hasActive('multi_branch')) || $this->db->multi_branch) { ?>
@@ -229,7 +228,48 @@ $tasklist = $this->customlib->getincompleteTask($userdata["id"],$userdata["role_
                                         </a>
                                         <ul class="dropdown-menu min-w-full sm-drop-down">
                                           <li><a href="<?php echo base_url() ?>admin/calendar/events"><i class="fa fa-calendar"></i></a></li>
-                                          <li><a href="<?php echo base_url() ?>admin/chat"><i class="fa fa-whatsapp"></i></a></li>
+                                          <li><a href="<?php echo base_url() ?>admin/chat"><i class="fa fa-comment-o"></i></a></li>
+                                         
+<?php  
+	if($result['admin_panel_whatsapp']){ 
+	$waurl = "https://wa.me/";
+	$mobile = $result['admin_panel_whatsapp_mobile'];	 
+	$url = $waurl.$mobile;
+	$today = strtotime(date("H:i:s"));
+	$show_hide = 1;
+	
+	if($result['admin_panel_whatsapp_from'] != '' && $result['admin_panel_whatsapp_to'] != ''){
+		
+		$admin_panel_whatsapp_from = strtotime($result['admin_panel_whatsapp_from']);
+		$admin_panel_whatsapp_to = strtotime($result['admin_panel_whatsapp_to']);
+	
+		if($today>=$admin_panel_whatsapp_from && $today<=$admin_panel_whatsapp_to){
+			$show_hide = 1;
+		}else{
+			$show_hide = 0;
+		}
+		
+	}
+	
+	if($show_hide){
+?>
+
+<li class="cal15 whatsapp-icon-bg"><a href="<?php echo $url; ?>" target="_blank" data-placement="bottom" data-toggle="tooltip" title="<?php echo $this->lang->line('whatsapp_link') ?>">
+<svg height="18px" width="18px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve">
+<path style="fill:#fff;" d="M0,512l35.31-128C12.359,344.276,0,300.138,0,254.234C0,114.759,114.759,0,255.117,0
+    S512,114.759,512,254.234S395.476,512,255.117,512c-44.138,0-86.51-14.124-124.469-35.31L0,512z"></path>
+<path style="fill:#55CD6C;" d="M137.71,430.786l7.945,4.414c32.662,20.303,70.621,32.662,110.345,32.662
+    c115.641,0,211.862-96.221,211.862-213.628S371.641,44.138,255.117,44.138S44.138,137.71,44.138,254.234
+    c0,40.607,11.476,80.331,32.662,113.876l5.297,7.945l-20.303,74.152L137.71,430.786z"></path>
+<path style="fill:#fff;" d="M187.145,135.945l-16.772-0.883c-5.297,0-10.593,1.766-14.124,5.297
+    c-7.945,7.062-21.186,20.303-24.717,37.959c-6.179,26.483,3.531,58.262,26.483,90.041s67.09,82.979,144.772,105.048
+    c24.717,7.062,44.138,2.648,60.028-7.062c12.359-7.945,20.303-20.303,22.952-33.545l2.648-12.359
+    c0.883-3.531-0.883-7.945-4.414-9.71l-55.614-25.6c-3.531-1.766-7.945-0.883-10.593,2.648l-22.069,28.248
+    c-1.766,1.766-4.414,2.648-7.062,1.766c-15.007-5.297-65.324-26.483-92.69-79.448c-0.883-2.648-0.883-5.297,0.883-7.062
+    l21.186-23.834c1.766-2.648,2.648-6.179,1.766-8.828l-25.6-57.379C193.324,138.593,190.676,135.945,187.145,135.945"></path>
+</svg></a></li>
+<?php } } ?>
+
                                         </ul>
                                       </li>
                                             <?php
@@ -238,15 +278,14 @@ $tasklist = $this->customlib->getincompleteTask($userdata["id"],$userdata["role_
 if ($this->module_lib->hasActive('chat')) {
     if ($this->rbac->hasPrivilege('chat', 'can_view')) {
         ?>
-                                         <li class="cal15 d-sm-none"><a data-placement="bottom" data-toggle="tooltip" title="" href="<?php echo base_url() ?>admin/chat" data-original-title="<?php echo $this->lang->line('chat') ?>" class="todoicon"><i class="fa fa-whatsapp"></i></a></li>
+                                         <li class="cal15 d-sm-none"><a data-placement="bottom" data-toggle="tooltip" title="" href="<?php echo base_url() ?>admin/chat" data-original-title="<?php echo $this->lang->line('chat') ?>" class="todoicon"><i class="fa fa-comment-o"></i></a></li>
                                         <?php
 }
     ?>
 
-
                                 <?php }
 $file   = "";
-$result = $this->customlib->getLoggedInUserData();
+
 $role = $this->customlib->getStaffRole();
 
 
@@ -264,7 +303,48 @@ if (!empty($image)) {
     }
 
 }
+?>                              
+
+<?php  
+	if($result['admin_panel_whatsapp']){ 
+	$waurl = "https://wa.me/";
+	$mobile = $result['admin_panel_whatsapp_mobile'];	 	
+	$url = $waurl.$mobile;
+	$today = strtotime(date("H:i:s")); 
+	
+	$show_hide = 1;
+	if($result['admin_panel_whatsapp_from'] != '' && $result['admin_panel_whatsapp_to'] != ''){
+		
+		$admin_panel_whatsapp_from = strtotime($result['admin_panel_whatsapp_from']);
+		$admin_panel_whatsapp_to = strtotime($result['admin_panel_whatsapp_to']);
+		
+		if($today>=$admin_panel_whatsapp_from && $today<=$admin_panel_whatsapp_to){
+			$show_hide = 1;
+		}else{
+			$show_hide = 0;
+		}		
+	}
+	
+	if($show_hide){
 ?>
+
+<li class="cal15 whatsapp-icon-bg d-sm-none"><a target="_blank" href="<?php echo $url; ?>" data-placement="bottom" data-toggle="tooltip" title="<?php echo $this->lang->line('whatsapp_link') ?>">
+<svg height="18px" width="18px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+     viewBox="0 0 512 512" xml:space="preserve">
+<path style="fill:#fff;" d="M0,512l35.31-128C12.359,344.276,0,300.138,0,254.234C0,114.759,114.759,0,255.117,0
+    S512,114.759,512,254.234S395.476,512,255.117,512c-44.138,0-86.51-14.124-124.469-35.31L0,512z"/>
+<path style="fill:#55CD6C;" d="M137.71,430.786l7.945,4.414c32.662,20.303,70.621,32.662,110.345,32.662
+    c115.641,0,211.862-96.221,211.862-213.628S371.641,44.138,255.117,44.138S44.138,137.71,44.138,254.234
+    c0,40.607,11.476,80.331,32.662,113.876l5.297,7.945l-20.303,74.152L137.71,430.786z"/>
+<path style="fill:#fff;" d="M187.145,135.945l-16.772-0.883c-5.297,0-10.593,1.766-14.124,5.297
+    c-7.945,7.062-21.186,20.303-24.717,37.959c-6.179,26.483,3.531,58.262,26.483,90.041s67.09,82.979,144.772,105.048
+    c24.717,7.062,44.138,2.648,60.028-7.062c12.359-7.945,20.303-20.303,22.952-33.545l2.648-12.359
+    c0.883-3.531-0.883-7.945-4.414-9.71l-55.614-25.6c-3.531-1.766-7.945-0.883-10.593,2.648l-22.069,28.248
+    c-1.766,1.766-4.414,2.648-7.062,1.766c-15.007-5.297-65.324-26.483-92.69-79.448c-0.883-2.648-0.883-5.297,0.883-7.062
+    l21.186-23.834c1.766-2.648,2.648-6.179,1.766-8.828l-25.6-57.379C193.324,138.593,190.676,135.945,187.145,135.945"/>
+</svg></a></li> 
+
+<?php } } ?>   
 
                                     <li class="dropdown user-menu">
                                         <a class="dropdown-toggle" style="padding: 15px 12px;" data-toggle="dropdown" href="#" aria-expanded="false">

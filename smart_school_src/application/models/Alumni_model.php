@@ -83,8 +83,6 @@ class Alumni_model extends MY_Model
             $message   = INSERT_RECORD_CONSTANT . " On Alumni Event id " . $insert_id;
             $action    = "Insert";
             $record_id = $insert_id;
-             
-            
         }
         
         $this->log($message, $record_id, $action);

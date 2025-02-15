@@ -80,9 +80,22 @@
                                         <?php
                                     }
                                     ?>
-                                    <tr class="bordertoplightgray">
-                                        <td colspan="2" class="text-right"><?php echo $this->lang->line('total'); ?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float) ($session_data['fine_amount_balance'] + $session_data['total']), 2, '.', ''); ?></td>
-                                    </tr>
+                                   
+                                     <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('discount'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $session_data['applied_fee_discount'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('processing_fees'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $session_data['gateway_processing_charge'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="bordertoplightgray">
+                                            <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)(($session_data['fine_amount_balance'] + $session_data['total']) - $session_data['applied_fee_discount']+$session_data['gateway_processing_charge']), 2, '.', ''); ?></td>
+                                        </tr>
                                 </table>
                                 <?php
                                 defined('BASEPATH') OR exit('No direct script access allowed');

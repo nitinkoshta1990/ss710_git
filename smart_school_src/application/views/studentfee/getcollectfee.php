@@ -153,12 +153,33 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
         }
 
     if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != NULL) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) && $amount_to_be_pay > 0) {
-         $fees_fine_amount=$fee_value->fine_amount-$fine_amount_paid;
-         $total_amount=$total_amount+$fees_fine_amount;
+         //$fees_fine_amount=$fee_value->fine_amount-$fine_amount_paid;
+         //$total_amount=$total_amount+$fees_fine_amount;
          $fine_amount_status=true;
+		 
+		 // get cumulative fine amount as delay days 
+            if($fee_value->fine_type=='cumulative'){
+                $date1=date_create("$fee_value->due_date");
+                $date2=date_create(date('Y-m-d'));
+                $diff=date_diff($date1,$date2);
+                $due_days= $diff->format("%a");;
+                
+                if($this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days)){
+                    $due_fine_amount=$this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days);
+                }else{
+                    $due_fine_amount=0;
+                }
+                $fees_fine_amount   = $due_fine_amount-$fine_amount_paid;
+
+            }else if($fee_value->fine_type=='fix' || $fee_value->fine_type=='percentage'){
+                $fees_fine_amount=$fee_value->fine_amount-$fine_amount_paid;
+            }          
+        // get cumulative fine amount as delay days
         }
 
-        $total_amount = $total_amount + $amount_to_be_pay;
+        //$total_amount = $total_amount + $amount_to_be_pay;
+		  $total_amount = $total_amount + $amount_to_be_pay+$fees_fine_amount;
+		  
         if ($amount_to_be_pay > 0) {
             ?>
 

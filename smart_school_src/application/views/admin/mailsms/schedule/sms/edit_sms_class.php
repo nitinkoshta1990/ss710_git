@@ -87,11 +87,29 @@ foreach ($classlist as $class) {
                                             </div>
                                             <div class="dual-list list-right">
                                                 <div class="well minheight260">
-                                                    <div class="wellscroll">
-                                                        <b><?php echo $this->lang->line('section'); ?></b>
-                                                        <ul class="list-group section_list listcheckbox">
-
-                                                        </ul>
+                                                    <div class="wellscroll row">
+                                                        <div class="col-md-2">
+                                                            <b><?php echo $this->lang->line('section'); ?></b>
+                                                            <ul class="list-group section_list listcheckbox">
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-md-10 ">
+                                                            <?php
+                                                            if($send_to==null){
+                                                                $send_to_user=[];
+                                                            }else{
+                                                                 $send_to_user=json_decode($send_to);
+                                                            }  ?>
+                                                            <b><?php echo $this->lang->line('send_to'); ?></b>
+                                                            <ul class="list-group listcheckbox hide"  id="send_to">
+                                                                <li class="checkbox"><a href="#" class="small"><label>
+                                                                    <input class="reset_checkbox" type="checkbox" name="send_to[]" <?php if(in_array('student',($send_to_user)) && $send_to!=null){ echo "checked"; } ?> value="student"/><?php echo $this->lang->line('students'); ?></label></a></li>
+                                                                <?php if ($sch_setting->guardian_name) {?>
+                                                                <li class="checkbox"><a href="#" class="small"><label>
+                                                                    <input class="reset_checkbox" type="checkbox" name="send_to[]" <?php if(in_array('parent',($send_to_user)) && $send_to!=null){ echo "checked"; } ?>  value="parent"/><?php echo $this->lang->line('guardians'); ?></label></a></li>
+                                                                <?php } ?>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -104,7 +122,7 @@ foreach ($classlist as $class) {
                                         <div class="col-md-12">
                                             <div class="pull-right">
                                                 <div class="flex-direction-column d-sm-flex d-lg-flex justify-content-center align-items-lg-center align-items-sm-start sm-full-width">
-                                                        <label for="exam_to"><?php echo $this->lang->line('schedule_date_time'); ?></label><small class="req"> *</small>
+                                                        <label for="exam_to"><?php echo $this->lang->line('schedule_date_time'); ?><small class="req"> *</small></label>
                                                         <div class="input-group">
                                                             <input class="form-control tddm200 datetime " name="schedule_date_time" type="text" id="schedule_date_time" value="<?php echo $this->customlib->dateyyyymmddToDateTimeformat($messagelist['schedule_date_time'], false); ?>">
                                                             <span class="input-group-addon" id="basic-addon2"><i class="fa fa-calendar"></i></span>
@@ -160,6 +178,14 @@ if (($userdata["role_id"] == 2)) {
 
             });
             $('.section_list').append(div_data);
+
+            if(class_id!=""){
+                $("#send_to").addClass("show");
+                $("#send_to").removeClass("hide");
+            }else{
+                $("#send_to").addClass("hide");
+                $("#send_to").removeClass("show");
+            }
         }
     });
 })
@@ -229,6 +255,10 @@ if (($userdata["role_id"] == 2)) {
                 } else {
                     $('#class_form')[0].reset();
                     $('.section_list').html("");
+                    
+                    $("#send_to").addClass("hide");
+                    $("#send_to").removeClass("show");
+                    
                     successMsg(data.msg);
                     window.location = "<?php echo base_url(); ?>admin/mailsms/schedule";
                 }

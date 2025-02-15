@@ -510,7 +510,6 @@ class Staff_model extends MY_Model
                 $i++;
             }
         }
-
        
         $field_var = count($field_k_array) > 0 ? "," . implode(',', $field_k_array) : "";        
          
@@ -613,7 +612,6 @@ class Staff_model extends MY_Model
                 $tb_counter = "table_custom_" . $i;
                 array_push($field_k_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name . '`');               
                 $join_array .= " LEFT JOIN `custom_field_values` as `" . $tb_counter . "` ON `staff`.`id` = `" . $tb_counter . "`.`belong_table_id` AND `" . $tb_counter . "`.`custom_field_id` = " . $custom_fields_value->id;
-
                 $i++;
             }
         }
@@ -630,7 +628,6 @@ class Staff_model extends MY_Model
         $query = "SELECT `staff`.*, `staff_designation`.`designation` as `designation`, `department`.`department_name` as `department`,roles.id as role_id,`roles`.`name` as user_type " . $field_var . "  FROM `staff` " . $join_array . " LEFT JOIN `staff_designation` ON `staff_designation`.`id` = `staff`.`designation` LEFT JOIN `staff_roles` ON `staff_roles`.`staff_id` = `staff`.`id` LEFT JOIN `roles` ON `staff_roles`.`role_id` = `roles`.`id` LEFT JOIN `department` ON `department`.`id` = `staff`.`department` WHERE  `staff`.`is_active` = '$active' and (CONCAT(`staff`.`name`,' ',`staff`.`surname`) LIKE '%".$this->db->escape_like_str($searchterm)."%' ESCAPE '!' OR `staff`.`surname` LIKE '%".$this->db->escape_like_str($searchterm)."%' ESCAPE '!' OR `staff`.`employee_id` LIKE '%".$this->db->escape_like_str($searchterm)."%' ESCAPE '!' OR `staff`.`local_address` LIKE '%".$this->db->escape_like_str($searchterm)."%' ESCAPE '!'  OR `staff`.`contact_no` LIKE '%".$this->db->escape_like_str($searchterm)."%' ESCAPE '!' OR `staff`.`email` LIKE '%".$this->db->escape_like_str($searchterm)."%' ESCAPE '!' OR `roles`.`name` LIKE '%".$this->db->escape_like_str($searchterm)."' ESCAPE '!') $condition ";
 
         $query = $this->db->query($query);
-
         return $query->result_array();
     }
 
@@ -810,7 +807,6 @@ class Staff_model extends MY_Model
         } else {
             return false;
         }
-
     }
 
     public function lastRecord()
@@ -939,7 +935,6 @@ class Staff_model extends MY_Model
         $query = "SELECT `staff`.*, `staff_designation`.`designation` as `designation`, `department`.`department_name` as `department`,`roles`.`name` as user_type " . $field_var . ",GROUP_CONCAT(leave_type_id,'@',alloted_leave) as leaves  FROM `staff` " . $join_array . " LEFT JOIN `staff_designation` ON `staff_designation`.`id` = `staff`.`designation` LEFT JOIN `staff_roles` ON `staff_roles`.`staff_id` = `staff`.`id` LEFT JOIN `roles` ON `staff_roles`.`role_id` = `roles`.`id` LEFT JOIN `department` ON `department`.`id` = `staff`.`department` left join staff_leave_details ON staff_leave_details.staff_id=staff.id WHERE 1  " . $condition .    $rolescondition . " group by staff.id";
 
         $query = $this->db->query($query);
-
         return $query->result_array();
     }
 
@@ -968,8 +963,16 @@ class Staff_model extends MY_Model
 
     public function getemployeeidbystaffid($id){
         $this->db->select('staff.employee_id,email,contact_no')->from('staff')->where('staff.id', $id); 
-         $query = $this->db->get();
+        $query = $this->db->get();
         $result =  $query->row_array();
         return $result['employee_id'];
     }
+
+    public function get_staff_list($array = null)
+    {      
+       $array = implode(',', $array); 
+       $query=$this->db->query("select * from staff where staff.id in ($array)");
+       return $query->result_array();
+    }
+
 }

@@ -28,7 +28,6 @@ class Cashfree extends Studentgateway_Controller {
     }
 
     public function pay() {
-
       
         $this->form_validation->set_rules('phone', $this->lang->line('phone'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|xss_clean');
@@ -44,12 +43,10 @@ class Cashfree extends Studentgateway_Controller {
             $data['student_data'] = $this->student_model->get($params['student_id']);
             $this->load->view('user/gateway/cashfree/index', $data);
         } else {
-
            
             $data = array();
             $data['name'] = $params['name'];
-            $amount =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'])), 2, '.', '');
-            //$api=' '.$this->api_config->api_publishable_key;
+            $amount =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge'])), 2, '.', '');           
             $customer_id="Student_id_".$params['student_id'];
             $order_id="order_".time().mt_rand(100,999);
             $currency=$params['invoice']->currency_name;;
@@ -139,7 +136,9 @@ class Cashfree extends Studentgateway_Controller {
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+						'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_cashfree_txn_id') . $payment_id,
                         'received_by'     => '',
@@ -157,7 +156,7 @@ class Cashfree extends Studentgateway_Controller {
                     //========
                     } 
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                     $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                     //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();

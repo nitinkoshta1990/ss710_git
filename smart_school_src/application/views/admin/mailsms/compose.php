@@ -19,7 +19,7 @@
                         <li class="active"><a href="#tab_group" data-toggle="tab"><?php echo $this->lang->line('group'); ?></a></li>
                         <li class="pull-left header"> <?php echo $this->lang->line('send_email'); ?></li>
                     </ul>
-                    <div class="tab-content pb0">
+                    <div class="tab-content pb0"> 
                         <div class="tab-pane active" id="tab_group">
                             <form action="<?php echo site_url('admin/mailsms/send_group') ?>" method="post" id="group_form">
                                     <div class="row">
@@ -269,11 +269,20 @@ if (set_value('class_id') == $class['id']) {
                                             </div>
                                             <div class="dual-list list-right">
                                                 <div class="well minheight260">
-                                                    <div class="wellscroll">
-                                                        <b><?php echo $this->lang->line('section'); ?></b>
-                                                        <ul class="list-group section_list listcheckbox">
-
-                                                        </ul>
+                                                    <div class="wellscroll row">
+                                                        <div class="col-md-2" id="">
+                                                            <b><?php echo $this->lang->line('section'); ?></b>
+                                                            <ul class="list-group section_list listcheckbox"></ul>
+                                                        </div>
+                                                        <div class="col-md-10 ">
+                                                            <b><?php echo $this->lang->line('send_to'); ?></b>
+                                                            <ul class="list-group listcheckbox hide"  id="send_to">
+                                                                <li class="checkbox"><a href="#" class="small"><label><input class="reset_checkbox" type="checkbox" name="send_to[]" value="student"/><?php echo $this->lang->line('students'); ?></label></a></li>
+                                                                <?php if ($sch_setting->guardian_name) {?>
+                                                                <li class="checkbox"><a href="#" class="small"><label><input class="reset_checkbox" type="checkbox" name="send_to[]" value="parent"/><?php echo $this->lang->line('guardians'); ?></label></a></li>
+                                                                <?php } ?>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -790,6 +799,7 @@ foreach ($birthDaysList['staff'] as $staff_key => $staff_value) {
 
     $(document).on('change', '#class_id', function (e) {
         $('.section_list').html("");
+        
         var class_id = $(this).val();
         var base_url = '<?php echo base_url() ?>';
         var url = "<?php
@@ -813,6 +823,18 @@ if (($userdata["role_id"] == 2)) {
 
                 });
                 $('.section_list').append(div_data);
+
+                if(class_id!=""){
+                    $("#send_to").addClass("show");
+                    $("#send_to").removeClass("hide");
+                }else{
+                    $("#send_to").addClass("hide");
+                    $("#send_to").removeClass("show");
+                }
+                if(class_id=="" || class_id=="select"){
+                    $('.reset_checkbox').prop('checked',false);
+                }
+                
             }
         });
     });
@@ -850,6 +872,7 @@ if (($userdata["role_id"] == 2)) {
                 $this.button('loading');
             },
             success: function (data) {
+
                 if (data.status == 1) {
                     var message = "";
                     $.each(data.msg, function (index, value) {
@@ -866,6 +889,8 @@ if (($userdata["role_id"] == 2)) {
                         CKEDITOR.instances[instance].setData(" ");
                     }
                     $('.section_list').html("");
+                    $("#send_to").addClass("hide");
+                    $("#send_to").removeClass("show");
                     successMsg(data.msg);
                 }
             },

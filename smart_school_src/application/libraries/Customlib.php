@@ -18,6 +18,9 @@ class Customlib
         $this->CI->load->model('Notification_model');
         $this->CI->load->model('Setting_model');
         $this->CI->load->model('Notificationsetting_model');
+		$this->CI->load->model('resume_model');
+        $this->CI->load->model('paymentsetting_model');
+		
     }
 
     public function getBaseUrl()
@@ -28,8 +31,11 @@ class Customlib
         if ($admin) {
             $base_url = $admin['db_array']['base_url'];
         } else if ($this->CI->session->userdata('student')) {
-             $base_url = $student['db_array']['base_url'];
-        }       
+            $base_url = $student['db_array']['base_url'];
+        } else {
+			$setting_result = $this->CI->setting_model->get();
+			$base_url = $setting_result[0]["base_url"];
+		}      
         
         if ($base_url == "") {
             $base_url = base_url();
@@ -47,7 +53,10 @@ class Customlib
             $folder_path = $admin['db_array']['folder_path'];
         } else if ($this->CI->session->userdata('student')) {
              $folder_path = $student['db_array']['folder_path'];
-        }   
+        } else {
+			$setting_result = $this->CI->setting_model->get();
+			$base_url = $setting_result[0]["folder_path"];
+		}    
         
         if ($folder_path == "") {
             $folder_path = null;
@@ -81,7 +90,19 @@ class Customlib
         $payment_type['paid']    = $this->CI->lang->line('no').' '.$this->CI->lang->line('balance');
         return $payment_type;
     }
-
+     public function getGatewayProcessingFees($amount)
+    {
+       $pay_method=$this->CI->paymentsetting_model->getActiveMethod();
+       $gateway_processing_charge=0;
+        if($pay_method->charge_type=='percentage'){
+        $gateway_processing_charge=(($amount * $pay_method->charge_value)/100);
+        }elseif($pay_method->charge_type=='fix'){
+            $gateway_processing_charge=$pay_method->charge_value;
+        }else{
+         $gateway_processing_charge=0;   
+        } 
+        return $gateway_processing_charge;
+    }
     public function getCalltype()
     {
         $call_type             = array();
@@ -645,7 +666,6 @@ class Customlib
     {
         $result = $this->CI->setting_model->get(1);
         return $result['currency_symbol'];
-
     }
 
     public function getSchoolCurrencyWithPlace($amount = 0)
@@ -1348,7 +1368,6 @@ class Customlib
             $now       = new DateTime('now', new DateTimeZone('UTC'));
 
             foreach (DateTimeZone::listIdentifiers() as $timezone) {
-
                 $now->setTimezone(new DateTimeZone($timezone));
                 $offsets[]            = $offset            = $now->getOffset();
                 $timezones[$timezone] = '(' . $this->format_GMT_offset($offset) . ') ' . $this->format_timezone_name($timezone);
@@ -2039,48 +2058,32 @@ class Customlib
         return $status;
     }
 
-    // public function generatebarcode($admission_no)
-    // {
-    //     //I'm just using rand() function for data example
-    //     $data = [];
-    //     $code = $admission_no;
-    //     //load library
-    //     $this->CI->load->library('zend');
-    //     //load in folder Zend
-    //     $this->CI->zend->load('Zend/Barcode');
-    //     //generate barcode
-    //     $imageResource = Zend_Barcode::factory('code128', 'image', array('text' => $code, 'barHeight' => 20), array())->draw();
-    //     imagepng($imageResource, 'uploads/student_id_card/barcodes/' . $code . '.png');
-    //     $barcode = 'uploads/student_id_card/barcodes/' . $code . '.png';
-    //     return $barcode;
-    // }
-
-    public function generatebarcode($admission_no, $default_return_code = 'barcode')
+    public function generatebarcode($admission_no,$student_id, $default_return_code = 'barcode')
     {
         $data = [];
         $code = $admission_no;
+       
         //load library
         $this->CI->load->library('zend');
         //load in folder Zend
         $this->CI->zend->load('Zend/Barcode');
         //generate barcode
         $imageResource = Zend_Barcode::factory('code128', 'image', array('text' => $code, 'barHeight' => 20), array())->draw();
-        imagepng($imageResource, 'uploads/student_id_card/barcodes/' . $code . '.png');
-        $barcode = 'uploads/student_id_card/barcodes/' . $code . '.png';
+        imagepng($imageResource, 'uploads/student_id_card/barcodes/' . $student_id. '.png');
+        $barcode = 'uploads/student_id_card/barcodes/' . $student_id. '.png';
 
         //=============qrcode=================
         $this->CI->load->library('QR_Code');
-        $qrcode =   $this->CI->qr_code->generate('uploads/student_id_card/qrcode/',$code);
+        $qrcode =   $this->CI->qr_code->generate('uploads/student_id_card/qrcode/',$code,$student_id);
 
         if ($default_return_code == "barcode") {
             return $barcode;
         } elseif ($default_return_code == "qrcode") {
-            return 'uploads/student_id_card/qrcode/' . $code . '.png';
+            return 'uploads/student_id_card/qrcode/' . $student_id . '.png';
         }
     }
 
-
-    public function generatestaffbarcode($employee_id,$default_return_code = 'barcode')
+    public function generatestaffbarcode($employee_id,$staff_id,$default_return_code = 'barcode')
     {
         //I'm just using rand() function for data example
         $data = [];
@@ -2091,16 +2094,16 @@ class Customlib
         $this->CI->zend->load('Zend/Barcode');
         //generate barcode
         $imageResource = Zend_Barcode::factory('code128', 'image', array('text' => $code, 'barHeight' => 20), array())->draw();
-        imagepng($imageResource, 'uploads/staff_id_card/barcodes/' . $code . '.png');
-        $barcode = 'uploads/staff_id_card/barcodes/' . $code . '.png';
+        imagepng($imageResource, 'uploads/staff_id_card/barcodes/' . $staff_id . '.png');
+        $barcode = 'uploads/staff_id_card/barcodes/' . $staff_id . '.png';
       //=============qrcode=================
       $this->CI->load->library('QR_Code');
-      $qrcode =   $this->CI->qr_code->generate('uploads/staff_id_card/qrcode/',$code);
+      $qrcode =   $this->CI->qr_code->generate('uploads/staff_id_card/qrcode/',$code,$staff_id);
 
       if ($default_return_code == "barcode") {
           return $barcode;
       } elseif ($default_return_code == "qrcode") {
-          return 'uploads/staff_id_card/qrcode/' . $code . '.png';
+          return 'uploads/staff_id_card/qrcode/' . $staff_id . '.png';
       }
     }
 
@@ -2120,7 +2123,6 @@ class Customlib
         } else {
             return false;
         }
-
     }
 
     public function get_myClassSectionQuerystring($tbl)
@@ -2153,7 +2155,6 @@ class Customlib
         } else {
             return false;
         }
-
     }
 
     public function calculateRating($avgRating)
@@ -2203,17 +2204,101 @@ class Customlib
     
     public function getCurrentSession(){
 
-        $return_session                = [];
+        $return_session      = [];
         $session_array       = $this->CI->session->has_userdata('session_array');
        
         if ($session_array) {
-            $return_session  = $this->CI->session->userdata('session_array');
+            $return_session      = $this->CI->session->userdata('session_array');
         } else {
             $setting             = $this->CI->setting_model->get();
             $return_session      = $setting[0]['current_session'];
         }
        return  $return_session;
 
+    }
+
+    public function checkcustomfieldexist($fieldname){
+		 
+        $status = $this->CI->resume_model->getfieldstatus($fieldname);
+        return $status;
+    }
+
+    public function getfieldcustomstatus($fieldname){
+		 
+        $status = $this->CI->resume_model->getfieldstatus($fieldname);
+        return $status;
+    }
+
+   public function get_additional_field_status($fieldname){
+         
+        $status = $this->CI->resume_model->get_additional_field_status($fieldname);
+        return $status;
+    }
+
+    public function get_user_dashboard_setting_status($fieldname){
+        
+        $user       =   $this->CI->session->userdata('student');
+        $user_role  =   $user['role'];
+
+        if ($user_role == "student") {
+            $status = $this->CI->student_model->get_student_dashboard_setting_status($fieldname);
+        }else if ($user_role == "parent") {
+            $status = $this->CI->student_model->get_parent_dashboard_setting_status($fieldname);
+        }
+        return $status;
+    }
+	
+	//fees master  fees collect //
+    public function get_cumulative_fine_amount($fee_groups_feetype_id,$due_days){
+       
+        $this->CI->load->model('studentfeemaster_model');
+        $get_cumulative_data = $this->CI->studentfeemaster_model->get_cumulative_fine_amount($fee_groups_feetype_id);
+        $due_fine_amount=0;
+
+        if(count($get_cumulative_data)>0){
+            foreach($get_cumulative_data as $key=>$value){
+                if($value->fine_per_day==1){
+                    //fine will multiply after due days to fine amount
+                    if($due_days > $value->overdue_day){
+                        $overduedays=$due_days-$value->overdue_day;
+                        $due_fine_amount= ($value->fine_amount*$overduedays);
+                    }
+                }else{ 
+                    //fine will after due date
+                    if($due_days > $value->overdue_day){
+                        $due_fine_amount= $value->fine_amount;
+                    }
+                }
+            }
+            return $due_fine_amount;
+        }else{
+            return false;
+        }
+
+        return false;
+    }
+	
+	public function get_lesson_complete_status($section_id,$lesson_quiz_id){
+        $this->CI->load->model('Studentcourse_model');
+        $total_rows = $this->CI->Studentcourse_model->get_lesson_complete_status($section_id,$lesson_quiz_id);
+        return $total_rows;
+    }
+
+    public function get_online_course_curriculam_status($fieldname){
+        $this->CI->load->model('Course_model');
+        $course_setting             = $this->CI->course_model->getOnlineCourseSettings();
+        $active_curriculam_status   = "" ;
+       
+        if($course_setting->course_curriculum_settings==null){
+            return $active_curriculam_status="hide"; 
+        }else{
+            $course_curriculum_settings = json_decode($course_setting->course_curriculum_settings); 
+            if(!empty($course_setting->course_curriculum_settings) && in_array("$fieldname",$course_curriculum_settings)){ 
+                return $active_curriculam_status="";
+            }else{
+                return $active_curriculam_status="hide";
+            }
+        }
     }
 
 }

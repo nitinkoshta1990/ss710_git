@@ -93,10 +93,19 @@ class Leaverequest extends Admin_Controller
         if ((!$this->rbac->hasPrivilege('approve_leave_request', 'can_edit'))) {
             access_denied();
         }
+
         $leave_request_id = $this->input->post("leave_request_id");
         $status           = $this->input->post("status");
         $adminRemark      = $this->input->post("detailremark");
-        $data             = array('status' => $status, 'admin_remark' => $adminRemark);
+
+        $data  = array('status' => $status, 'admin_remark' => $adminRemark);
+
+        if ($data['status'] != 'pending') {
+            $data['approve_date']   =   date('Y-m-d');
+        }else{
+            $data['approve_date']   =   null;
+        } 
+
         $this->leaverequest_model->changeLeaveStatus($data, $leave_request_id);
         $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         echo json_encode($array);
@@ -187,9 +196,16 @@ class Leaverequest extends Admin_Controller
                 } else {
                     $document = '';
                 }
-
-                if (!empty($request_id)) {
-
+				
+					if($status == 'approved'){
+						$approve_date = date('Y-m-d');
+					}else{
+						$approve_date = null;
+					}	
+					
+					
+                if (!empty($request_id)) {				 
+					 
                     $data = array(
                         'id'              => $request_id,
                         'staff_id'        => $staff_id,
@@ -203,10 +219,12 @@ class Leaverequest extends Admin_Controller
                         'admin_remark'    => $remark,
                         'applied_by'      => $applied_by,
                         'document_file'   => $document,
+                        'approve_date'   => $approve_date,
                     );
+					
                 } else {
-
-                    $data = array('staff_id' => $staff_id, 'date' => date("Y-m-d", $this->customlib->datetostrtotime($applied_date)), 'leave_days' => $leave_days, 'leave_type_id' => $leavetype, 'leave_from' => $leavefrom, 'leave_to' => $leaveto, 'employee_remark' => $reason, 'status' => $status, 'admin_remark' => $remark, 'applied_by' => $applied_by, 'document_file' => $document);
+					 
+                    $data = array('staff_id' => $staff_id, 'date' => date("Y-m-d", $this->customlib->datetostrtotime($applied_date)), 'leave_days' => $leave_days, 'leave_type_id' => $leavetype, 'leave_from' => $leavefrom, 'leave_to' => $leaveto, 'employee_remark' => $reason, 'status' => $status, 'admin_remark' => $remark, 'applied_by' => $applied_by, 'document_file' => $document, 'approve_date' => $approve_date);
                 }
 
                 $this->leaverequest_model->addLeaveRequest($data);

@@ -4,7 +4,6 @@
     ?>
         <li class="removehover">
             <a data-toggle="modal" data-target="#sessionModal"><span><?php echo $this->lang->line('current_session') . ": " . $this->setting_model->getCurrentSessionName(); ?></span><i class="fa fa-pencil pull-right"></i></a>
-
         </li>
     <?php } ?>
 
@@ -29,7 +28,6 @@
                                     $cat_permission = access_permission_remove_comma($m_permission_value);
 
                                     if ($this->rbac->hasPrivilege($cat_permission[0], $cat_permission[1])) {
-
                                         $module_access = true;
                                         break;
                                     }
@@ -91,35 +89,27 @@
                                                 <?php
                                                     }
                                                 }
-
                                                 ?>
                                             </ul>
-
                                         <?php
-
                                         }
                                         ?>
-
                                     </div>
                             <?php
                                 }
                             }
-
                             ?>
-
                     <?php
                         }
                     }
                     ?>
-
-
                 </div>
             </div>
-
         </div>
     </li>
 </ul>
-<script>
+
+<script type="text/javascript">
     $('.verticalmenu').click(function(event) {
         event.stopPropagation();
     });

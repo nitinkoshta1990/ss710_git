@@ -264,8 +264,9 @@ if(in_array('0', $print_copy)){
 
                                     <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                         <thead>
-                                        <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                        <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                        <th><?php echo $this->lang->line('fees'); ?></th>
+                                        <!-- <th><?php echo $this->lang->line('fees_group'); ?></th> -->
+                                        <!-- <th><?php echo $this->lang->line('fees_code'); ?></th> -->
                                         <th  class=""><?php echo $this->lang->line('due_date'); ?></th>
                                         <th class=""><?php echo $this->lang->line('status'); ?></th>
                                         <th  class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -323,7 +324,7 @@ if(in_array('0', $print_copy)){
                                                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td> 
+                                                        <!-- <td> 
                                                             <?php
                                                             if ($feeList->is_system) {
                                                                 echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
@@ -340,7 +341,20 @@ if(in_array('0', $print_copy)){
                                                                 echo $feeList->code ;
                                                             }
                                                             ?>
+                                                        </td> -->
+
+                                                        <td> 
+                                                            <?php
+                                                            if ($feeList->is_system) {
+                                                                echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                            } else {
+                                                                echo $feeList->type . " (" . $feeList->code . ")";
+                                                            }
+                                                            ?>
                                                         </td>
+
+
+
                                                         <td class="">
 
                                                             <?php
@@ -413,7 +427,7 @@ if ($feeList->fine_amount != "") {
                                                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -453,12 +467,12 @@ if ($feeList->fine_amount != "") {
                                                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td><?php
-                                                            echo $this->lang->line("transport_fees");
-                                                            ?></td>
-                                                        <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td>
-                                                        <td class="">
+                                                    <!--<td><?php echo $this->lang->line("transport_fees"); ?></td>
+                                                        <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td> -->
 
+                                                        <td><?php echo $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")"  ?></td>
+
+                                                        <td class="">
                                                             <?php
                                                             if ($feeList->due_date == "0000-00-00") {
                                                                 
@@ -528,7 +542,7 @@ if ($feeList->fine_amount != "") {
                                                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -550,7 +564,7 @@ if ($feeList->fine_amount != "") {
                                             }
                                             ?>
                                             <tr class="success">
-                                                <td align="left" ></td>
+                                                <!-- <td align="left" ></td> -->
                                                 <td align="left" ></td>
                                                 <td align="left" ></td>
 
@@ -661,8 +675,9 @@ if(in_array('0', $print_copy)){
 
                                         <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                             <thead>
-                                            <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                            <th><?php echo $this->lang->line('fees'); ?></th>
+                                            <!-- <th><?php echo $this->lang->line('fees_group'); ?></th> -->
+                                            <!-- <th><?php echo $this->lang->line('fees_code'); ?></th> -->
                                             <th  class=""><?php echo $this->lang->line('due_date'); ?></th>
                                             <th class=""><?php echo $this->lang->line('status'); ?></th>
                                             <th  class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -721,7 +736,7 @@ if(in_array('0', $print_copy)){
                                                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td>                                                            
+                                                       <!--  <td>                                                            
                                                             <?php
                                                             if ($feeList->is_system) {
                                                                 echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
@@ -738,7 +753,17 @@ if(in_array('0', $print_copy)){
                                                                 echo $feeList->code ;
                                                             }
                                                             ?>
+                                                        </td> -->
+                                                          <td> 
+                                                            <?php
+                                                            if ($feeList->is_system) {
+                                                                echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                            } else {
+                                                                echo $feeList->type . " (" . $feeList->code . ")";
+                                                            }
+                                                            ?>
                                                         </td>
+
                                                         <td class="">
 
                                                             <?php
@@ -810,7 +835,7 @@ if ($feeList->fine_amount != "") {
                                                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -849,10 +874,11 @@ if ($feeList->fine_amount != "") {
                                                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td><?php
-                                                            echo $this->lang->line("transport_fees");
-                                                            ?></td>
-                                                        <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td>
+                                                       <!--  <td><?php echo $this->lang->line("transport_fees"); ?></td>
+                                                        <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td> -->
+
+                                                        <td><?php echo  $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")"; ?></td>
+
                                                         <td class="">
                                                             <?php
                                                             if ($feeList->due_date == "0000-00-00") {
@@ -923,7 +949,7 @@ if ($feeList->fine_amount != "") {
                                                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -945,7 +971,7 @@ if ($feeList->fine_amount != "") {
                                             }
                                             ?>
                                             <tr class="success">
-                                                <td align="left" ></td>
+                                                <!-- <td align="left" ></td> -->
                                                 <td align="left" ></td>
                                                 <td align="left" ></td>
 
@@ -1048,8 +1074,9 @@ if ($feeList->fine_amount != "") {
 
                                         <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                             <thead>
-                                            <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                            <th><?php echo $this->lang->line('fees'); ?></th>
+                                            <!-- <th><?php echo $this->lang->line('fees_group'); ?></th> -->
+                                            <!-- <th><?php echo $this->lang->line('fees_code'); ?></th> -->
                                             <th class=""><?php echo $this->lang->line('due_date'); ?></th>
                                             <th class=""><?php echo $this->lang->line('status'); ?></th>
                                             <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -1108,7 +1135,7 @@ if ($feeList->fine_amount != "") {
                                                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td> 
+                                                        <!-- <td> 
                                                             <?php
                                                             if ($feeList->is_system) {
                                                                 echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
@@ -1125,7 +1152,20 @@ if ($feeList->fine_amount != "") {
                                                                     echo $feeList->code ;
                                                                 }
                                                             ?>
+                                                        </td> -->
+
+
+                                                        <td> 
+                                                            <?php
+                                                            if ($feeList->is_system) {
+                                                                echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                            } else {
+                                                                echo $feeList->type . " (" . $feeList->code . ")";
+                                                            }
+                                                            ?>
                                                         </td>
+
+
                                                         <td class="">
 
                                                             <?php
@@ -1198,7 +1238,7 @@ if ($feeList->fine_amount != "") {
                                                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -1238,12 +1278,12 @@ if ($feeList->fine_amount != "") {
                                                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td><?php
-                                                            echo $this->lang->line("transport_fees");
-                                                            ?></td>
-                                                        <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td>
-                                                        <td class="">
+                                                        <!-- <td><?php echo $this->lang->line("transport_fees");  ?></td>
+                                                        <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td> -->
 
+                                                        <td><?php echo  $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")"; ?></td>
+                                                        
+                                                        <td class="">
                                                             <?php
                                                             if ($feeList->due_date == "0000-00-00") {
                                                                 
@@ -1318,7 +1358,7 @@ if ($feeList->fine_amount != "") {
                                                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -1342,7 +1382,7 @@ if ($feeList->fine_amount != "") {
                                             }
                                             ?>
                                             <tr class="success">
-                                                <td align="left" ></td>
+                                                <!-- <td align="left" ></td> -->
                                                 <td align="left" ></td>
                                                 <td align="left" ></td>
 

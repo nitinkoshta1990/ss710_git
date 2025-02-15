@@ -42,7 +42,7 @@ class Stripe extends OnlineAdmission_Controller
         $stripeEmail         = $this->input->post('stripeEmail');
         $data                = $this->input->post();
         $data['stripeToken'] = $stripeToken;
-        $data['total']  = $this->amount;
+        $data['total']  = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $data['description'] = $this->lang->line('online_admission_form_fees');
         $data['currency']    = $this->customlib->get_currencyShortName();
         $response            = $this->stripe_payment->payment($data);
@@ -63,10 +63,12 @@ class Stripe extends OnlineAdmission_Controller
                 $this->onlinestudent_model->edit($adddata);
                 
                 $gateway_response['online_admission_id']   = $reference; 
-                $gateway_response['paid_amount']    = $this->amount;
+                $gateway_response['paid_amount']    = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
                 $gateway_response['transaction_id'] = $transactionid;
                 $gateway_response['payment_mode']   = 'stripe';
                 $gateway_response['payment_type']   = 'online';
+                $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
                 $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_stripe_txn_id')   . $transactionid;
                 $gateway_response['date']           = date("Y-m-d H:i:s");
                 $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

@@ -700,5 +700,17 @@ class Homework_model extends MY_model
         return $result->result_array();
     }  
 
+    function get_student_homework_evaluation($id){
+        $query = $this->db->select("homework.*,homework_evaluation.marks as evaluated_marks,homework_evaluation.student_id,homework_evaluation.id as evalid,
+            homework_evaluation.date as evaluation_date,homework_evaluation.status,classes.class,subjects.name,sections.section,students.app_key,students.admission_no,students.firstname,students.middlename,students.lastname,students.parent_app_key,students.email,students.guardian_email,students.mobileno,students.guardian_phone,students.id as student_id");
+        $this->db->join("classes", "classes.id = homework.class_id",'left');
+        $this->db->join("sections", "sections.id = homework.section_id",'left');
+        $this->db->join("subjects", "subjects.id = homework.subject_id",'left');
+        $this->db->join("homework_evaluation", "homework.id = homework_evaluation.homework_id",'left');
+        $this->db->join("students", "students.id = homework_evaluation.student_id",'left');
+        $this->db->where("homework.id", $id);
+        $query =  $this->db->get("homework"); 
+        return $query->result_array();
+    }
     
 }

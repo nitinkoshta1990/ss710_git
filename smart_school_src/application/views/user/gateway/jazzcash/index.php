@@ -85,9 +85,21 @@
                                         <?php
                                     }
                                     ?>
-                                    <tr class="bordertoplightgray">
-                                        <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)($params['fine_amount_balance']+$params['total']), 2, '.', ''); ?></td>
-                                    </tr>
+                                     <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('discount'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['applied_fee_discount'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('processing_fees'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['gateway_processing_charge'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="bordertoplightgray">
+                                            <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)(($params['fine_amount_balance'] + $params['total']) - $params['applied_fee_discount']+$params['gateway_processing_charge']), 2, '.', ''); ?></td>
+                                        </tr>
                                         <hr>
                                         <tr class="bordertoplightgray">
                                             <td  bgcolor="#fff"><button type="submit" onclick="window.history.go(-1); return false;" name="search"  value="" class="btn btn-info"><i class="fa fa fa-chevron-left"></i> <?php echo $this->lang->line('back'); ?> </button>  </td>

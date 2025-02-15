@@ -45,10 +45,7 @@ class apply_leave_model extends MY_Model
                 $this->db->group_start();
                 $this->db->where("staff_roles.role_id !=", 7);
                 $this->db->or_where('staff_roles.role_id is  NULL', NULL, FALSE);
-                // $this->db->or_where("student_applyleave.status", 0);
-
-                   $this->db->group_end();
-
+                $this->db->group_end();
             }
         } 
 
@@ -232,7 +229,59 @@ class apply_leave_model extends MY_Model
          
         return $result;
     }
+	
+	public function getStudentMonthlyLeave($start_date, $end_date)
+    {       
+        $this->db->select('student_applyleave.*,students.firstname,students.middlename,students.lastname')
+		->from('student_applyleave')
+		->join('student_session', 'student_session.id = student_applyleave.student_session_id')
+		->join('students', 'students.id=student_session.student_id', 'inner');
+        $this->db->where('student_session.session_id', $this->current_session);         
+        $this->db->where('students.is_active', 'yes');
+        $this->db->where('student_applyleave.from_date >= ', $start_date);
+        $this->db->where('student_applyleave.from_date <=', $end_date);		
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+	
+	public function getStudentApproveMonthlyLeave($start_date, $end_date)
+    {       
+        $this->db->select('student_applyleave.*,students.firstname,students.middlename,students.lastname')
+		->from('student_applyleave')
+		->join('student_session', 'student_session.id = student_applyleave.student_session_id')
+		->join('students', 'students.id=student_session.student_id', 'inner');
+        $this->db->where('student_session.session_id', $this->current_session);         
+        $this->db->where('students.is_active', 'yes');
+        $this->db->where('student_applyleave.approve_date >= ', $start_date);
+        $this->db->where('student_applyleave.approve_date <=', $end_date);		
+        $this->db->where('student_applyleave.status', 1);		
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 
-    
+    public function getStaffMonthlyLeave($start_date, $end_date)
+    {       
+        $this->db->select('staff_leave_request.*,staff.name,staff.surname')
+        ->from('staff_leave_request')
+        ->join('staff', 'staff.id=staff_leave_request.staff_id', 'inner');
+        $this->db->where('staff.is_active', '1');
+        $this->db->where('staff_leave_request.leave_from >= ', $start_date);
+        $this->db->where('staff_leave_request.leave_to <=', $end_date);      
+        $query = $this->db->get();
+        return $query->result_array();
+    }    
+
+    public function getStaffApproveMonthlyLeave($start_date, $end_date)
+    {       
+        $this->db->select('staff_leave_request.*,staff.name,staff.surname')
+        ->from('staff_leave_request')
+        ->join('staff', 'staff.id=staff_leave_request.staff_id', 'inner');
+        $this->db->where('staff.is_active', '1');
+        $this->db->where('staff_leave_request.approve_date >= ', $start_date);
+        $this->db->where('staff_leave_request.approve_date <=', $end_date);      
+        $this->db->where('staff_leave_request.status','approved');       
+        $query = $this->db->get();
+        return $query->result_array();
+    }    
 
 }

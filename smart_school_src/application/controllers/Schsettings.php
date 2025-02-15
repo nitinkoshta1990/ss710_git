@@ -12,11 +12,11 @@ class Schsettings extends Admin_Controller
         parent::__construct();
         $this->load->library('media_storage');
         $this->load->library('upload');
-        $this->load->model(array('class_section_time_model','sidebarmenu_model'));
+        $this->load->model(array('class_section_time_model','sidebarmenu_model','staffAttendaceSetting_model','attendencetype_model','studentAttendaceSetting_model'));
     }
 
     public function index()
-    {
+    { 
         if (!$this->rbac->hasPrivilege('general_setting', 'can_view')) {
             access_denied();
         }
@@ -45,6 +45,7 @@ class Schsettings extends Admin_Controller
         $setting->base_url        = ($setting->base_url == "") ? base_url() : $setting->base_url;
         $setting->folder_path     = ($setting->folder_path == "") ? FCPATH : $setting->folder_path;
         $data['result']           = $setting;
+	 
         $this->load->view('layout/header', $data);
         $this->load->view('setting/settingList', $data);
         $this->load->view('layout/footer', $data);
@@ -402,7 +403,8 @@ class Schsettings extends Admin_Controller
             'calendar_event_reminder'  => $calendar_event_reminder,
             'event_reminder'           => $this->input->post('event_reminder'),
             'staff_notification_email' => $this->input->post('staff_notification_email'),
-            'scan_code_type' => $this->input->post('scan_code_type')
+            'scan_code_type'           => $this->input->post('scan_code_type'),
+            'download_admit_card'      => $this->input->post('download_admit_card'),
         );
 
         $this->setting_model->add($data);
@@ -501,11 +503,11 @@ class Schsettings extends Admin_Controller
         $parent_panel_login  = 0;
         $student_panel_login = 0;
 
-        if (isset($_POST['student_panel_login'])) {
+        if(isset($_POST['student_panel_login'])) {
             $student_panel_login = 1;
-            if (isset($_POST['parent_panel_login'])) {
-                $parent_panel_login = 1;
-            }
+        }
+        if(isset($_POST['parent_panel_login'])) {
+            $parent_panel_login = 1;
         }
 
         $data = array(
@@ -555,7 +557,7 @@ class Schsettings extends Admin_Controller
                 'fee_due_days'              => form_error('fee_due_days'),
                 'lock_grace_period'         => form_error('lock_grace_period'),
                 'is_student_feature_lock'   => form_error('is_student_feature_lock'),
-                'is_offline_fee_payment'   => form_error('is_offline_fee_payment'),
+                'is_offline_fee_payment'    => form_error('is_offline_fee_payment'),
             );
             $array = array('status' => 'fail', 'error' => $data);
             echo json_encode($array);
@@ -563,15 +565,16 @@ class Schsettings extends Admin_Controller
 
             $is_duplicate_fees_invoice = implode(",", $this->input->post('is_duplicate_fees_invoice'));
             $data                      = array(
-                'id'                        => $this->input->post('sch_id'),
-                'is_duplicate_fees_invoice' => $is_duplicate_fees_invoice,
-                'single_page_print'         => $this->input->post('single_page_print'),
-                'fee_due_days'              => $this->input->post('fee_due_days'),
-                'lock_grace_period'         => $this->input->post('lock_grace_period'),
-                'collect_back_date_fees'    => $this->input->post('collect_back_date_fees'),
-                'is_student_feature_lock'   => $this->input->post('is_student_feature_lock'),
-                'is_offline_fee_payment'    => $this->input->post('is_offline_fee_payment'),
-                'offline_bank_payment_instruction'  => $this->input->post('offline_bank_payment_instruction'),
+                'id'                                => $this->input->post('sch_id'),
+                'is_duplicate_fees_invoice'         => $is_duplicate_fees_invoice,
+                'single_page_print'                 => $this->input->post('single_page_print'),
+                'fee_due_days'                      => $this->input->post('fee_due_days'),
+                'lock_grace_period'                 => $this->input->post('lock_grace_period'),
+                'collect_back_date_fees'            => $this->input->post('collect_back_date_fees'),
+                'is_student_feature_lock'           => $this->input->post('is_student_feature_lock'),
+                'is_offline_fee_payment'            => $this->input->post('is_offline_fee_payment'),
+                'offline_bank_payment_instruction'  => $this->input->post('offline_bank_payment_instruction'),               
+                'fees_discount'                     => $this->input->post('fees_discount'),               
             );
 
             $this->setting_model->add($data);
@@ -672,7 +675,12 @@ class Schsettings extends Admin_Controller
         $this->session->set_userdata('top_menu', 'System Settings');
         $this->session->set_userdata('sub_menu', 'schsettings/index');
         $this->session->set_userdata('subsub_menu', 'schsettings/attendancetype');
-
+        
+        $data['classid']=$classid=$this->input->post('class_id');
+        if(isset($classid)==false){
+            $data['classid']=0;
+        }
+        
         $class_list=$this->class_section_time_model->allClassSections();
         $data['class_list']=$class_list;
 
@@ -680,6 +688,71 @@ class Schsettings extends Admin_Controller
         $setting->base_url    = ($setting->base_url == "") ? base_url() : $setting->base_url;
         $setting->folder_path = ($setting->folder_path == "") ? FCPATH : $setting->folder_path;
         $data['result']       = $setting;
+
+        //staff attedance settings
+        $staff_attendance_data   = $this->staffAttendaceSetting_model->getRoleAttendanceSetting();  
+        $attendance_type         = $this->attendencetype_model->getScheduleTypeStaffAttendance();
+        $user_roles              = $this->staff_model->getStaffRole();
+        $data['user_roles']      = $user_roles;    
+        $data['attendance_type'] = $attendance_type;
+        $new_list_attendance     = array();
+
+        foreach ($staff_attendance_data as $key => $value) {
+            if (array_key_exists($value->id, $new_list_attendance)) {
+                $new_list_attendance[$value->id]['schedule'][] = $value;
+            } else {
+                $new_list_attendance[$value->id] = [
+                    'role_id' => $value->id,
+                    'role' => $value->role_name,
+                    'schedule' => array($value)
+                ];
+            }
+        }
+        $data['list_attendance'] = $new_list_attendance;     
+        // staff attedance settings
+
+        //student attedance settings
+        $student_class_section_data = $this->studentAttendaceSetting_model->getClassWiseAttendanceSetting($classid);
+        $student_attendance_type            = $this->attendencetype_model->getScheduleTypeAttendance();
+        // $data = array();
+        $data['student_attendance_type'] = $student_attendance_type;
+        $student_new_list_attendance = array();
+
+        foreach ($student_class_section_data as $student_class_key => $student_class_value) {
+            if (array_key_exists($student_class_value->class_id, $student_new_list_attendance)) {
+
+                if (array_key_exists($student_class_value->section_id, $student_new_list_attendance[$student_class_value->class_id]['sections'])) {
+
+                    $student_new_list_attendance[$student_class_value->class_id]['sections'][$student_class_value->section_id]['student_schedule'][] = $student_class_value;
+                } else {
+
+                    $student_new_list_attendance[$student_class_value->class_id]['sections'][$student_class_value->section_id] = array(
+                        'class_section_id' => $student_class_value->id,
+                        'section_id' => $student_class_value->section_id,
+                        'section' => $student_class_value->section,
+                        'student_schedule' => array($student_class_value)
+                    );
+                }
+            } else {
+                $student_new_list_attendance[$student_class_value->class_id] = [
+                    'class_id' => $student_class_value->class_id,
+                    'class' => $student_class_value->class,
+                    'sections' => array($student_class_value->section_id =>
+                    array(
+                        'class_section_id' => $student_class_value->id,
+                        'section_id' => $student_class_value->section_id,
+                        'section' => $student_class_value->section,
+                        'student_schedule' => array($student_class_value)
+                    ))
+                ];
+            }
+        }
+        $data['student_list_attendance'] = $student_new_list_attendance;
+        //student attedance settings
+
+        $class                   = $this->class_model->get();
+        $data['classlist']       = $class;
+
         $this->load->view('layout/header', $data);
         $this->load->view('setting/attendancetype', $data);
         $this->load->view('layout/footer', $data);
@@ -819,5 +892,178 @@ class Schsettings extends Admin_Controller
             echo json_encode($array);
         }
     }
+
+    //****staff attendance settings****//
+    public function savestaffsetting(){
+        $this->form_validation->set_rules('row[]', $this->lang->line('row'), 'trim|required|xss_clean');
+        $row = $this->input->post('row');
+        $time_valid = true;
+
+        if (!empty($row) && isset($row)) {
+            foreach ($row as $row_key => $row_value) {
+                $attendance_type      = $this->input->post('attendance_type_id_' . $row_value);
+                $class_section        = $this->input->post('role_id_' . $row_value);
+                $entry_time_from      = $this->input->post('entry_time_from_' . $row_value);
+                $entry_time_to        = $this->input->post('entry_time_to_' . $row_value);
+                $total_institute_hour = $this->input->post('total_institute_hour_' . $row_value);
+             
+                if ($class_section == "" || $entry_time_from == "" || $entry_time_to == "" || $total_institute_hour == "" || $attendance_type == "") {
+                    $this->form_validation->set_rules(
+                        'fields',
+                        'fields --r',
+                        'trim|required|xss_clean',
+                        array('required' => $this->lang->line('fields_values_required'))
+                    );
+                    $time_valid = false;
+                    break;
+                }
+            }
+        }
+
+        if ($this->form_validation->run() == false){
+            $msg = array(
+                'row' => form_error('row'),
+                'fields' => form_error('fields')
+            );
+            $array = array('status' => 0, 'error' => $msg, 'message' => '');
+        } else {
+            $insert_array = array();
+            $role_array = array();
+            foreach ($row as $row_key => $row_value) {
+                $role_array[] = ($this->input->post('role_id_' . $row_value));
+                $role_id = $this->input->post('role_id_' . $row_value);
+                $attendance_type = $this->input->post('attendance_type_id_' . $row_value);
+                $entry_time_from = $this->input->post('entry_time_from_' . $row_value);
+                $entry_time_to = $this->input->post('entry_time_to_' . $row_value);
+                $total_institute_hour = $this->input->post('total_institute_hour_' . $row_value);
+       
+                $insert_array[] = array(
+                    'staff_attendence_type_id' => $attendance_type,
+                    'role_id'                  => $class_section,
+                    'entry_time_from'          => $entry_time_from,
+                    'entry_time_to'            => $entry_time_to,
+                    'total_institute_hour'     => ($total_institute_hour)
+                );
+            }
+
+            $this->staffAttendaceSetting_model->add($insert_array, $role_array);
+            $array = array('status' => 1, 'message' => $this->lang->line('update_message'));
+        }
+        echo json_encode($array);
+    }
+
+	public function whatsappsettings()
+    {
+        $this->session->set_userdata('top_menu', 'System Settings');
+        $this->session->set_userdata('sub_menu', 'schsettings/index');
+        $this->session->set_userdata('subsub_menu', 'schsettings/whatsappsettings');
+        $setting              = $this->setting_model->getSetting();
+        
+        $data['result']       = $setting;
+        $this->load->view('layout/header');
+        $this->load->view('setting/whatsappsettings', $data);
+        $this->load->view('layout/footer');
+    }
+
+	public function savewhatsappsettings()
+    {
+        $this->form_validation->set_rules('sch_id', ('sch_id'), 'trim|required|xss_clean');
+		$this->form_validation->set_rules('time_to', $this->lang->line('time_to'), 'callback_time_check');        	
+		
+		$whatsapp_fields = [
+			'front_side_whatsapp' => 'front_side_whatsapp_mobile',
+			'admin_panel_whatsapp' => 'admin_panel_whatsapp_mobile',
+			'student_panel_whatsapp' => 'student_panel_whatsapp_mobile'
+		];
+
+		foreach ($whatsapp_fields as $input_name => $field_name) {
+			
+			$this->form_validation->set_rules($input_name, $this->lang->line('whatsapp_link'), 'trim|required|xss_clean');
+			
+			if ($this->input->post($input_name)) {
+				$this->form_validation->set_rules($field_name, $this->lang->line('mobile_no'), 'trim|required|xss_clean');
+			}
+			
+			// Check time fields
+			$from_field = "{$input_name}_from";
+			$to_field = "{$input_name}_to";
+			
+			if (empty($this->input->post($from_field)) && !empty($this->input->post($to_field))) {
+				$this->form_validation->set_rules($from_field, $this->lang->line('time_from'), 'trim|required|xss_clean');
+			}
+			
+			if (!empty($this->input->post($from_field)) && empty($this->input->post($to_field))) {
+				$this->form_validation->set_rules($to_field, $this->lang->line('time_to'), 'trim|required|xss_clean');
+			}
+		}
+		
+        if ($this->form_validation->run() == false) {            
+			
+			$fields = ['sch_id', 'front_side_whatsapp', 'admin_panel_whatsapp', 'student_panel_whatsapp', 'front_side_whatsapp_mobile', 'admin_panel_whatsapp_mobile', 'student_panel_whatsapp_mobile',  'front_side_whatsapp_from', 'front_side_whatsapp_to', 'admin_panel_whatsapp_from', 'admin_panel_whatsapp_to', 'student_panel_whatsapp_from', 'student_panel_whatsapp_to', 'time_to'];
+
+			$error = array();
+			
+			foreach ($fields as $field) {
+				$error[$field] = form_error($field);
+			}			
+			
+            $array = array('status' => 'fail', 'error' => $error);
+            echo json_encode($array);
+        } else {			
+			
+			$fields = ['front_side_whatsapp_from', 'front_side_whatsapp_to', 'admin_panel_whatsapp_from', 'admin_panel_whatsapp_to', 'student_panel_whatsapp_from', 'student_panel_whatsapp_to'];
+
+			foreach ($fields as $field) {
+				$$field = $this->input->post($field) ?: null;
+			}
+			
+            $data = array(
+				'id'                       		=> $this->input->post('sch_id'),
+				'front_side_whatsapp'           => $this->input->post('front_side_whatsapp'),
+				'front_side_whatsapp_mobile'    => $this->input->post('front_side_whatsapp_mobile'),
+				'front_side_whatsapp_from'      => $front_side_whatsapp_from,
+				'front_side_whatsapp_to'        => $front_side_whatsapp_to,             
+				'admin_panel_whatsapp'        	=> $this->input->post('admin_panel_whatsapp'),             
+				'admin_panel_whatsapp_mobile'   => $this->input->post('admin_panel_whatsapp_mobile'),             
+				'admin_panel_whatsapp_from'     => $admin_panel_whatsapp_from,             
+				'admin_panel_whatsapp_to'       => $admin_panel_whatsapp_to,             
+				'student_panel_whatsapp'        => $this->input->post('student_panel_whatsapp'),             
+				'student_panel_whatsapp_mobile' => $this->input->post('student_panel_whatsapp_mobile'),             
+				'student_panel_whatsapp_from'   => $student_panel_whatsapp_from,             
+				'student_panel_whatsapp_to'     => $student_panel_whatsapp_to,             
+			);
+			
+            $this->setting_model->add($data);		
+			
+			$this->session->userdata['admin']['admin_panel_whatsapp'] = $this->input->post('admin_panel_whatsapp');
+			$this->session->userdata['admin']['admin_panel_whatsapp_mobile'] = $this->input->post('admin_panel_whatsapp_mobile');
+			$this->session->userdata['admin']['admin_panel_whatsapp_from'] = $admin_panel_whatsapp_from;
+			$this->session->userdata['admin']['admin_panel_whatsapp_to'] = $admin_panel_whatsapp_to;	
+
+            $array = array('status' => 1, 'error' => '', 'message' => $this->lang->line('success_message'));
+            echo json_encode($array);
+        }
+    }
+	
+	function time_check()
+	{
+		$fields = [
+			'front_side_whatsapp',
+			'admin_panel_whatsapp',
+			'student_panel_whatsapp'
+		];
+	
+		foreach ($fields as $field) {
+			$from = strtotime($this->input->post("{$field}_from"));
+			$to = strtotime($this->input->post("{$field}_to"));
+			
+			if (!empty($from) && !empty($to) && $from >= $to) {
+				$this->form_validation->set_message('time_check', '%s cannot less than from time %s');
+				return FALSE;
+			}
+		}
+	
+		return TRUE;
+	}
     
 }

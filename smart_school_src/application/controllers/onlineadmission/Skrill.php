@@ -22,7 +22,7 @@ class Skrill extends OnlineAdmission_Controller
         $setting             = $this->setting;
         $data                = array();
         $data['setting'] = $setting; 
-        $total_amount = $this->amount;
+        $total_amount = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $data['amount'] = $total_amount;
         $total                       = 0;
         $amount                      = convertBaseAmountCurrencyFormat($total_amount);
@@ -106,7 +106,7 @@ class Skrill extends OnlineAdmission_Controller
     } 
  
     public function success() {
-        $amount = $this->amount;
+        $amount = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $reference  = $this->session->userdata('reference');
         $billExternalReferenceNo  = $this->session->userdata('transaction_id');
         $online_data = $this->onlinestudent_model->getAdmissionData($reference);
@@ -133,6 +133,8 @@ class Skrill extends OnlineAdmission_Controller
             $gateway_response['transaction_id'] = $transactionid;
             $gateway_response['payment_mode']   = 'skrill';
             $gateway_response['payment_type']   = 'online';
+            $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_skrill_txn_id')  . $transactionid;
             $gateway_response['date']           = date("Y-m-d H:i:s");
             $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

@@ -31,7 +31,7 @@ class Razorpay extends OnlineAdmission_Controller
         $data['txnid'] = time() . "02";
         $data['title'] = $this->lang->line('online_admission_form_fees');
         $data['return_url'] = site_url() . 'onlineadmission/razorpay/complete';
-        $data['total'] = convertBaseAmountCurrencyFormat($amount) * 100;
+        $data['total'] = convertBaseAmountCurrencyFormat($amount+$this->customlib->getGatewayProcessingFees($this->amount)) * 100;
         $data['key_id'] = $this->pay_method->api_publishable_key;
         $data['currency_code'] = $this->customlib->get_currencyShortName();
         $ch = curl_init(); 
@@ -79,10 +79,12 @@ class Razorpay extends OnlineAdmission_Controller
                     
             $transactionid                      = $_POST['razorpay_payment_id'];
             $gateway_response['online_admission_id']   = $reference; 
-            $gateway_response['paid_amount']    = $this->amount;
+            $gateway_response['paid_amount']    = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
             $gateway_response['transaction_id'] = $transactionid;
             $gateway_response['payment_mode']   = 'razorpay';
             $gateway_response['payment_type']   = 'online';
+            $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_razorpay_txn_id') . $transactionid;
             $gateway_response['date']           = date("Y-m-d H:i:s");
             $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response); 

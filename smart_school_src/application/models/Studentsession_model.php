@@ -86,6 +86,13 @@ class Studentsession_model extends CI_Model
         return $query->row();
     }
 
+    public function getTotalHeadCountBySession()
+    {
+        $query = "SELECT count(*) as `total_student` FROM `student_session` INNER JOIN students on students.id=student_session.student_id where student_session.session_id=" . $this->db->escape($this->current_session) . " and students.is_active = 'yes' group by student_session.student_id";
+        $query = $this->db->query($query);        
+        return $query->result();
+    }
+
     public function add($insert_array, $student_id)
     {
         $not_delarray = array();

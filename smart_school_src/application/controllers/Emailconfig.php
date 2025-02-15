@@ -66,6 +66,7 @@ class Emailconfig extends Admin_Controller
             $data['title'] = 'Email Config List';
             $data_insert   = array(
                 'email_type'    => $this->input->post('email_type'),
+                'smtp_email'    => $this->input->post('smtp_email'),
                 'smtp_username' => $email,
                 'smtp_password' => $this->input->post('smtp_password'),
                 'smtp_server'   => $this->input->post('smtp_server'),

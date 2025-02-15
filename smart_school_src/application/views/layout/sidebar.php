@@ -3,7 +3,6 @@
         <form class="navbar-form navbar-left search-form2" role="search"  action="<?php echo site_url('admin/admin/search'); ?>" method="POST">
             <?php echo $this->customlib->getCSRF(); ?>
             <div class="input-group ">
-
                 <input type="text"  name="search_text" class="form-control search-form" placeholder="<?php echo $this->lang->line('search_by_student_name'); ?>">
                 <span class="input-group-btn">
                     <button type="submit" name="search" id="search-btn" style="padding: 3px 12px !important;border-radius: 0px 30px 30px 0px; background: #fff;" class="btn btn-flat"><i class="fa fa-search"></i></button>
@@ -14,10 +13,12 @@
     <section class="sidebar" id="sibe-box">
         <?php $this->load->view('layout/top_sidemenu');?>
 
-        <ul class="sidebar-menu verttop">
+        <ul class="sidebar-menu verttop">	
+					
 
-        <!-- //==================sidebar dynamic======================= -->
-        <?php
+<!-- //==================sidebar dynamic======================= -->
+
+<?php
 $side_list = side_menu_list(1);
 
 if (!empty($side_list)) {
@@ -86,7 +87,6 @@ foreach ($side_list_value->submenus as $submenu_key => $submenu_value) {
 
                         <li class="<?php echo activate_submenu($submenu_value->activate_controller, explode(',', $submenu_value->activate_methods)); ?>"><a href="<?php echo site_url($submenu_value->url); ?>"><i class="fa fa-angle-double-right"></i><?php echo $this->lang->line($submenu_value->lang_key); ?></a></li>
 
-
                           <?php
 }
 
@@ -94,7 +94,6 @@ foreach ($side_list_value->submenus as $submenu_key => $submenu_value) {
 
                     ?>
                         </ul>
-
                             <?php
 
                 }

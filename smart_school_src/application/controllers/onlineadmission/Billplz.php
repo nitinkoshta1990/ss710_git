@@ -36,7 +36,7 @@ class Billplz extends OnlineAdmission_Controller
         $parameter           = array(
             'title'       => $this->lang->line('online_admission_form_fees'),
             'description' => $data['productinfo'],
-            'amount'      =>  convertBaseAmountCurrencyFormat($data['total']) * 100,
+            'amount'      =>  convertBaseAmountCurrencyFormat($data['total']+$this->customlib->getGatewayProcessingFees($data['total'])) * 100,
         );
 
         $optional = array(
@@ -60,7 +60,7 @@ class Billplz extends OnlineAdmission_Controller
 
     public function complete() {
         $this->output->enable_profiler();
-    	$amount = $this->amount;
+    	$amount = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $reference  = $this->session->userdata('reference');
         $online_data = $this->onlinestudent_model->getAdmissionData($reference);
         $apply_date = date("Y-m-d H:i:s");
@@ -76,9 +76,11 @@ class Billplz extends OnlineAdmission_Controller
         
             $transactionid                      = $_GET['billplz']['id'];
             $gateway_response['online_admission_id']   = $reference; 
-            $gateway_response['paid_amount']    = $this->amount;
+            $gateway_response['paid_amount']    = $amount;
             $gateway_response['transaction_id'] = $transactionid;
             $gateway_response['payment_mode']   = 'billplz';
+            $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['payment_type']   = 'online';
             $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_billplz_txn_id')  . $transactionid;
             $gateway_response['date']           = date("Y-m-d H:i:s");

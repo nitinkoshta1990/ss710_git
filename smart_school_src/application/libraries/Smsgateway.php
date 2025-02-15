@@ -126,7 +126,6 @@ class Smsgateway
                 );
                 $this->_CI->load->library('mobireach_lib', $params);
                 $this->_CI->mobireach_lib->sendSms(array($to), $msg);
-
             } else if ($sms_detail->type == 'nexmo') {
                 $to     = $send_to;
                 $params = array(
@@ -288,7 +287,6 @@ class Smsgateway
 
     public function sentFeeProcessingSMS($detail, $template, $template_id, $send_to)
     {
-
         $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
 
         if (!empty($sms_detail)) {
@@ -372,7 +370,6 @@ class Smsgateway
                 );
                 $this->_CI->load->library('mobireach_lib', $params);
                 $this->_CI->mobireach_lib->sendSms(array($to), $msg);
-
             } else if ($sms_detail->type == 'nexmo') {
                 $to     = $send_to;
                 $params = array(
@@ -382,7 +379,6 @@ class Smsgateway
                 );
                 $this->_CI->load->library('nexmo_lib', $params);
                 $this->_CI->nexmo_lib->sendSms($to, $msg);
-
             } else if ($sms_detail->type == 'africastalking') {
                 $to     = $send_to;
                 $params = array(
@@ -392,12 +388,10 @@ class Smsgateway
                 );
                 $this->_CI->load->library('africastalking_lib', $params);
                 $this->_CI->africastalking_lib->sendSms($to, $msg);
-
             } else if ($sms_detail->type == 'smseg') {
                 $to = $send_to;
                 $this->_CI->load->library('smseg_lib');
                 $this->_CI->smseg_lib->sendSms($to, $msg);
-
             } else if ($sms_detail->type == 'custom') {
                 $params = array(
                     'templateid' => $template_id,
@@ -502,7 +496,6 @@ class Smsgateway
                     'authkey'  => $sms_detail->authkey,
                     'senderid' => $sms_detail->senderid,
                     'routeid'  => $sms_detail->api_id,
-
                 );
                 $this->_CI->load->library('mobireach_lib', $params);
                 $this->_CI->mobireach_lib->sendSms(array($to), $msg);
@@ -513,7 +506,6 @@ class Smsgateway
                     'from'       => $sms_detail->senderid,
                     'api_key'    => $sms_detail->api_id,
                     'api_secret' => $sms_detail->authkey,
-
                 );
                 $this->_CI->load->library('nexmo_lib', $params);
                 $this->_CI->nexmo_lib->sendSms($to, $msg);
@@ -524,7 +516,6 @@ class Smsgateway
                     'from'         => $sms_detail->senderid,
                     'api_key'      => $sms_detail->api_id,
                     'api_username' => $sms_detail->username,
-
                 );
                 $this->_CI->load->library('africastalking_lib', $params);
                 $this->_CI->africastalking_lib->sendSms($to, $msg);
@@ -532,7 +523,6 @@ class Smsgateway
                 $to = $send_to;
                 $this->_CI->load->library('smseg_lib');
                 $this->_CI->smseg_lib->sendSms($to, $msg);
-
             } else if ($sms_detail->type == 'custom') {
                 $params = array(
                     'templateid' => $template_id,
@@ -548,14 +538,14 @@ class Smsgateway
         }
     }
 
-    public function sentAbsentStudentSMS($detail, $template, $template_id, $send_to)
+    public function sentPresentStudentSMS($detail, $template, $template_id, $send_to)
     {
-
         $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
 
         if (!empty($sms_detail)) {
 
-            $msg = $this->getAbsentStudentContent($detail, $template, $sms_detail->type);            
+            $msg = $this->getPresentStudentContent($detail, $template, $sms_detail->type);  
+                   
             if ($sms_detail->type == 'clickatell') {
                 $params = array(
                     'apiToken' => $sms_detail->api_id,
@@ -641,6 +631,157 @@ class Smsgateway
                     'from'       => $sms_detail->senderid,
                     'api_key'    => $sms_detail->api_id,
                     'api_secret' => $sms_detail->authkey,
+                );
+                $this->_CI->load->library('nexmo_lib', $params);
+                $this->_CI->nexmo_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'africastalking') {
+                $to     = $send_to;
+                $params = array(
+                    'from'         => $sms_detail->senderid,
+                    'api_key'      => $sms_detail->api_id,
+                    'api_username' => $sms_detail->username,
+                );
+                $this->_CI->load->library('africastalking_lib', $params);
+                $this->_CI->africastalking_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'smseg') {
+                $to = $send_to;
+                $this->_CI->load->library('smseg_lib');
+                $this->_CI->smseg_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'custom') {
+                $params = array(
+                    'templateid' => $template_id,
+                );
+                $this->_CI->load->library('customsms', $params);
+                $from    = $sms_detail->contact;
+                $to      = $send_to;
+                $message = $msg;
+                $this->_CI->customsms->sendSMS($to, $message);
+            } else {
+
+            }
+        }
+    }
+
+    public function sentPresentStudentNotification($detail, $template, $subject)
+    {
+        $msg        = $this->getPresentStudentContent($detail, $template);
+        $push_array = array(
+            'title' => $subject,
+            'body'  => $msg,
+        );
+        if ($detail['app_key'] != "") {
+            $this->_CI->pushnotification->send($detail['app_key'], $push_array, "mail_sms");
+        }
+    }
+
+    public function getPresentStudentContent($student_detail, $template, $sms_detail_type = null)
+    {       
+        foreach ($student_detail as $key => $value) {
+
+            if ($sms_detail_type == 'msg_nineone') {
+                if (strlen($value) > 30) {
+                    $value = substr($value, 0, 29);
+                }
+            }
+                $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
+        }
+        return $template;
+    }
+
+    public function sentAbsentStudentSMS($detail, $template, $template_id, $send_to)
+    {
+        $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
+
+        if (!empty($sms_detail)) {
+
+            $msg = $this->getAbsentStudentContent($detail, $template, $sms_detail->type);            
+            if ($sms_detail->type == 'clickatell') {
+                $params = array(
+                    'apiToken' => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('clickatell', $params);
+                try {
+                    $result = $this->_CI->clickatell->sendMessage(['to' => [$send_to], 'content' => $msg]);
+                    foreach ($result['messages'] as $message) {
+
+                    }
+                    return true;
+                } catch (Exception $e) {
+                    return false;
+                }
+            } else if ($sms_detail->type == 'twilio') {
+
+                $params = array(
+                    'mode'        => 'sandbox',
+                    'account_sid' => $sms_detail->api_id,
+                    'auth_token'  => $sms_detail->password,
+                    'api_version' => '2010-04-01',
+                    'number'      => $sms_detail->contact,
+                );
+
+                $this->_CI->load->library('twilio', $params);
+
+                $from     = $sms_detail->contact;
+                $to       = $send_to;
+                $message  = $msg;
+                $response = $this->_CI->twilio->sms($from, $to, $message);
+
+                if ($response->IsError) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else if ($sms_detail->type == 'msg_nineone') {
+                $params = array(
+                    'authkey'    => $sms_detail->authkey,
+                    'senderid'   => $sms_detail->senderid,
+                    'templateid' => $template_id,
+                );
+                $this->_CI->load->library('msgnineone', $params);
+                $this->_CI->msgnineone->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'smscountry') {
+                $params = array(
+                    'username'  => $sms_detail->username,
+                    'sernderid' => $sms_detail->senderid,
+                    'password'  => $sms_detail->password,
+                    'authkey'   => $sms_detail->authkey,
+                    'api_id'    => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('smscountry', $params);
+                $this->_CI->smscountry->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'text_local') {
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'hash'     => $sms_detail->password,
+                );
+                $this->_CI->load->library('textlocalsms', $params);
+                $this->_CI->textlocalsms->sendSms(array($send_to), $msg, $sms_detail->senderid);
+            } else if ($sms_detail->type == 'bulk_sms') {
+                $to     = $send_to;
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'password' => $sms_detail->password,
+                );
+                $this->_CI->load->library('bulk_sms_lib', $params);
+                $this->_CI->bulk_sms_lib->sendSms(array($to), $msg);
+            } else if ($sms_detail->type == 'mobireach') {
+                $to     = $send_to;
+                $params = array(
+                    'authkey'  => $sms_detail->authkey,
+                    'senderid' => $sms_detail->senderid,
+                    'routeid'  => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('mobireach_lib', $params);
+                $this->_CI->mobireach_lib->sendSms(array($to), $msg);
+            } else if ($sms_detail->type == 'nexmo') {
+                $to     = $send_to;
+                $params = array(
+                    'from'       => $sms_detail->senderid,
+                    'api_key'    => $sms_detail->api_id,
+                    'api_secret' => $sms_detail->authkey,
 
                 );
                 $this->_CI->load->library('nexmo_lib', $params);
@@ -652,7 +793,6 @@ class Smsgateway
                     'from'         => $sms_detail->senderid,
                     'api_key'      => $sms_detail->api_id,
                     'api_username' => $sms_detail->username,
-
                 );
                 $this->_CI->load->library('africastalking_lib', $params);
                 $this->_CI->africastalking_lib->sendSms($to, $msg);
@@ -788,7 +928,6 @@ class Smsgateway
                         'authkey'  => $sms_detail->authkey,
                         'senderid' => $sms_detail->senderid,
                         'routeid'  => $sms_detail->api_id,
-
                     );
                     $this->_CI->load->library('mobireach_lib', $params);
                     $this->_CI->mobireach_lib->sendSms(array($to), $msg);
@@ -799,7 +938,6 @@ class Smsgateway
                         'from'       => $sms_detail->senderid,
                         'api_key'    => $sms_detail->api_id,
                         'api_secret' => $sms_detail->authkey,
-
                     );
                     $this->_CI->load->library('nexmo_lib', $params);
                     $this->_CI->nexmo_lib->sendSms($to, $msg);
@@ -919,7 +1057,6 @@ class Smsgateway
                     'authkey'  => $sms_detail->authkey,
                     'senderid' => $sms_detail->senderid,
                     'routeid'  => $sms_detail->api_id,
-
                 );
                 $this->_CI->load->library('mobireach_lib', $params);
                 $this->_CI->mobireach_lib->sendSms(array($to), $msg);
@@ -930,7 +1067,6 @@ class Smsgateway
                     'from'       => $sms_detail->senderid,
                     'api_key'    => $sms_detail->api_id,
                     'api_secret' => $sms_detail->authkey,
-
                 );
                 $this->_CI->load->library('nexmo_lib', $params);
                 $this->_CI->nexmo_lib->sendSms($to, $msg);
@@ -941,7 +1077,6 @@ class Smsgateway
                     'from'         => $sms_detail->senderid,
                     'api_key'      => $sms_detail->api_id,
                     'api_username' => $sms_detail->username,
-
                 );
                 $this->_CI->load->library('africastalking_lib', $params);
                 $this->_CI->africastalking_lib->sendSms($to, $msg);
@@ -1140,7 +1275,6 @@ class Smsgateway
                             'from'       => $sms_detail->senderid,
                             'api_key'    => $sms_detail->api_id,
                             'api_secret' => $sms_detail->authkey,
-
                         );
                         $this->_CI->load->library('nexmo_lib', $params);
                         $this->_CI->nexmo_lib->sendSms($to, $msg);
@@ -1151,7 +1285,6 @@ class Smsgateway
                             'from'         => $sms_detail->senderid,
                             'api_key'      => $sms_detail->api_id,
                             'api_username' => $sms_detail->username,
-
                         );
                         $this->_CI->load->library('africastalking_lib', $params);
                         $this->_CI->africastalking_lib->sendSms($to, $msg);
@@ -1583,7 +1716,7 @@ class Smsgateway
                 }
             }
 
-                   $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
+            $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
         }
 
         return $template;
@@ -1591,7 +1724,6 @@ class Smsgateway
 
     public function sentOnlineClassStudentSMS($detail, $template)
     {
-
         $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
         if (!empty($sms_detail)) {
 
@@ -2713,5 +2845,300 @@ class Smsgateway
 
         return $subject;
     }
+
+    //send staff attendance sms and notification on app present
+    public function sentPresentStaffSMS($detail, $template, $template_id, $send_to)
+    {
+        $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
+        if (!empty($sms_detail)) {
+            $msg = $this->getPresentStaffContent($detail, $template, $sms_detail->type);  
+                   
+            if ($sms_detail->type == 'clickatell') {
+                $params = array(
+                    'apiToken' => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('clickatell', $params);
+                try {
+                    $result = $this->_CI->clickatell->sendMessage(['to' => [$send_to], 'content' => $msg]);
+                    foreach ($result['messages'] as $message) {
+
+                    }
+                    return true;
+                } catch (Exception $e) {
+                    return false;
+                }
+            } else if ($sms_detail->type == 'twilio') {
+
+                $params = array(
+                    'mode'        => 'sandbox',
+                    'account_sid' => $sms_detail->api_id,
+                    'auth_token'  => $sms_detail->password,
+                    'api_version' => '2010-04-01',
+                    'number'      => $sms_detail->contact,
+                );
+
+                $this->_CI->load->library('twilio', $params);
+
+                $from     = $sms_detail->contact;
+                $to       = $send_to;
+                $message  = $msg;
+                $response = $this->_CI->twilio->sms($from, $to, $message);
+
+                if ($response->IsError) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else if ($sms_detail->type == 'msg_nineone') {
+                $params = array(
+                    'authkey'    => $sms_detail->authkey,
+                    'senderid'   => $sms_detail->senderid,
+                    'templateid' => $template_id,
+                );
+                $this->_CI->load->library('msgnineone', $params);
+                $this->_CI->msgnineone->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'smscountry') {
+                $params = array(
+                    'username'  => $sms_detail->username,
+                    'sernderid' => $sms_detail->senderid,
+                    'password'  => $sms_detail->password,
+                    'authkey'   => $sms_detail->authkey,
+                    'api_id'    => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('smscountry', $params);
+                $this->_CI->smscountry->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'text_local') {
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'hash'     => $sms_detail->password,
+                );
+                $this->_CI->load->library('textlocalsms', $params);
+                $this->_CI->textlocalsms->sendSms(array($send_to), $msg, $sms_detail->senderid);
+            } else if ($sms_detail->type == 'bulk_sms') {
+                $to     = $send_to;
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'password' => $sms_detail->password,
+                );
+                $this->_CI->load->library('bulk_sms_lib', $params);
+                $this->_CI->bulk_sms_lib->sendSms(array($to), $msg);
+            } else if ($sms_detail->type == 'mobireach') {
+                $to     = $send_to;
+                $params = array(
+                    'authkey'  => $sms_detail->authkey,
+                    'senderid' => $sms_detail->senderid,
+                    'routeid'  => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('mobireach_lib', $params);
+                $this->_CI->mobireach_lib->sendSms(array($to), $msg);
+
+            } else if ($sms_detail->type == 'nexmo') {
+                $to     = $send_to;
+                $params = array(
+                    'from'       => $sms_detail->senderid,
+                    'api_key'    => $sms_detail->api_id,
+                    'api_secret' => $sms_detail->authkey,
+
+                );
+                $this->_CI->load->library('nexmo_lib', $params);
+                $this->_CI->nexmo_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'africastalking') {
+                $to     = $send_to;
+                $params = array(
+                    'from'         => $sms_detail->senderid,
+                    'api_key'      => $sms_detail->api_id,
+                    'api_username' => $sms_detail->username,
+
+                );
+                $this->_CI->load->library('africastalking_lib', $params);
+                $this->_CI->africastalking_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'smseg') {
+                $to = $send_to;
+                $this->_CI->load->library('smseg_lib');
+                $this->_CI->smseg_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'custom') {
+                $params = array(
+                    'templateid' => $template_id,
+
+                );
+                $this->_CI->load->library('customsms', $params);
+                $from    = $sms_detail->contact;
+                $to      = $send_to;
+                $message = $msg;
+                $this->_CI->customsms->sendSMS($to, $message);
+            } else {
+
+            }
+        }
+    }
+  
+    public function getPresentStaffContent($staff_detail, $template, $sms_detail_type = null)
+    {
+        foreach ($staff_detail as $key => $value) {
+            if ($sms_detail_type == 'msg_nineone') {
+                if (strlen($value) > 30) {
+                    $value = substr($value, 0, 29);
+                }
+            }
+            $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
+        }
+        return $template;
+    }
+    //send staff attendance sms and notification on app present   
+
+      //send staff attendance sms and notification on app present
+    public function sentAbsentStaffSMS($detail, $template, $template_id, $send_to)
+    {
+        $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
+        if (!empty($sms_detail)) {
+            $msg = $this->getAbsentStaffContent($detail, $template, $sms_detail->type);  
+                   
+            if ($sms_detail->type == 'clickatell') {
+                $params = array(
+                    'apiToken' => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('clickatell', $params);
+                try {
+                    $result = $this->_CI->clickatell->sendMessage(['to' => [$send_to], 'content' => $msg]);
+                    foreach ($result['messages'] as $message) {
+
+                    }
+                    return true;
+                } catch (Exception $e) {
+                    return false;
+                }
+            } else if ($sms_detail->type == 'twilio') {
+
+                $params = array(
+                    'mode'        => 'sandbox',
+                    'account_sid' => $sms_detail->api_id,
+                    'auth_token'  => $sms_detail->password,
+                    'api_version' => '2010-04-01',
+                    'number'      => $sms_detail->contact,
+                );
+
+                $this->_CI->load->library('twilio', $params);
+
+                $from     = $sms_detail->contact;
+                $to       = $send_to;
+                $message  = $msg;
+                $response = $this->_CI->twilio->sms($from, $to, $message);
+
+                if ($response->IsError) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else if ($sms_detail->type == 'msg_nineone') {
+                $params = array(
+                    'authkey'    => $sms_detail->authkey,
+                    'senderid'   => $sms_detail->senderid,
+                    'templateid' => $template_id,
+                );
+                $this->_CI->load->library('msgnineone', $params);
+                $this->_CI->msgnineone->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'smscountry') {
+                $params = array(
+                    'username'  => $sms_detail->username,
+                    'sernderid' => $sms_detail->senderid,
+                    'password'  => $sms_detail->password,
+                    'authkey'   => $sms_detail->authkey,
+                    'api_id'    => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('smscountry', $params);
+                $this->_CI->smscountry->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'text_local') {
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'hash'     => $sms_detail->password,
+                );
+                $this->_CI->load->library('textlocalsms', $params);
+                $this->_CI->textlocalsms->sendSms(array($send_to), $msg, $sms_detail->senderid);
+            } else if ($sms_detail->type == 'bulk_sms') {
+                $to     = $send_to;
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'password' => $sms_detail->password,
+                );
+                $this->_CI->load->library('bulk_sms_lib', $params);
+                $this->_CI->bulk_sms_lib->sendSms(array($to), $msg);
+            } else if ($sms_detail->type == 'mobireach') {
+                $to     = $send_to;
+                $params = array(
+                    'authkey'  => $sms_detail->authkey,
+                    'senderid' => $sms_detail->senderid,
+                    'routeid'  => $sms_detail->api_id,
+                );
+                $this->_CI->load->library('mobireach_lib', $params);
+                $this->_CI->mobireach_lib->sendSms(array($to), $msg);
+
+            } else if ($sms_detail->type == 'nexmo') {
+                $to     = $send_to;
+                $params = array(
+                    'from'       => $sms_detail->senderid,
+                    'api_key'    => $sms_detail->api_id,
+                    'api_secret' => $sms_detail->authkey,
+
+                );
+                $this->_CI->load->library('nexmo_lib', $params);
+                $this->_CI->nexmo_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'africastalking') {
+                $to     = $send_to;
+                $params = array(
+                    'from'         => $sms_detail->senderid,
+                    'api_key'      => $sms_detail->api_id,
+                    'api_username' => $sms_detail->username,
+
+                );
+                $this->_CI->load->library('africastalking_lib', $params);
+                $this->_CI->africastalking_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'smseg') {
+                $to = $send_to;
+                $this->_CI->load->library('smseg_lib');
+                $this->_CI->smseg_lib->sendSms($to, $msg);
+
+            } else if ($sms_detail->type == 'custom') {
+                $params = array(
+                    'templateid' => $template_id,
+
+                );
+                $this->_CI->load->library('customsms', $params);
+                $from    = $sms_detail->contact;
+                $to      = $send_to;
+                $message = $msg;
+                $this->_CI->customsms->sendSMS($to, $message);
+            } else {
+
+            }
+        }
+    }
+  
+    public function getAbsentStaffContent($staff_detail, $template, $sms_detail_type = null)
+    {
+        foreach ($staff_detail as $key => $value) {
+            if ($sms_detail_type == 'msg_nineone') {
+                if (strlen($value) > 30) {
+                    $value = substr($value, 0, 29);
+                }
+            }
+            $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
+        }
+        return $template;
+    }
+    //send staff attendance sms and notification on app present   
+
+
+
+
+
+
+
+
+
 
 }

@@ -347,8 +347,10 @@ function array_insert(&$array, $position, $insert)
 function two_digit_float($number)
 {
 
-    if ($number != "") {
+    if (!IsNullOrEmptyString($number)) {
         $number = number_format($number, 2, ".", "");
+    }elseif (IsNullOrEmptyString($number)) {
+        $number = number_format(0, 2, ".", "");
     }
     return $number;
 }
@@ -651,9 +653,17 @@ function getAgentDetail()
         $agent = 'Unidentified User Agent';
     }
 
-
-
     $user_agent .= $CI->agent->platform() . " | ";
     $user_agent .= $agent;
     return  $user_agent;
+}
+
+
+function is_value_exist($array,$value){
+    foreach($array as $key=>$val){
+        if($val['fees_discount_id']==$value){
+            return true;
+        }
+    }
+    return false;
 }

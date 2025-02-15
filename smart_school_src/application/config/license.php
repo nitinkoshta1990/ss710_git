@@ -6,5 +6,5 @@ if (!defined('BASEPATH')) {
 
 $config['envato_market_purchase_code'] = '';
 $config['envato_market_username'] = '';
-$config['SSLK'] = '';
-$config['app_ver'] = 0;
+$config['SSLK'] = '9MK98D-5QNPE7-355WFL-VEpmaHZZZkpMSVFJMkVWc0VQNG9WL3lCZlUxendSQ2VFYkd6V05hOVJpS01uQitmejZTdzNueGI4ZWphZXJnaQ==';
+$config['app_ver'] = 1;

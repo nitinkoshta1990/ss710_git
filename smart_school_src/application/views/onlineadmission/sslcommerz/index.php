@@ -53,18 +53,27 @@
                             <div class="padd2 paddtzero">
                             <form action="<?php echo base_url(); ?>onlineadmission/sslcommerz/pay" method="post">
                                 <table class="table2" width="100%">
+                                    <tr class="border_bottom">
+                                            <td> 
+                                                <span class="title"><?php echo $this->lang->line('online_admission_form_fees'); ?></span></td>
+                                            <td class="text-right"><?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($amount); ?></td>
+                                        </tr>
                                     <tr>
                                         <th><?php echo $this->lang->line('description'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('amount') ?></th>
                                     </tr>
 
-                                    <tr class="border_bottom">
-                                        <td> 
-                                            <span class="title"><?php echo $this->lang->line('online_admission_form_fees'); ?></span></td>
-                                        <td class="text-right"><?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($amount); ?></td>
+                                    <?php
+                                        if($this->customlib->getGatewayProcessingFees($amount)>0){
+                                            ?>
+                                             <tr class="bordertoplightgray">
+                                        <td colspan="2" class="text-right"><?php echo $this->lang->line('processing_fees');?>: <?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($this->customlib->getGatewayProcessingFees($amount)); ?></td>
                                     </tr>
+                                            <?php
+                                        }
+                                        ?>
                                 <tr class="bordertoplightgray">
-                                    <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($amount); ?></td>
+                                    <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($amount+$this->customlib->getGatewayProcessingFees($amount)); ?></td>
                                 </tr>
                                 <tr class="bordertoplightgray"><td colspan="2">  <?php if ($error) {
                                 ?>

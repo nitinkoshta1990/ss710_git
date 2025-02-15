@@ -416,4 +416,12 @@ class Admitcard extends Admin_Controller
         echo json_encode(array('status' => 1, 'page' => $page));
     }
 
+    public function save_active_status(){
+        $value=$_POST['value'];
+        $this->admitcard_model->save_active_status($value); 
+    }
+
+
+
+
 }

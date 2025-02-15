@@ -181,6 +181,12 @@ form.gauthenticate-form {
 
                     <button type="button" class="signup modalclosebtn btn mdbtn" data-dismiss="modal"><?php echo $this->lang->line('signup'); ?> </button>
                     <button type="submit" id="loginformbtn" class="onlineformbtn mdbtn" data-loading-text="<i class='fa fa-spinner fa-spin '></i> wait..."><?php echo $this->lang->line('submit'); ?></button>
+					
+					<div class="col-lg-12 col-md-12">
+                        <div class="admin-text">
+                            <a href="<?php echo site_url('site/userlogin') ?>" target="_blank" ><i class="fa fa-users"></i><?php echo $this->lang->line('student_parent_login'); ?></a>
+                        </div>      
+                    </div>
 
                 </div>
             </form>

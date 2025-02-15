@@ -220,4 +220,16 @@ class Income_model extends My_Model
         return $query->row();
     }
 
+    public function incomeexpensebalancereport($start_date, $end_date)
+    {
+        $query = "
+		SELECT expenses.*, 'expenses' AS source, expenses.note as note, expense_head.exp_category AS category FROM expenses JOIN expense_head  ON expense_head.id = expenses.exp_head_id where DATE_FORMAT(expenses.date, '%Y-%m-%d') >= '$start_date'
+        and DATE_FORMAT(expenses.date, '%Y-%m-%d') <= '$end_date'
+		UNION 
+		SELECT income.*, 'income' AS source, income.note as note, income_head.income_category AS category FROM income JOIN income_head ON income_head.id = income.income_head_id where DATE_FORMAT(income.date, '%Y-%m-%d') >= '$start_date'
+        and DATE_FORMAT(income.date, '%Y-%m-%d') <= '$end_date' ORDER BY date asc";
+        $query = $this->db->query($query);		 
+        return $query->result_array();
+    }
+
 }

@@ -10,6 +10,9 @@ class Notification extends Admin_Controller
     {
         parent::__construct();
         $this->load->library('media_storage');
+        $this->load->library('smsgateway');
+        $this->load->library('mailsmsconf');
+        $this->load->library('mailer');
     }
 
     public function index()
@@ -26,191 +29,6 @@ class Notification extends Admin_Controller
         $data['user_id']    = $userdata["id"];
         $this->load->view('layout/header', $data);
         $this->load->view('admin/notification/notificationList', $data);
-        $this->load->view('layout/footer', $data);
-    }
-
-    public function add()
-    {
-        if (!$this->rbac->hasPrivilege('notice_board', 'can_add')) {
-            access_denied();
-        }
-
-        $this->session->set_userdata('top_menu', 'Communicate');
-        $this->session->set_userdata('sub_menu', 'notification/index');
-        $data['title']      = 'Add Notification';
-        $data['title_list'] = 'Notification List';
-        $data['roles']      = $this->role_model->get();
-
-        $this->form_validation->set_rules('title', $this->lang->line('title'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('message', $this->lang->line('message'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('date', $this->lang->line('notice_date'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('publish_date', $this->lang->line('publish_on'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('visible[]', $this->lang->line('message_to'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('file', $this->lang->line('image'), 'callback_handle_upload');
-
-        if ($this->form_validation->run() == false) {
-
-        } else {
-            $img_name = $this->media_storage->fileupload("file", "./uploads/notice_board_images/");
-             
-            $userdata    = $this->customlib->getUserData();
-            $student     = "No";
-            $staff       = "No";
-            $parent      = "No";
-            $staff_roles = array();
-            $visible     = $this->input->post('visible');
-            
-            if (!in_array(7, $visible))
-            {
-                $staff_roles[] = array('role_id' => 7, 'send_notification_id' => '');
-                $staff         = "Yes";
-            }
-              
-           
-            foreach ($visible as $key => $value) {
-
-                if ($value == "student") {
-                    $student = "Yes";
-                } else if ($value == "parent") {
-                    $parent = "Yes";
-                } else if (is_numeric($value)) {
-
-                    $staff_roles[] = array('role_id' => $value, 'send_notification_id' => '');
-                    $staff         = "Yes";
-                }
-            }
- 
-            $data = array(
-                'message'         => $this->input->post('message'),
-                'title'           => $this->input->post('title'),
-                'date'            => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('date'))),
-                'created_by'      => $userdata["user_type"],
-                'created_id'      => $this->customlib->getStaffID(),
-                'visible_student' => $student,
-                'visible_staff'   => $staff,
-                'visible_parent'  => $parent,
-                'publish_date'    => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('publish_date'))),
-                'attachment'    => $img_name,
-            );
-
-            $id = $this->notification_model->insertBatch($data, $staff_roles);        
-
-            $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('success_message') . '</div>');
-            redirect('admin/notification/index');
-        }
-        $exam_result                    = $this->exam_model->get();
-        $data['examlist']               = $exam_result;
-        $data['superadmin_restriction'] = $this->customlib->superadmin_visible();
-        $this->load->view('layout/header', $data);
-        $this->load->view('admin/notification/notificationAdd', $data);
-        $this->load->view('layout/footer', $data);
-    }
-
-    public function edit($id)
-    {
-        $userdata         = $this->customlib->getUserData();
-        $user_id          = $userdata["id"];
-        $usernotification = $this->notification_model->get($id);
-        if ((!$this->rbac->hasPrivilege('notice_board', 'can_edit'))) {
-            if ($usernotification['created_id'] != $user_id) {
-
-                access_denied();
-            }
-        }
-        $data['id']   = $id;
-        $notification = $this->notification_model->get($id);
-
-        $data['notification'] = $notification;
-        $data['roles']        = $this->role_model->get();
-        $data['title']        = 'Edit Notification';
-        $data['title_list']   = 'Notification List';
-        $this->form_validation->set_rules('title', $this->lang->line('title'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('message', $this->lang->line('message'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('date', $this->lang->line('notice_date'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('publish_date', $this->lang->line('publish_on'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('visible[]', $this->lang->line('message_to'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('file', $this->lang->line('image'), 'callback_handle_upload');
-        if ($this->form_validation->run() == false) {
-
-        } else {
-
-            $userdata    = $this->customlib->getUserData();
-            $student     = "No";
-            $staff       = "No";
-            $parent      = "No";
-            $prev_roles  = $this->input->post('prev_roles');
-            $visible     = $this->input->post('visible');
-            $staff_roles = array();
-            $inst_staff  = array();
-            
-            if (!in_array(7, $visible))
-            {
-                $staff_roles[] = array('role_id' => 7, 'send_notification_id' => '');
-                $staff         = "Yes";
-            }
-            
-            foreach ($visible as $key => $value) {
-
-                if ($value == "student") {
-                    $student = "Yes";
-                } else if ($value == "parent") {
-                    $parent = "Yes";
-                } else if (is_numeric($value)) {
-                    $inst_staff[]  = $value;
-                    $staff_roles[] = array('role_id' => $value, 'send_notification_id' => '');
-                    $staff         = "Yes";
-                }
-            }
-
-            $to_be_del    = array_diff($prev_roles, $inst_staff);
-            $to_be_insert = array_diff($inst_staff, $prev_roles);
-            $insert       = array();
-
-            if (!empty($to_be_insert)) {
-
-                foreach ($to_be_insert as $to_insert_key => $to_insert_value) {
-                    $insert[] = array('role_id' => $to_insert_value, 'send_notification_id' => '');
-                }
-            }      
-            
-            $data = array(
-                'id'              => $id,
-                'message'         => $this->input->post('message'),
-                'title'           => $this->input->post('title'),
-                'date'            => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('date'))),
-                'created_by'      => $userdata["user_type"],
-                'created_id'      => $this->customlib->getStaffID(),
-                'visible_student' => $student,
-                'visible_staff'   => $staff,
-                'visible_parent'  => $parent,
-                'publish_date'    => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('publish_date'))),    
-                
-            );
-            
-             if (isset($_FILES["file"]) && $_FILES['file']['name'] != '' && (!empty($_FILES['file']['name']))) {
-
-                $img_name = $this->media_storage->fileupload("file", "./uploads/notice_board_images/");
-            } else {
-                $img_name = $notification['attachment'];
-            }
-
-            $data['attachment'] = $img_name;
-
-            if (isset($_FILES["file"]) && $_FILES['file']['name'] != '' && (!empty($_FILES['file']['name']))) {
-                if ($notification['attachment'] != '') {
-                    $this->media_storage->filedelete($notification['attachment'], "uploads/school_income");
-                }
-            }
-            
-            $this->notification_model->insertBatch($data, $insert, $to_be_del);            
-
-            $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('update_message') . '</div>');
-            redirect('admin/notification/index');
-        }
-        $exam_result      = $this->exam_model->get();
-        $data['examlist'] = $exam_result;
-        $this->load->view('layout/header', $data);
-        $this->load->view('admin/notification/notificationEdit', $data);
         $this->load->view('layout/footer', $data);
     }
 
@@ -429,5 +247,458 @@ class Notification extends Admin_Controller
         $page = $this->load->view('admin/notification/_notification', $data, true);
         echo json_encode(array('status' => 1, 'page' => $page));
     }
+
+
+    //*** send notice to start ***//
+    public function multihandle_upload($str, $var){
+
+        if (isset($_FILES['file']['name']) && !empty($_FILES['file']['name'])) {
+            $image_validate               = $this->config->item('file_validate');
+            $result                       = $this->filetype_model->get();
+            $file_size_shoud_be_less_than = array();
+            $file_type_not_allowed        = array();
+            foreach ($_FILES['file']['name'] as $key => $files_value) {
+                $file_type         = $_FILES['file']['type'][$key];
+                $file_size         = $_FILES['file']["size"][$key];
+                $file_name         = $_FILES['file']['name'][$key];
+                $allowed_extension = array_map('trim', array_map('strtolower', explode(',', $result->file_extension)));
+                $allowed_mime_type = array_map('trim', array_map('strtolower', explode(',', $result->file_mime)));
+                $ext               = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+                $message           = "";
+                if ($files = filesize($_FILES['file']['tmp_name'][$key])) {
+
+                    if (!in_array($file_type, $allowed_mime_type)) {
+                        $file_type_not_allowed[] = 0;
+                    }
+                    if (!in_array($ext, $allowed_extension) || !in_array($file_type, $allowed_mime_type)) {
+                        $file_type_not_allowed[] = 0;
+                    }
+                    if ($file_size > $result->file_size) {
+                        $file_size_shoud_be_less_than[] = 0;
+                    }
+                } else {
+
+                }
+            }
+
+            if (in_array(0, $file_type_not_allowed)) {
+                $this->form_validation->set_message('multihandle_upload', $this->lang->line('file_type_not_allowed'));
+                $file_type_not_allowed[] = 0;
+                return false;
+            }
+
+            if (in_array(0, $file_size_shoud_be_less_than)) {
+                $this->form_validation->set_message('multihandle_upload', $this->lang->line('file_size_shoud_be_less_than') . number_format($image_validate['upload_size'] / 1048576, 2) . " MB");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function add()
+    {
+        if (!$this->rbac->hasPrivilege('notice_board', 'can_add')) {
+            access_denied();
+        }
+
+        $this->session->set_userdata('top_menu', 'Communicate');
+        $this->session->set_userdata('sub_menu', 'notification/index');
+        $data['title']              =   'Add Notification';
+        $data['title_list']         =   'Notification List';
+        $data['roles']              =    $this->role_model->get();
+        $send_attachments           =    [];
+        $template_id                =    $this->input->post('template_id');
+        $data['mail']               =    $mail           =    $this->input->post('mail');
+        $data['sms']                =    $sms            =    $this->input->post('sms');
+        $data['mobile_notification']       =    $mobile_notification   =    $this->input->post('mobile_notification');
+        $userlisting                =    $this->input->post('visible[]');
+        $message                    =    $this->input->post('message');
+        $message_title              =    $this->input->post('title');
+
+        $this->form_validation->set_rules('title', $this->lang->line('title'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('message', $this->lang->line('message'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('date', $this->lang->line('notice_date'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('publish_date', $this->lang->line('publish_on'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('visible[]', $this->lang->line('message_to'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('file', $this->lang->line('file'), 'callback_multihandle_upload[file]');
+
+        if($this->input->post('sms')==1){
+            $this->form_validation->set_rules('template_id', $this->lang->line('template_id'), 'trim|required|xss_clean');
+            $data['sms_validation']      = 1;
+        }else{
+              $data['sms_validation']    = 0;
+        }
+        if ($this->form_validation->run() == false) {
+
+        } else {
+            //code start
+            //upload attachment if uploaded
+            if (isset($_FILES['file']['name'][0]) && !empty($_FILES['file']['name'][0])) {
+                foreach ($_FILES['file']['name'] as $key => $files_value) {
+                    $file_type = $_FILES['file']['type'][$key];
+                    $file_size = $_FILES['file']["size"][$key];
+                    $file_name = $_FILES['file']['name'][$key];
+                    $fileInfo  = pathinfo($_FILES["file"]["name"][$key]);
+                    $img_name  = time() . rand(99, 999) . '.' . $fileInfo['extension'];
+                    move_uploaded_file($_FILES["file"]["tmp_name"][$key], "./uploads/notice_board_images/" . $img_name);
+                    $send_attachments[] = array('directory' => 'uploads/notice_board_images/', 'attachment' => $img_name, 'attachment_name' => $file_name);
+                }
+            }
+
+            foreach($userlisting as $users_key => $users_value) {
+                if ($users_value == "student" || $users_value == "parent") {
+                    $userdata_array = $this->student_model->getStudents();
+                }
+                if ($users_value == "student") {
+                    if (!empty($userdata_array)) {
+                        foreach ($userdata_array as $student_key => $student_value) {
+                            $array = array(
+                                'user_id'  => $student_value['id'],
+                                'email'    => $student_value['email'],
+                                'mobileno' => $student_value['mobileno'],
+                                'app_key'  => $student_value['app_key'], //app key for mobile app notification
+                                'role'     => 'student'
+                            );
+                            $user_array[] = $array;
+                        }
+                    }
+                }else if ($users_value == "parent"){
+                    if (!empty($userdata_array)) {
+                        foreach ($userdata_array as $parent_key => $parent_value) {
+                            $array = array(
+                                'user_id'   => $parent_value['id'],
+                                'email'     => $parent_value['guardian_email'],
+                                'mobileno'  => $parent_value['guardian_phone'],
+                                'app_key'   => $parent_value['parent_app_key'], //app key for mobile app notification
+                                'role'      => 'parent'
+                            );
+                            $user_array[] = $array;
+                        }
+                    }
+                }else if (is_numeric($users_value)){
+                    $staff = $this->staff_model->getEmployeeByRoleID($users_value);
+                    if (!empty($staff)) {
+                        foreach ($staff as $staff_key => $staff_value) {
+                            $array = array(
+                                'user_id'  => $staff_value['id'],
+                                'email'    => $staff_value['email'],
+                                'mobileno' => $staff_value['contact_no'],
+                                'role'     => 'staff'
+                            );
+                            $user_array[] = $array;
+                        }
+                    }
+                }
+            }
+            //send notification in mail
+            if(isset($mail) && $mail==1){
+            if (!empty($user_array)) {
+                if (!empty($this->mail_config)) {
+                    foreach ($user_array as $user_mail_key => $user_mail_value) {
+                        if ($user_mail_value['email'] != "") {
+                            $this->mailer->compose_mail($user_mail_value['email'], $message_title, $message, $send_attachments);
+                        }
+                    }
+                }
+            }
+            }
+            //send notification in sms 
+            if(isset($sms) && $sms==1){
+            if (!empty($user_array)) {
+                    foreach ($user_array as $user_mail_key => $user_mail_value) {
+                        if ($user_mail_value['mobileno'] != "") {
+                            $this->smsgateway->sendSMS($user_mail_value['mobileno'], $message, $template_id, "");
+                        }
+                    }
+            }
+            }
+            //mobile app notification will only send to the students
+            if(isset($mobile_notification) && $mobile_notification==1){
+            if (!empty($user_array)) {
+                    foreach ($user_array as $user_mail_key => $user_mail_value) {
+                        $push_array = array(
+                            'title' => $message_title,
+                            'body'  => $message,
+                        );
+                        if($user_mail_value['role']=='student' || $user_mail_value['role']=='parent'){                         
+                            if($user_mail_value['app_key'] != "") {
+                                $this->pushnotification->send($user_mail_value['app_key'], $push_array, "mail_sms");
+                            }
+                        }
+                    }
+            }
+            }
+            //code end
+
+            //***old code as it is for send notification on web application notice board***//
+            $userdata    = $this->customlib->getUserData();
+            $student     = "No";
+            $staff       = "No";
+            $parent      = "No";
+            $staff_roles = array();
+            $visible     = $this->input->post('visible');
+            
+            if (!in_array(7, $visible)){
+                $staff_roles[] = array('role_id' => 7, 'send_notification_id' => '');
+                $staff         = "Yes";
+            }
+           
+            foreach ($visible as $key => $value) {
+                if ($value == "student") {
+                    $student = "Yes";
+                } else if ($value == "parent") {
+                    $parent = "Yes";
+                } else if (is_numeric($value)) {
+                    $staff_roles[] = array('role_id' => $value, 'send_notification_id' => '');
+                    $staff         = "Yes";
+                }
+            }
+ 
+            $data = array(
+                'message'         => $this->input->post('message'),
+                'title'           => $this->input->post('title'),
+                'date'            => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('date'))),
+                'created_by'      => $userdata["user_type"],
+                'created_id'      => $this->customlib->getStaffID(),
+                'visible_student' => $student,
+                'visible_staff'   => $staff,
+                'visible_parent'  => $parent,
+                'publish_date'    => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('publish_date'))),
+                'attachment'    => $img_name,
+            );
+
+            $id = $this->notification_model->insertBatch($data, $staff_roles);        
+            $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('success_message') . '</div>');
+            redirect('admin/notification/index');
+        }
+        $exam_result                    = $this->exam_model->get();
+        $data['examlist']               = $exam_result;
+        $data['superadmin_restriction'] = $this->customlib->superadmin_visible();
+        $this->load->view('layout/header', $data);
+        $this->load->view('admin/notification/notificationAdd', $data);
+        $this->load->view('layout/footer', $data);
+    }
+
+    public function edit($id)
+    {
+        $userdata         = $this->customlib->getUserData();
+        $user_id          = $userdata["id"];
+        $usernotification = $this->notification_model->get($id);
+        if ((!$this->rbac->hasPrivilege('notice_board', 'can_edit'))) {
+            if ($usernotification['created_id'] != $user_id) {
+                access_denied();
+            }
+        }
+        $data['id']   = $id;
+        $notification = $this->notification_model->get($id);
+
+        $data['notification']       =   $notification;
+        $data['roles']              =   $this->role_model->get();
+        $data['title']              =   'Edit Notification';
+        $data['title_list']         =   'Notification List';
+        $send_attachments           =    [];
+        $template_id                =    $this->input->post('template_id');
+        $data['mail']               =    $mail           =    $this->input->post('mail');
+        $data['sms']                =    $sms            =    $this->input->post('sms');
+        $data['mobile_notification']=    $mobile_notification   =    $this->input->post('notification');
+        $userlisting                =    $this->input->post('visible[]');
+        $message                    =    $this->input->post('message');
+        $message_title              =    $this->input->post('title');
+
+        $this->form_validation->set_rules('title', $this->lang->line('title'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('message', $this->lang->line('message'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('date', $this->lang->line('notice_date'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('publish_date', $this->lang->line('publish_on'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('visible[]', $this->lang->line('message_to'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('file', $this->lang->line('file'), 'callback_multihandle_upload[file]');
+
+        if($this->input->post('sms')==1){
+            $this->form_validation->set_rules('template_id', $this->lang->line('template_id'), 'trim|required|xss_clean');
+            $data['sms_validation']      = 1;
+        }else{
+              $data['sms_validation']    = 0;
+        }
+
+        if ($this->form_validation->run() == false) {
+
+        } else {
+
+            //code start
+            //upload attachment if uploaded
+            if (isset($_FILES["file"]) && $_FILES['file']['name'] != '' && (!empty($_FILES['file']['name']))) {
+              if (isset($_FILES['file']['name'][0]) && !empty($_FILES['file']['name'][0])) {
+                foreach ($_FILES['file']['name'] as $key => $files_value) {
+                    $file_type = $_FILES['file']['type'][$key];
+                    $file_size = $_FILES['file']["size"][$key];
+                    $file_name = $_FILES['file']['name'][$key];
+                    $fileInfo  = pathinfo($_FILES["file"]["name"][$key]);
+                    $img_name  = time() . rand(99, 999) . '.' . $fileInfo['extension'];
+                    move_uploaded_file($_FILES["file"]["tmp_name"][$key], "./uploads/notice_board_images/" . $img_name);
+                    $send_attachments[] = array('directory' => 'uploads/notice_board_images/', 'attachment' => $img_name, 'attachment_name' => $file_name);
+                }
+            }
+            } else {
+                $img_name = $notification['attachment'];
+            }
+
+            foreach($userlisting as $users_key => $users_value) {
+                if ($users_value == "student" || $users_value == "parent") {
+                    $userdata_array = $this->student_model->getStudents();
+                }
+                if ($users_value == "student") {
+                    if (!empty($userdata_array)) {
+                        foreach ($userdata_array as $student_key => $student_value) {
+                            $array = array(
+                                'user_id'  => $student_value['id'],
+                                'email'    => $student_value['email'],
+                                'mobileno' => $student_value['mobileno'],
+                                'app_key'  => $student_value['app_key'], //app key for mobile app notification
+                                'role'     => 'student'
+                            );
+                            $user_array[] = $array;
+                        }
+                    }
+                }else if ($users_value == "parent"){
+                    if (!empty($userdata_array)) {
+                        foreach ($userdata_array as $parent_key => $parent_value) {
+                            $array = array(
+                                'user_id'   => $parent_value['id'],
+                                'email'     => $parent_value['guardian_email'],
+                                'mobileno'  => $parent_value['guardian_phone'],
+                                'app_key'   => $parent_value['parent_app_key'], //app key for mobile app notification
+                                'role'      => 'parent'
+                            );
+                            $user_array[] = $array;
+                        }
+                    }
+                }else if (is_numeric($users_value)){
+                    $staff = $this->staff_model->getEmployeeByRoleID($users_value);
+                    if (!empty($staff)) {
+                        foreach ($staff as $staff_key => $staff_value) {
+                            $array = array(
+                                'user_id'  => $staff_value['id'],
+                                'email'    => $staff_value['email'],
+                                'mobileno' => $staff_value['contact_no'],
+                                'role'     => 'staff'
+                            );
+                            $user_array[] = $array;
+                        }
+                    }
+                }
+            }
+
+            //send notification in mail
+            if(isset($mail) && $mail==1){
+                if (!empty($user_array)) {
+                    if (!empty($this->mail_config)) {
+                        foreach ($user_array as $user_mail_key => $user_mail_value) {
+                            if ($user_mail_value['email'] != "") {
+                                $this->mailer->compose_mail($user_mail_value['email'], $message_title, $message, $send_attachments);
+                            }
+                        }
+                    }
+                }
+            }
+            //send notification in sms 
+            if(isset($sms) && $sms==1){
+                if (!empty($user_array)) {
+                    foreach ($user_array as $user_mail_key => $user_mail_value) {
+                        if ($user_mail_value['mobileno'] != "") {
+                            $this->smsgateway->sendSMS($user_mail_value['mobileno'], $message, $template_id, "");
+                        }
+                    }
+                }
+            }
+            //mobile app notification will only send to the students
+            if(isset($mobile_notification) && $mobile_notification==1){
+                if (!empty($user_array)) {
+                    foreach ($user_array as $user_mail_key => $user_mail_value) {
+                        $push_array = array(
+                            'title' => $message_title,
+                            'body'  => $message,
+                        );
+                        if($user_mail_value['role']=='student' || $user_mail_value['role']=='parent'){                         
+                            if($user_mail_value['app_key'] != "") {
+                                $this->pushnotification->send($user_mail_value['app_key'], $push_array, "mail_sms");
+                            }
+                        }
+                    }
+                }
+            }
+            //code end
+
+            //****old code as it is for sending notification on web application no  changes perform on below code****//
+            $userdata    = $this->customlib->getUserData();
+            $student     = "No";
+            $staff       = "No";
+            $parent      = "No";
+            $prev_roles  = $this->input->post('prev_roles');
+            $visible     = $this->input->post('visible');
+            $staff_roles = array();
+            $inst_staff  = array();
+            
+            if (!in_array(7, $visible))
+            {
+                $staff_roles[] = array('role_id' => 7, 'send_notification_id' => '');
+                $staff         = "Yes";
+            }
+            
+            foreach ($visible as $key => $value) {
+
+                if ($value == "student") {
+                    $student = "Yes";
+                } else if ($value == "parent") {
+                    $parent = "Yes";
+                } else if (is_numeric($value)) {
+                    $inst_staff[]  = $value;
+                    $staff_roles[] = array('role_id' => $value, 'send_notification_id' => '');
+                    $staff         = "Yes";
+                }
+            }
+
+            $to_be_del    = array_diff($prev_roles, $inst_staff);
+            $to_be_insert = array_diff($inst_staff, $prev_roles);
+            $insert       = array();
+
+            if (!empty($to_be_insert)) {
+
+                foreach ($to_be_insert as $to_insert_key => $to_insert_value) {
+                    $insert[] = array('role_id' => $to_insert_value, 'send_notification_id' => '');
+                }
+            }      
+            
+            $data = array(
+                'id'              => $id,
+                'message'         => $this->input->post('message'),
+                'title'           => $this->input->post('title'),
+                'date'            => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('date'))),
+                'created_by'      => $userdata["user_type"],
+                'created_id'      => $this->customlib->getStaffID(),
+                'visible_student' => $student,
+                'visible_staff'   => $staff,
+                'visible_parent'  => $parent,
+                'publish_date'    => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('publish_date'))),    
+                'attachment'      => $img_name  
+            );          
+         
+            if (isset($_FILES["file"]) && $_FILES['file']['name'] != '' && (!empty($_FILES['file']['name']))) {
+                if ($notification['attachment'] != '') {
+                    $this->media_storage->filedelete($notification['attachment'], "uploads/school_income");
+                }
+            }
+            
+            $this->notification_model->insertBatch($data, $insert, $to_be_del);            
+            $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('update_message') . '</div>');
+            redirect('admin/notification/index');
+        }
+        $exam_result      = $this->exam_model->get();
+        $data['examlist'] = $exam_result;
+        $this->load->view('layout/header', $data);
+        $this->load->view('admin/notification/notificationEdit', $data);
+        $this->load->view('layout/footer', $data);
+    }
+
+
+
 
 }

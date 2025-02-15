@@ -108,20 +108,21 @@ class Question extends Admin_Controller
                             continue;
                         }
                         if (trim($column['0']) != "" && trim($column['1']) != "" && trim($column['2']) != "") {
+                         
                             $insert_array[] = array(
                                 'staff_id'      => $this->customlib->getStaffID(),
                                 'subject_id'    => $this->input->post('subject_id'),
                                 'class_id'      => $this->input->post('class_id'),
                                 'section_id'    => $this->input->post('section_id'),
-                                'question_type' => trim($column['0']),
-                                'level'         => trim($column['1']),
-                                'question'      => trim($column['2']),
-                                'opt_a'         => trim($column['3']),
-                                'opt_b'         => trim($column['4']),
-                                'opt_c'         => trim($column['5']),
-                                'opt_d'         => trim($column['6']),
-                                'opt_e'         => trim($column['7']),
-                                'correct'       => trim($column['8']),
+                                'question_type' => (trim($column['0'])),
+                                'level'         => (trim($column['1'])),
+                                'question'      => (trim($column['2'])),
+                                'opt_a'         => (trim($column['3'])),
+                                'opt_b'         => (trim($column['4'])),
+                                'opt_c'         => (trim($column['5'])),
+                                'opt_d'         => (trim($column['6'])),
+                                'opt_e'         => (trim($column['7'])),
+                                'correct'       => (trim($column['8'])),
                             );
                         }
                     }
@@ -470,6 +471,7 @@ class Question extends Admin_Controller
         $role_id            = $userdata["role_id"];
         if (!empty($question_dt->data)) {
             foreach ($question_dt->data as $key => $value) {
+                
 
                 $delete       = "'" . $this->lang->line("delete_confirm") . "'";
                 $delete_title = "'" . $this->lang->line("delete") . "'";

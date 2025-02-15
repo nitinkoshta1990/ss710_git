@@ -175,6 +175,7 @@ echo $this->lang->line('fees_statement') . " ";
             $total_discount_amount = "0";
             $total_balance_amount  = "0";
             $alot_fee_discount     = 0;
+			$fees_fine_amount=0;
             foreach ($student['fees'] as $key => $fee) {
 
                 foreach ($fee as $fee_key => $fee_value) {
@@ -199,7 +200,7 @@ echo $this->lang->line('fees_statement') . " ";
                     $total_balance_amount  = $total_balance_amount + $feetype_balance;
                     ?>
                                                     <?php
-if ($feetype_balance > 0 && strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) {
+if ($feetype_balance > 0 && ($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) {
                         ?>
                                                         <tr class="danger">
                                                             <?php
@@ -249,14 +250,39 @@ if ($feetype_balance == 0) {
 }
                     ?>
                                                         </td>
-                                                        <td class="text text-right"><?php echo amountFormat($fee_value->amount);  if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
+                                                        <td class="text text-right"><?php 
+                                                        echo amountFormat($fee_value->amount); 
+                                                        if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
+															
+														// get cumulative fine amount as delay days 
+                                                        if($fee_value->fine_type=='cumulative'){
+                                                            $date1=date_create("$fee_value->due_date");
+                                                            $date2=date_create(date('Y-m-d'));
+                                                            $diff=date_diff($date1,$date2);
+                                                            $due_days= $diff->format("%a");;
+                                                            
+                                                            if($this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days)){
+                                                                $testing="test1";
+
+                                                                $due_fine_amount=$this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days);
+                                                            }else{
+                                                                $testing="test 2";
+                                                                $due_fine_amount=0;
+                                                            }
+                                                            $fees_fine_amount   = $due_fine_amount;
+                                                            $grand_fine_amount+=$due_fine_amount;
+                                            
+                                                        }else if($fee_value->fine_type=='fix' || $fee_value->fine_type=='percentage'){
+                                                            $fees_fine_amount   = $fee_value->fine_amount;
+                                                            $grand_fine_amount+=$fee_value->fine_amount;
+                                                        }
+                                                        // get cumulative fine amount as delay days
             ?>
-<span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . amountFormat($fee_value->fine_amount); ?></span>
+<span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . amountFormat($fees_fine_amount ); ?></span>
 
 <div class="fee_detail_popover" style="display: none">
     <?php
-if ($fee_value->fine_amount != "") {
-    $grand_fine_amount+=$fee_value->fine_amount;
+if ($fees_fine_amount  != "") {
                 ?>
         <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
         <?php
@@ -320,7 +346,7 @@ if ($fee_deposits_value->description == "") {
                                                                 </td>
                                                                 <td class="text text-left"><?php echo $this->lang->line(strtolower($fee_deposits_value->payment_mode)); ?></td>
                                                                 <td class="text text-left">
-                                                                    <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); ?>
+                                                                    <?php if($fee_deposits_value->date != '0000-00-00'){  echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); } ?>
                                                                 </td>
                                                                 <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></td>
                                                                 <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_fine); ?></td>
@@ -478,7 +504,7 @@ if ($fee_deposits_value->description == "") {
                                                         </td>
                                                         <td class="text text-left"><?php echo $this->lang->line(strtolower($fee_deposits_value->payment_mode)); ?></td>
                                                         <td class="text text-left">
-                                                            <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); ?>
+                                                            <?php if($fee_deposits_value->date != '0000-00-00'){ echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); }?>
                                                         </td>
                                                         <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></td>
                                                         <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_fine); ?></td>
@@ -493,64 +519,9 @@ if ($fee_deposits_value->description == "") {
 
 <?php
 }
-}
+} ?>
 
-
-if (!empty($student['student_discount_fee'])) {
-
-                foreach ($student['student_discount_fee'] as $discount_key => $discount_value) {
-                    ?>
-                                                    <tr class="dark-light">
-                                                        <td align="left"> <?php echo $this->lang->line('discount'); ?> </td>
-                                                        <td align="left">
-                                                            <?php echo $discount_value['code']; ?>
-                                                        </td>
-                                                        <td align="left"></td>
-                                                        <td align="left" class="text text-left">
-                                                            <?php
-if ($discount_value['status'] == "applied") {
-                        ?>
-                                                                <a href="#" data-toggle="popover" class="detail_popover" >
-
-                                                                    <?php echo $this->lang->line('discount_of') . " " . $currency_symbol . amountFormat($discount_value['amount']) . " " . $this->lang->line($discount_value['status']) . " : " . $discount_value['payment_id']; ?>
-
-                                                                </a>
-                                                                <div class="fee_detail_popover" style="display: none">
-                                                                    <?php
-if ($fee_deposits_value->description == "") {
-                            ?>
-                                                                        <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
-                                                                        <?php
-} else {
-                            ?>
-                                                                        <p class="text text-danger"><?php echo $discount_value['student_fees_discount_description'] ?></p>
-                                                                        <?php
-}
-                        ?>
-                                                                </div>
-                                                                <?php
-} else {
-                        echo '<p class="text text-danger">' . $this->lang->line('discount_of') . " " . $currency_symbol . amountFormat($discount_value['amount']) . " " . $this->lang->line($discount_value['status']);
-                    }
-                    ?>
-                                                        </td>
-                                                        <td></td>
-                                                        <td class="text text-left"></td>
-                                                        <td class="text text-left"></td>
-                                                        <td class="text text-left"></td>
-                                                        <td  class="text text-right">
-                                                            <?php
-$alot_fee_discount = $alot_fee_discount;
-                    ?>
-                                                        </td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td ></td>
-                                                    </tr>
-                                                    <?php
-}
-            }
-            ?>
+ 
                                             <tr class="box box-solid total-bg">
                                                 <td align="left"></td>
                                                 <td align="left"></td>

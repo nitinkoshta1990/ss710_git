@@ -288,10 +288,20 @@ if (set_value('class_id') == $class['id']) {
                                             </div>
                                             <div class="dual-list list-right">
                                                 <div class="well minheight260">
-                                                    <div class="wellscroll">
-                                                        <b><?php echo $this->lang->line('section'); ?></b>
-                                                        <ul class="list-group section_list listcheckbox">
-                                                        </ul>
+                                                    <div class="wellscroll row">
+                                                        <div class="col-md-2" id="">
+                                                            <b><?php echo $this->lang->line('section'); ?></b>
+                                                            <ul class="list-group section_list listcheckbox"></ul>
+                                                        </div>
+                                                         <div class="col-md-10 ">
+                                                            <b><?php echo $this->lang->line('send_to'); ?></b>
+                                                            <ul class="list-group listcheckbox hide"  id="send_to">
+                                                                <li class="checkbox"><a href="#" class="small"><label><input class="reset_checkbox" type="checkbox" name="send_to[]" value="student"/><?php echo $this->lang->line('students'); ?></label></a></li>
+                                                                <?php if ($sch_setting->guardian_name) {?>
+                                                                <li class="checkbox"><a href="#" class="small"><label><input class="reset_checkbox" type="checkbox" name="send_to[]" value="parent"/><?php echo $this->lang->line('guardians'); ?></label></a></li>
+                                                                <?php } ?>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -822,12 +832,22 @@ if (($userdata["role_id"] == 2)) {
             data: {'class_id': class_id},
             dataType: "json",
             success: function (data) {
-                $.each(data, function (i, obj)
-                {
+                $.each(data, function (i, obj){
                     div_data += '<li class="checkbox"><a href="#" class="small"><label><input type="checkbox" name="user[]" value ="' + obj.section_id + '"/>' + obj.section + '</label></a></li>';
-
                 });
+
                 $('.section_list').append(div_data);
+                if(class_id!=""){
+                    $("#send_to").addClass("show");
+                    $("#send_to").removeClass("hide");
+                }else{
+                    $("#send_to").addClass("hide");
+                    $("#send_to").removeClass("show");
+                }
+
+                if(class_id=="" || class_id=="select"){
+                    $('.reset_checkbox').prop('checked',false);
+                }
             }
         });
     });
@@ -869,6 +889,8 @@ if (($userdata["role_id"] == 2)) {
                     $('#class_form')[0].reset();
                     $('#class_word_counter').html('<?php echo $this->lang->line('character_count'); ?>: 0');
                     $('.section_list').html("");
+                    $("#send_to").addClass("hide");
+                    $("#send_to").removeClass("show");
                     successMsg(data.msg);
                 }
             },

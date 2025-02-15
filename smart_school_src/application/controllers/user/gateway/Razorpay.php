@@ -29,7 +29,7 @@ class Razorpay extends Studentgateway_Controller {
         $data['txnid'] = time() . "02";
         $data['title'] = 'Student Fee';
         $data['return_url'] = site_url() . 'user/gateway/razorpay/callback';
-        $amount=number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');
+        $amount=number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', '');
         $data['total'] = $amount;
         $data['amount'] = convertBaseAmountCurrencyFormat($amount)*100;
         $data['key_id'] = $this->api_config->api_publishable_key;
@@ -78,7 +78,9 @@ $data['order_id']=$order_id;
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+                        'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_razorpay_txn_id') . $payment_id,
                         'received_by'     => '',
@@ -96,7 +98,7 @@ $data['order_id']=$order_id;
                     //========
                     }
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                      //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();
@@ -123,7 +125,6 @@ $data['order_id']=$order_id;
                             'sub_invoice_id' => $response_value['sub_invoice_id'],
                             'fee_category' => $fee_category,
                         );
-
 
                         if ($response_value['student_transport_fee_id'] != 0 && $response_value['fee_category'] == "transport") {
 

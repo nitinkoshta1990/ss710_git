@@ -16,6 +16,8 @@ class Feetype_model extends MY_Model
     {
         $this->db->select()->from('feetype');
         $this->db->where('is_system', 0);
+        $this->db->where('nature !='  , 'custom');
+        
         if ($id != null) {
             $this->db->where('id', $id);
         } else {
@@ -135,5 +137,27 @@ class Feetype_model extends MY_Model
             return false;
         }
     }
+
+    //**** custome fees master ****//
+    public function getCustomFeesTypeByStudentSession($student_session_id){
+        $this->db->select()->from('feetype');
+        $this->db->where('is_system', 0);
+        $this->db->where('nature', 'custom');        
+        $this->db->where('student_session_id', $student_session_id);        
+        $query = $this->db->get();        
+        return $query->result_array();         
+    }
+
+    public function getCustomFeesType()
+    {
+        $this->db->select()->from('feetype');
+        $this->db->where('is_system', 0);         
+        $this->db->where('nature', 'custom');         
+        $query = $this->db->get();        
+        return $query->result_array();         
+    }
+    
+
+    
 
 }

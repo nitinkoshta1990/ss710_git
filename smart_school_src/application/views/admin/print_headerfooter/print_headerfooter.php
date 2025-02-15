@@ -5,9 +5,10 @@
             <div class="col-md-12">
                 <div class="nav-tabs-custom box box-primary theme-shadow">
                     <ul class="nav nav-tabs pull-right flex-sm-wrap d-xs-flex">
+                        <li><a href="#tab_5" data-toggle="tab"><?php echo $this->lang->line('general_purpose'); ?></a></li>
                         <li><a href="#tab_2" data-toggle="tab"><?php echo $this->lang->line('online_exam'); ?></a></li>
                         <li><a href="#tab_1" data-toggle="tab"><?php echo $this->lang->line('online_admission_receipt'); ?></a></li>
-                        <li ><a href="#tab_4" data-toggle="tab"><?php echo $this->lang->line('payslip') ?></a></li>
+                        <li><a href="#tab_4" data-toggle="tab"><?php echo $this->lang->line('payslip') ?></a></li>
                         <li class="active"><a href="#tab_3" data-toggle="tab"><?php echo $this->lang->line('fees_receipt'); ?></a></li>
                         <li class="pull-left header"> <?php echo $this->lang->line('print_headerfooter'); ?></li>
                     </ul>
@@ -130,6 +131,36 @@ if ($this->session->flashdata('msg') != '') {
                             </form>
                         </div>
                         <!-- /.tab-pane -->
+
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="tab_5">
+                            <form role="form" id="form5" enctype="multipart/form-data" action="<?php echo site_url('admin/print_headerfooter/edit') ?>" class="" method="post">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label><?php echo $this->lang->line('header_image') . " (2230px X 300px)"; ?><small class="req"> *</small></label>
+                                            <input id="general_purpose_documents" data-default-file="<?php echo $this->customlib->getBaseUrl() ?>./uploads/print_headerfooter/general_purpose/<?php echo $result[4]['header_image'] ?>" placeholder="" type="file" class="filestyle form-control" data-height="180"  name="header_image">
+                                            <input  placeholder="" type="hidden" class="form-control" value="general_purpose" name="type">
+                                            <span class="text-danger"><?php echo form_error('header_image'); ?></span>
+                                        </div>
+                                        <div class="form-group"><label><?php echo $this->lang->line('footer_content'); ?></label>
+                                            <textarea id="general_purpose_textarea" name="general_purpose_message" class="form-control" style="height: 250px">
+                                                <?php echo set_value('general_purpose_message', $result[4]['footer_content']); ?>
+                                            </textarea>
+                                            <span class="text-danger"><?php echo form_error('general_purpose_message'); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="pull-right">
+                                            <button type="submit" id="submitbtn5" class="btn btn-primary " data-loading-text="<i class='fa fa-spinner fa-spin '></i> <?php echo $this->lang->line('save'); ?>"><?php echo $this->lang->line('save'); ?></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.tab-pane -->
+
+
                     </div>
                     <!-- /.tab-content -->
                 </div>
@@ -147,6 +178,7 @@ if ($this->session->flashdata('msg') != '') {
         $("#student_textarea").wysihtml5();
         $("#online_exam_textarea").wysihtml5();
         $("#online_admission_textarea").wysihtml5();
+        $("#general_purpose_textarea").wysihtml5();
      
 
     });
@@ -165,6 +197,9 @@ if ($this->session->flashdata('msg') != '') {
         });
         $('#form4'). submit( function() {
             $("#submitbtn4").button('loading');
+        });
+        $('#form5').submit( function() {
+            $("#submitbtn5").button('loading');
         });
     })
 </script>

@@ -270,8 +270,9 @@ if (!empty($feearray)) {
         ?>
                                     <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                         <thead>
-                                        <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                        <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                        <th><?php echo $this->lang->line('fees'); ?></th>
+                                        <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                        <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                         <th class=""><?php echo $this->lang->line('due_date'); ?></th>
                                         <th class=""><?php echo $this->lang->line('status'); ?></th>
                                         <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -295,7 +296,7 @@ $total_amount          = 0;
         if (empty($feearray)) {
             ?>
                                                 <tr>
-                                                    <td colspan="11" class="text-danger text-center">
+                                                    <td colspan="10" class="text-danger text-center">
                                                         <?php echo $this->lang->line('no_transaction_found'); ?>
                                                     </td>
                                                 </tr>
@@ -329,7 +330,7 @@ $total_amount          = 0;
                     $total_balance_amount  = $total_balance_amount + $feetype_balance;
                     ?>
                                                     <tr  class="dark-gray">
-                                                        <td>
+                                                       <!--  <td>
                                                         <?php
                                                             if ($feeList->is_system) {
                                                                 echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
@@ -346,7 +347,19 @@ $total_amount          = 0;
                                                                     echo $feeList->code;
                                                                 }                    
                                                             ?>
+                                                        </td> -->
+
+                                                        <td>
+                                                        <?php
+                                                            if ($feeList->is_system) {
+                                                                echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                            } else {
+                                                                echo $feeList->type . " (" . $feeList->code . ")";
+                                                            }
+                                                        ?>
                                                         </td>
+
+
                                                         <td class="">
                                                             <?php
 if ($feeList->due_date) {
@@ -374,12 +387,35 @@ if ($feetype_balance == 0) {
                                                          echo $currency_symbol . amountFormat($feeList->amount); 
                                                          
       if (($feeList->due_date != "0000-00-00" && $feeList->due_date != null) && (strtotime($feeList->due_date) < strtotime(date('Y-m-d')))) {
+		  
+		    // get cumulative fine amount as delay days 
+            if($feeList->fine_type=='cumulative'){
+                $date1=date_create("$feeList->due_date");
+                $date2=date_create(date('Y-m-d'));
+                $diff=date_diff($date1,$date2);
+                $due_days= $diff->format("%a");;
+                
+                if($this->customlib->get_cumulative_fine_amount($feeList->fee_groups_feetype_id,$due_days)){
+                    $due_fine_amount=$this->customlib->get_cumulative_fine_amount($feeList->fee_groups_feetype_id,$due_days);
+                }else{
+                    $due_fine_amount=0;
+                }
+                $fees_fine_amount   = $due_fine_amount;
+
+            }else if($feeList->fine_type=='fix' || $feeList->fine_type=='percentage'){
+                $fees_fine_amount   = $feeList->fine_amount;
+            }
+            // get cumulative fine amount as delay days
             ?>
-<span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . $currency_symbol .amountFormat($feeList->fine_amount); ?></span>
+<span data-toggle="popover" class="text text-danger detail_popover"><?php 
+
+ echo " + " . $currency_symbol .amountFormat($fees_fine_amount); 
+
+ ?></span>
 
 <div class="fee_detail_popover" style="display: none">
     <?php
-if ($feeList->fine_amount != "") {
+if ($fees_fine_amount != "") {
                 ?>
         <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
         <?php
@@ -419,7 +455,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -457,10 +493,10 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                     $total_balance_amount  = $total_balance_amount + $feetype_balance;
                     ?>
                                                     <tr  class="dark-gray">
-                                                        <td><?php
-echo $this->lang->line("transport_fees");
-                    ?></td>
-                                                        <td><?php echo $feeList->month; ?></td>
+                                                    <!--<td><?php //echo $this->lang->line("transport_fees"); ?></td>
+                                                        <td><?php //echo $feeList->month; ?></td>-->
+                                                        <td><?php echo $this->lang->line("transport_fees")." (".$feeList->month.")";   ?></td>
+
                                                         <td class="">
                                                             <?php
 if ($feeList->due_date == "0000-00-00") {
@@ -533,7 +569,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -554,7 +590,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
         }
         ?>
                                             <tr class="success">
-                                                <td align="left" ></td>
+                                                <!-- <td align="left" ></td> -->
                                                 <td align="left" ></td>
                                                 <td align="left" ></td>
                                                 <td align="left" class="text text-left" >
@@ -599,7 +635,10 @@ echo $currency_symbol . amountFormat($total_balance_amount);
     <?php
 }
 ?>
-            <?php
+
+
+
+<?php
 if (in_array('1', $print_copy)) {
     ?>
             <?php
@@ -649,8 +688,9 @@ if (!empty($feearray)) {
         ?>
                                         <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                             <thead>
-                                            <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                            <th><?php echo $this->lang->line('fees'); ?></th>
+                                            <!-- <th><?php echo $this->lang->line('fees_group'); ?></th> -->
+                                            <!-- <th><?php echo $this->lang->line('fees_code'); ?></th> -->
                                             <th class=""><?php echo $this->lang->line('due_date'); ?></th>
                                             <th class=""><?php echo $this->lang->line('status'); ?></th>
                                             <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -708,7 +748,7 @@ $total_amount          = 0;
                     $total_balance_amount  = $total_balance_amount + $feetype_balance;
                     ?>
                                                     <tr  class="dark-gray">
-                                                        <td><?php
+                                                       <!--  <td><?php
                                                             if ($feeList->is_system) {
                                                                 echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
                                                             } else {
@@ -723,7 +763,18 @@ $total_amount          = 0;
                                                                     echo $feeList->code;
                                                                 }                    
                                                             ?>
+                                                        </td> -->
+                                                        
+                                                        <td>
+                                                        <?php
+                                                            if ($feeList->is_system) {
+                                                                echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                            } else {
+                                                                echo $feeList->type . " (" . $feeList->code . ")";
+                                                            }
+                                                        ?>
                                                         </td>
+
                                                         <td class="">
 
                                                             <?php
@@ -745,7 +796,62 @@ if ($feetype_balance == 0) {
                     }
                     ?>
                                                         </td>
-                                                        <td class="text text-right"><?php echo $currency_symbol . amountFormat($feeList->amount); ?></td>
+
+
+                                                    <!-- <td class="text text-right"><?php //echo $currency_symbol . amountFormat($feeList->amount); ?></td> old-->
+
+                                                    <td class="text text-right">
+                        <?php
+                                                         echo $currency_symbol . amountFormat($feeList->amount); 
+                                                         
+      if (($feeList->due_date != "0000-00-00" && $feeList->due_date != null) && (strtotime($feeList->due_date) < strtotime(date('Y-m-d')))) {
+          
+            // get cumulative fine amount as delay days 
+            if($feeList->fine_type=='cumulative'){
+                $date1=date_create("$feeList->due_date");
+                $date2=date_create(date('Y-m-d'));
+                $diff=date_diff($date1,$date2);
+                $due_days= $diff->format("%a");;
+                
+                if($this->customlib->get_cumulative_fine_amount($feeList->fee_groups_feetype_id,$due_days)){
+                    $due_fine_amount=$this->customlib->get_cumulative_fine_amount($feeList->fee_groups_feetype_id,$due_days);
+                }else{
+                    $due_fine_amount=0;
+                }
+                $fees_fine_amount   = $due_fine_amount;
+
+            }else if($feeList->fine_type=='fix' || $feeList->fine_type=='percentage'){
+                $fees_fine_amount   = $feeList->fine_amount;
+            }
+            // get cumulative fine amount as delay days
+            ?>
+<span data-toggle="popover" class="text text-danger detail_popover"><?php 
+
+ echo " + " . $currency_symbol .amountFormat($fees_fine_amount); 
+
+ ?></span>
+
+<div class="fee_detail_popover" style="display: none">
+    <?php
+if ($fees_fine_amount != "") {
+                ?>
+        <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
+        <?php
+}
+            ?>
+</div>
+    <?php
+}
+
+
+                                                         ?>
+                                                     </td>
+
+
+
+
+
+
                                                         <td colspan="3"></td>
                                                         <td class="text text-right"><?php
 echo $currency_symbol . amountFormat($fee_paid);
@@ -772,7 +878,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -810,10 +916,10 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                     $total_balance_amount  = $total_balance_amount + $feetype_balance;
                     ?>
                                                     <tr  class="dark-gray">
-                                                        <td><?php
-echo $this->lang->line("transport_fees");
-                    ?></td>
-                                                        <td><?php echo $feeList->month; ?></td>
+                                                    <!--<td><?php //echo $this->lang->line("transport_fees"); ?></td>
+                                                        <td><?php //echo $feeList->month; ?></td> -->
+
+                                                        <td><?php echo $this->lang->line("transport_fees")." (".$feeList->month.")";   ?></td>
                                                         <td class="">
                                                             <?php
 if ($feeList->due_date == "0000-00-00") {
@@ -835,7 +941,30 @@ if ($feetype_balance == 0) {
                     }
                     ?>
                                                         </td>
-                                                        <td class="text text-right"><?php echo $currency_symbol . amountFormat($feeList->fees); ?></td>
+
+                                                          <td class="text text-right">
+                                                <?php 
+
+                      echo $currency_symbol . $feeList->fees; 
+
+
+    if (($feeList->due_date != "0000-00-00" && $feeList->due_date != null) && (strtotime($feeList->due_date) < strtotime(date('Y-m-d')))) {
+            $tr_fine_amount = $feeList->fine_amount;
+            if ($feeList->fine_type != "" && $feeList->fine_type == "percentage") {
+
+                $tr_fine_amount = percentageAmount($feeList->fees, $feeList->fine_percentage);
+            }
+            ?>
+
+<span  class="text text-danger"><?php echo " + " . $currency_symbol.amountFormat($tr_fine_amount); ?></span>
+
+    <?php
+}
+
+                                                ?>
+                                            </td>
+
+                                                        <!-- <td class="text text-right"><?php //echo $currency_symbol . amountFormat($feeList->fees); ?></td> -->
                                                         <td colspan="3"></td>
                                                         <td class="text text-right"><?php
 echo $currency_symbol . amountFormat($fee_paid);
@@ -863,7 +992,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -884,7 +1013,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
         }
         ?>
                                             <tr class="success">
-                                                <td align="left" ></td>
+                                                <!-- <td align="left" ></td> -->
                                                 <td align="left" ></td>
                                                 <td align="left" ></td>
                                                 <td align="left" class="text text-left" >
@@ -980,8 +1109,9 @@ if (!empty($feearray)) {
 
                                         <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                             <thead>
-                                            <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                            <th><?php echo $this->lang->line('fees'); ?></th>
+                                            <!-- <th><?php echo $this->lang->line('fees_group'); ?></th> -->
+                                            <!-- <th><?php echo $this->lang->line('fees_code'); ?></th> -->
                                             <th  class=""><?php echo $this->lang->line('due_date'); ?></th>
                                             <th class=""><?php echo $this->lang->line('status'); ?></th>
                                             <th  class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -1040,7 +1170,7 @@ $total_amount          = 0;
                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td><?php
+                                                       <!--<td><?php
                                                             if ($feeList->is_system) {
                                                                 echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
                                                             } else {
@@ -1056,7 +1186,19 @@ $total_amount          = 0;
                                                                     echo $feeList->code;
                                                                 }                    
                                                             ?>
+                                                        </td> -->
+
+                                                        <td>
+                                                        <?php
+                                                            if ($feeList->is_system) {
+                                                                echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                            } else {
+                                                                echo $feeList->type . " (" . $feeList->code . ")";
+                                                            }
+                                                        ?>
                                                         </td>
+
+
                                                         <td class="">
 
                                                             <?php
@@ -1079,7 +1221,59 @@ if ($feetype_balance == 0) {
                     }
                     ?>
                                                         </td>
-                                                        <td class="text text-right"><?php echo $currency_symbol . amountFormat($feeList->amount); ?></td>
+                                                        <!-- <td class="text text-right"><?php //echo $currency_symbol . amountFormat($feeList->amount); ?></td> old-->
+
+                                                        <td class="text text-right">
+                        <?php
+                                                         echo $currency_symbol . amountFormat($feeList->amount); 
+                                                         
+      if (($feeList->due_date != "0000-00-00" && $feeList->due_date != null) && (strtotime($feeList->due_date) < strtotime(date('Y-m-d')))) {
+          
+            // get cumulative fine amount as delay days 
+            if($feeList->fine_type=='cumulative'){
+                $date1=date_create("$feeList->due_date");
+                $date2=date_create(date('Y-m-d'));
+                $diff=date_diff($date1,$date2);
+                $due_days= $diff->format("%a");;
+                
+                if($this->customlib->get_cumulative_fine_amount($feeList->fee_groups_feetype_id,$due_days)){
+                    $due_fine_amount=$this->customlib->get_cumulative_fine_amount($feeList->fee_groups_feetype_id,$due_days);
+                }else{
+                    $due_fine_amount=0;
+                }
+                $fees_fine_amount   = $due_fine_amount;
+
+            }else if($feeList->fine_type=='fix' || $feeList->fine_type=='percentage'){
+                $fees_fine_amount   = $feeList->fine_amount;
+            }
+            // get cumulative fine amount as delay days
+            ?>
+<span data-toggle="popover" class="text text-danger detail_popover"><?php 
+
+ echo " + " . $currency_symbol .amountFormat($fees_fine_amount); 
+
+ ?></span>
+
+<div class="fee_detail_popover" style="display: none">
+    <?php
+if ($fees_fine_amount != "") {
+                ?>
+        <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
+        <?php
+}
+            ?>
+</div>
+    <?php
+}
+
+
+                                                         ?>
+                                                     </td>
+
+
+
+
+
                                                         <td colspan="3"></td>
                                                         <td class="text text-right"><?php
 echo $currency_symbol . amountFormat($fee_paid);
@@ -1106,7 +1300,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -1145,23 +1339,21 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                     ?>
                                                     <tr  class="dark-gray">
 
-                                                        <td><?php
-echo $this->lang->line("transport_fees");
-                    ?></td>
-                                                        <td><?php echo $feeList->month; ?></td>
-                                                        <td class="">
+                                                <!--<td><?php //echo $this->lang->line("transport_fees"); ?></td>
+                                                    <td><?php //echo $feeList->month; ?></td> -->
 
-                                                            <?php
-if ($feeList->due_date == "0000-00-00") {
+                                                    <td><?php echo $this->lang->line("transport_fees")." (".$feeList->month.")";   ?></td>
 
-                    } else {
+                                                    <td class=""><?php 
+                                                    if ($feeList->due_date == "0000-00-00") {
 
-                        echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($feeList->due_date));
-                    }
-                    ?>
-                                                        </td>
-                                                        <td class="">
-                                                            <?php
+                                                    } else {
+                                                        echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($feeList->due_date));
+                                                    }   ?>
+                                                    </td>
+
+                                                    <td class="">
+                                                    <?php
 if ($feetype_balance == 0) {
                         echo $this->lang->line('paid');
                     } else if (!empty($feeList->amount_detail)) {
@@ -1171,7 +1363,29 @@ if ($feetype_balance == 0) {
                     }
                     ?>
                                                         </td>
-                                                        <td class="text text-right"><?php echo $currency_symbol . amountFormat($feeList->fees); ?></td>
+                                                        <!-- <td class="text text-right"><?php echo $currency_symbol . amountFormat($feeList->fees); ?></td> -->
+                                                          <td class="text text-right">
+                                                <?php 
+
+                      echo $currency_symbol . $feeList->fees; 
+
+
+    if (($feeList->due_date != "0000-00-00" && $feeList->due_date != null) && (strtotime($feeList->due_date) < strtotime(date('Y-m-d')))) {
+            $tr_fine_amount = $feeList->fine_amount;
+            if ($feeList->fine_type != "" && $feeList->fine_type == "percentage") {
+
+                $tr_fine_amount = percentageAmount($feeList->fees, $feeList->fine_percentage);
+            }
+            ?>
+
+<span  class="text text-danger"><?php echo " + " . $currency_symbol.amountFormat($tr_fine_amount); ?></span>
+
+    <?php
+}
+
+                                                ?>
+                                            </td>
+
                                                         <td colspan="3"></td>
                                                         <td class="text text-right"><?php
 echo $currency_symbol . amountFormat($fee_paid);
@@ -1199,7 +1413,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                             ?>
                                                             <tr class="white-td">
-                                                                <td colspan="5" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
+                                                                <td colspan="4" class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
                                                                 <td class="text text-center">
                                                                     <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
                                                                 </td>
@@ -1221,7 +1435,7 @@ $fee_deposits = json_decode(($feeList->amount_detail));
         }
         ?>
                                             <tr class="success">
-                                                <td align="left" ></td>
+                                                <!-- <td align="left" ></td> -->
                                                 <td align="left" ></td>
                                                 <td align="left" ></td>
                                                 <td align="left" class="text text-left" >

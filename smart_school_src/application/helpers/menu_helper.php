@@ -155,7 +155,8 @@ if (!function_exists('main_menu_array')) {
                 'feediscount'    => array('index','edit','assign'),                               
                 'feesforward'    => array('index'),                               
                 'feereminder'    => array('setting'), 
-                'offlinepayment' => array('index'), 				
+                'offlinepayment' => array('index'), 
+				'customfeesmaster'  => array('index'),  
             ), 
             
             'income' => array(                                 
@@ -283,24 +284,23 @@ if (!function_exists('main_menu_array')) {
             ),            
             
             'reports' => array(  
-                'report'            => array('alumnireport','inventory','issueinventory','additem','inventorystock','library','studentbookissuereport','bookduereport','bookinventory','human_resource','staff_report','lesson_plan','teachersyllabusstatus','onlineexamrank','onlineexamattend','onlineexams','attendance','studentinformation','studentreport','online_admission_report','student_teacher_ratio','boys_girls_ratio','student_profile','sibling_report','admission_report','class_subject','classsectionreport','guardianreport','admissionreport','logindetailreport','parentlogindetailreport'),
-                
+                'report'            => array('alumnireport','inventory','issueinventory','additem','inventorystock','library','studentbookissuereport','bookduereport','bookinventory','human_resource','staff_report','lesson_plan','teachersyllabusstatus','onlineexamrank','onlineexamattend','onlineexams','attendance','studentinformation','studentreport','online_admission_report','student_teacher_ratio','boys_girls_ratio','student_profile','sibling_report','admission_report','class_subject','classsectionreport','guardianreport','admissionreport','logindetailreport','parentlogindetailreport'),                
                 'attendencereports' => array('attendance','classattendencereport','attendancereport','daily_attendance_report','staffattendancereport','biometric_attlog','reportbymonthstudent','reportbymonth','staffdaywiseattendancereport','daywiseattendancereport'), 
                 'payroll'           => array('payrollreport'), 
                 'onlineexam'        => array('report'),  
-                'examresult'        => array('rankreport','examinations'), 
+                'examresult'        => array('rankreport','examinations'),  
                 'book'              => array('issue_returnreport'), 
                 'homework'          => array('homeworkreport','evaluation_report'),                
                 'route'             => array('studenttransportdetails'), 
                 'hostelroom'        => array('studenthosteldetails'), 
                 'userlog'           => array('index'), 
                 'audit'             => array('index'),
-                'financereports'    => array('finance','reportduefees','reportdailycollection','reportbyname','studentacademicreport','collection_report','onlinefees_report','duefeesremark','income','expense','payroll','incomegroup','expensegroup','onlineadmission'),                
+                'financereports'    => array('finance','reportduefees','reportdailycollection','reportbyname','studentacademicreport','collection_report','onlinefees_report','duefeesremark','income','expense','payroll','incomegroup','expensegroup','onlineadmission','incomeexpensebalancereport'),                
                 'homework'          => array('homeworkordailyassignmentreport','homeworkreport','evaluation_report','dailyassignmentreport'),             
             ),            
             
             'system_settings' => array(  
-                'schsettings'           => array('index','logo','miscellaneous','backendtheme','mobileapp','studentguardianpanel','fees','idautogeneration','attendancetype','maintenance'),                     
+                'schsettings'           => array('index','logo','miscellaneous','backendtheme','mobileapp','studentguardianpanel','fees','idautogeneration','attendancetype','maintenance','whatsappsettings'),                     
                 'sessions'              => array('index','edit'),                     
                 'notification'          => array('setting'),                     
                 'smsconfig'             => array('index'),                     
@@ -321,6 +321,8 @@ if (!function_exists('main_menu_array')) {
                 'onlineadmission'       => array('admissionsetting'),                  
                 'updater'               => array('index'),                  
                 'sidemenu'              => array('index'),                  
+                'addons'              	=> array('index'),                  
+                'thermalprint'         => array('index'),                  
             ),
 
             'gmeet_live_classes' => array(               
@@ -350,8 +352,10 @@ if (!function_exists('main_menu_array')) {
             'online_course' => array(               
                 'course'        => array('index','setting'),               
                 'coursecategory'  => array('categoryadd','categoryedit'),               
-                'coursereport'   => array('report','coursepurchase','coursesellreport','trendingreport','completereport','courseratingreport','guestlist','quizperformance'),               
+                'coursereport'   => array('report','coursepurchase','coursesellreport','trendingreport','completereport','courseratingreport','guestlist','quizperformance','course_assignment_report','course_exam_result_report','course_exam_report','course_exam_attempt_report'),         
                 'offlinepayment'   => array('payment'),               
+                'courseexamquestion'   => array('index'),               
+                'coursetag'   => array('index'),               
             ),
             
             'cbse_exam' => array(               
@@ -372,6 +376,16 @@ if (!function_exists('main_menu_array')) {
                 'attendance'    => array('index'),                
                 'setting'       => array('index'),                              
             ),
+                
+            'holiday' => array(                            
+                'holiday'        => array('index','holidaytype','editholidaytype'),               
+            ),
+                
+            'student_cv' => array(                            
+                'resume'        => array('index','download','resume_setting','student_resume_details'),               
+            ),
+                
+            
             
         );
         if (array_key_exists($find_array, $array)) {

@@ -24,6 +24,7 @@ class Paypal extends Studentgateway_Controller {
         $this->session->set_userdata('sub_menu', 'book/index');
         $data = array();
         $data['params'] = $this->session->userdata('params');
+        
         $data['setting'] = $this->setting;
         $data['student_fees_master_array']=$data['params']['student_fees_master_array'];
         $this->load->view('user/gateway/paypal/index', $data);
@@ -56,7 +57,7 @@ class Paypal extends Studentgateway_Controller {
 
             $student_data = $this->student_model->get($params['student_id']);
            
-            $amount =number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');
+            $amount =number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', '');
             $data = array();
             $data['student_id'] = $this->input->post('student_id');
             $data['total'] = $amount;
@@ -98,7 +99,6 @@ class Paypal extends Studentgateway_Controller {
         $data['name'] = $params['name'];
         $data['guardian_phone'] = $student_data['guardian_phone'];
 
-
           $success_data = array(
             'guardian_phone' => $data['guardian_phone'],
             'name' => $data['name'],
@@ -124,7 +124,9 @@ class Paypal extends Studentgateway_Controller {
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+						'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_paypal_txn_id') . $ref_id,
                         'received_by'     => '',
@@ -142,7 +144,7 @@ class Paypal extends Studentgateway_Controller {
                     //========
                     }
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                      //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();

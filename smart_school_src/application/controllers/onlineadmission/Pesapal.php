@@ -30,7 +30,7 @@ class Pesapal extends OnlineAdmission_Controller
 
 	public function pay()
     {
-    	$this->session->set_userdata('payment_amount',$this->amount);
+    	$this->session->set_userdata('payment_amount',$this->customlib->getGatewayProcessingFees($this->amount)+$this->amount);
 		$reference_id = $this->session->userdata('reference');
 		$online_data = $this->onlinestudent_model->getAdmissionData($reference_id);
         $data['amount']   = convertBaseAmountCurrencyFormat($this->amount);
@@ -39,7 +39,7 @@ class Pesapal extends OnlineAdmission_Controller
         $consumer_secret  = $this->pay_method->api_secret_key;
         $signature_method = new OAuthSignatureMethod_HMAC_SHA1();
         $iframelink       = 'https://www.pesapal.com/API/PostPesapalDirectOrderV4';
-        $amount           = number_format(convertBaseAmountCurrencyFormat($data['amount']), 2);
+        $amount           = number_format(convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount), 2);
         $desc             = $this->lang->line('online_admission_form_fees');
         $type             = 'MERCHANT';
         $reference        = time();
@@ -145,13 +145,15 @@ class Pesapal extends OnlineAdmission_Controller
                 
                 $date         = date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat(date("Y-m-d", strtotime($apply_date))));  
 
-                $amount                           = $this->amount;
+                $amount                           = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
                 $transactionid                      = $pesapal_tracking_id;
                 $gateway_response['online_admission_id']   = $reference; 
 				$gateway_response['paid_amount']    = $amount;
 				$gateway_response['transaction_id'] = $transactionid;
 				$gateway_response['payment_mode']   = 'pesapal';
 				$gateway_response['payment_type']   = 'online';
+                $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
 				$gateway_response['note']           = $this->lang->line('online_fees_deposit_through_pesapal_txn_id') . $transactionid;
 				$gateway_response['date']           = date("Y-m-d H:i:s");
 				$return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

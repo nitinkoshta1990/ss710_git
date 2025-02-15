@@ -72,11 +72,9 @@ class Frontcms extends Admin_Controller
             );
     
             if (isset($_FILES["logo"]) && !empty($_FILES["logo"]['name'])) {
-
                 $img_name = $this->media_storage->fileupload("logo", "./uploads/school_content/logo/");
 
                 if ($this->input->post('id') != '') {
-
                     $row = $this->frontcms_setting_model->get($this->input->post('id'));
 
                     if ($row->logo != '') {
@@ -87,7 +85,6 @@ class Frontcms extends Admin_Controller
 
             }
             if (isset($_FILES["fav_icon"]) && !empty($_FILES["fav_icon"]['name'])) {
-
                 $img_name = $this->media_storage->fileupload("fav_icon", "./uploads/school_content/logo/");
 
                 if ($this->input->post('id') != '') {
@@ -98,8 +95,7 @@ class Frontcms extends Admin_Controller
                 }
                 $data['fav_icon'] = "./uploads/school_content/logo/" .$img_name;
             }
-            $this->frontcms_setting_model->add($data);
-            
+            $this->frontcms_setting_model->add($data);            
             
             $setting_data['id'] = 1;
             $setting_data['lang_id'] = $this->input->post('sch_lang_id');

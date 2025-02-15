@@ -43,7 +43,14 @@ if (empty($marksheet)) {
                             <table cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td valign="top" style="font-size: 20px; font-weight: bold; text-align: center;">
-                                    <?php echo $template->exam_name; ?></td>
+                                     <?php 
+                                    if(!empty($template->exam_name)){
+                                        echo $template->exam_name; 
+                                    }else{
+                                        echo $exam->exam;
+                                    }
+                                    ?>
+                                    <?php //echo $template->exam_name; ?></td>
                                 </tr>
                                  <?php
                                                 if ($template->exam_session) {
@@ -360,9 +367,11 @@ if ($student_value['image'] != '') {
                                                     <td><?php echo $this->lang->line('percentage') ?></td>
                                                     <td>
                                                         <?php
+                                                        $percentage_total=0;
+                                                        if($total_max_marks > 0){
                                                         echo number_format((($total_obtain_marks * 100) / $total_max_marks), 2, '.', '');
-
-                                                        $percentage_total = (($total_obtain_marks * 100) / $total_max_marks);
+                                                        $percentage_total = (($total_obtain_marks * 100) / $total_max_marks);                                                    
+                                                        }
                                                         ?>
                                                     </td>
                                                     <td>
@@ -481,7 +490,7 @@ if ($student_value['image'] != '') {
                                 ?>
    <tr>
             <td valign="top" style="padding-top: 10px;">
-                <table cellpadding="0" cellspacing="0" width="100%%" class="">
+                <table cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                       <td valign="top" width="30%"> <?php echo $this->lang->line('division') ?></td>
                         <td valign="top" style="font-weight: bold;">
@@ -499,7 +508,7 @@ if ($student_value['image'] != '') {
                                 ?>
    <tr>
             <td valign="top" style="padding-top: 10px;">
-                <table cellpadding="0" cellspacing="0" width="100%%" class="">
+                <table cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                       <td valign="top" width="30%"> <?php echo $this->lang->line('rank') ?></td>
                         <td valign="top" style="font-weight: bold;">
@@ -517,7 +526,7 @@ if ($student_value['image'] != '') {
                                 ?>
                                  <tr>
             <td valign="top" style="padding-top: 10px;">
-                <table cellpadding="0" cellspacing="0" width="100%" class="">                    
+                <table cellpadding="0" cellspacing="0" width="100%">                    
                     <tr>                    
                         <td valign="top" width="30%"><?php echo $this->lang->line('teacher_remark'); ?></td>
                         <td valign="top" style="font-weight: bold;"><?php echo $student_value['teacher_remark']; ?></td>
@@ -530,7 +539,7 @@ if ($student_value['image'] != '') {
                             ?>
         <tr>
             <td valign="top" style="padding-top: 10px;">
-                <table cellpadding="0" cellspacing="0" width="100%" class="">                    
+                <table cellpadding="0" cellspacing="0" width="100%">                    
                     <tr>                    
                         <td valign="top" width="30%"><?php echo $this->lang->line('date'); ?></td>
                         <td valign="top" style="font-weight: bold;"><?php echo $template->date; ?></td>
@@ -558,7 +567,7 @@ if ($student_value['image'] != '') {
                             ?>
       <tr>
             <td valign="top">
-                <table cellpadding="0" cellspacing="0" width="100%" class="">
+                <table cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                          <?php
                                             if ($template->left_sign != "") {
@@ -647,7 +656,14 @@ if($to_be_print < $total_students)
                             <table cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td valign="top" style="font-size: 20px; font-weight: bold; text-align: center;">
-                                    <?php echo $template->exam_name; ?></td>
+                                     <?php 
+                                    if(!empty($template->exam_name)){
+                                        echo $template->exam_name; 
+                                    }else{
+                                        echo $exam->exam;
+                                    }
+                                    ?>
+                                    <?php //echo $template->exam_name; ?></td>
                                 </tr>                                
                                 <?php   if ($template->exam_session) {   ?>
                                 <tr>

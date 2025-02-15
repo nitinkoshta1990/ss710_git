@@ -152,7 +152,6 @@ class Offlinepayment extends Admin_Controller
     public function update()
     {
         $this->form_validation->set_error_delimiters('', '');
-
         $this->form_validation->set_rules('payment_status', $this->lang->line('payment_status'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('amount', $this->lang->line('amount'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('fine', $this->lang->line('fine'), 'required|trim|xss_clean');
@@ -163,7 +162,6 @@ class Offlinepayment extends Admin_Controller
                 'payment_status' => form_error('payment_status'),
                 'amount'         => form_error('amount'),
                 'fine'           => form_error('fine'),
-
             );
             $array = array('status' => 0, 'error' => $data);
             echo json_encode($array);
@@ -181,8 +179,7 @@ class Offlinepayment extends Admin_Controller
                 'approved_by'  => $this->customlib->getStaffID(),
             );
 
-            $payment = $this->offlinePayment_model->update($update_data);
-       
+            $payment = $this->offlinePayment_model->update($update_data);      
 
             $array = array('status' => '1', 'error' => '', 'message' => $this->lang->line('success_message'));
             echo json_encode($array);

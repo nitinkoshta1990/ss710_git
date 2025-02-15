@@ -200,6 +200,7 @@ if ($this->rbac->hasPrivilege('design_admit_card', 'can_add')) {
                                     <tr>
                                         <th><?php echo $this->lang->line('certificate_name'); ?></th>
                                         <th><?php echo $this->lang->line('background_image'); ?></th>
+                                        <th><?php echo $this->lang->line('active'); ?></th>
                                         <th class="text-right noExport"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -222,6 +223,12 @@ if ($this->rbac->hasPrivilege('design_admit_card', 'can_add')) {
                                                         <i class="fa fa-picture-o fa-3x" aria-hidden="true"></i>
                                                     <?php }?>
                                                 </td>
+
+                                                <td>
+                                                    <input onclick="save_active_status(this.value)" type="radio" id="active_admit_card_<?php echo $certificate->id ?>" name="active_admit_card" value="<?php echo $certificate->id ?>"  <?php if($certificate->is_active==1){ echo "checked"; }else{ echo ""; } ?>>
+                                                </td>
+
+
                                                 <td class="mailbox-date text-right no-print white-space-nowrap">
                                                     <a data-toggle="tooltip"  id="<?php echo $certificate->id ?>" class="btn btn-default btn-xs view_data" title="<?php echo $this->lang->line('view'); ?>">
                                                         <i class="fa fa-reorder"></i>
@@ -364,4 +371,18 @@ if ($this->rbac->hasPrivilege('design_admit_card', 'can_edit')) {
             $("#submitbtn").button('loading');
         });
     })
+</script>
+
+<script type="text/javascript">
+    
+    function save_active_status(value){
+        $.ajax({
+                url: "<?php echo base_url('admin/admitcard/save_active_status') ?>",
+                method: "post",
+                data: {value: value},
+                success: function (data) {
+                    successMsg("<?php echo $this->lang->line('record_updated_successfully'); ?>");
+                }
+        });
+    }
 </script>

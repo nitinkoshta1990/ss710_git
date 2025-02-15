@@ -72,8 +72,9 @@ echo $this->session->flashdata('msg');
                                                         </div>
                                                         <div class="col-md-1 col-xs-2">
                                                             <div class="form-group">
+																<?php if($sch_setting_detail->online_admission_application_form){ ?>
                                                                 <a href="<?php echo base_url(); ?>admin/onlineadmission/download/<?php echo $sch_setting_detail->id; ?>" data-toggle="tooltip" data-original-title='<?php echo $this->lang->line('download_application_form'); ?>' class='btn btn-info btn-sm btn-sm-md'><i class="fa fa-download"></i></a>                                                          
-                                                                 
+                                                                <?php } ?> 
                                                             </div>
                                                         </div>
                                                      </div>

@@ -72,8 +72,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <th><?php echo $this->lang->line('admission_no'); ?></th>
                                         <th><?php echo $this->lang->line('name'); ?></th>
                                         <th><?php echo $this->lang->line('class'); ?></th>
-                                        <th><?php echo $this->lang->line('fee_type'); ?></th>
+                                        <th><?php echo $this->lang->line('fee_type'); ?></th>                                        
                                         <th><?php echo $this->lang->line('mode'); ?></th>
+										<th><?php echo $this->lang->line('transaction_description'); ?></th>
                                         <th class="text text-right"><?php echo $this->lang->line('amount'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
                                         <th class="text text-right"><?php echo $this->lang->line('discount'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
                                         <th class="text text-right"><?php echo $this->lang->line('fine'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
@@ -83,7 +84,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <tbody>
                                     <?php
                                         $count = 1;
- 
+                                        
                                         foreach ($collectlist as $key => $collect) {
 
                                             $amount = 0;
@@ -127,8 +128,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                             echo $collect['type'];
                                                         }
                                                     ?>
-                                                </td>
+                                                </td>                                                
                                                 <td><?php echo $this->lang->line(strtolower($collect['payment_mode'])); ?></td>
+												<td><?php echo $collect['description']; ?></td>
                                                 <td class="text text-right"> <?php echo $amountLabel; ?></td>
                                                 <td class="text text-right"><?php echo $discountLabel; ?> </td>
                                                 <td class="text text-right"><?php echo $fineLabel; ?></td>
@@ -150,8 +152,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                     <td style="font-weight:bold"><?php echo $this->lang->line('total') ?></td>
-                                    <td class="text text-right" style="font-weight:bold" ><?php echo amountFormat($allamount); ?></td>
+                                    <td class="text text-right" style="font-weight:bold"><?php echo amountFormat($allamount); ?></td>
                                     <td class="text text-right" style="font-weight:bold"><?php echo amountFormat($alldiscount); ?></td>
                                     <td class="text text-right" style="font-weight:bold"><?php echo amountFormat($finetotal); ?></td>
                                     <td class="text text-right" style="font-weight:bold"><?php echo amountFormat($alltotal); ?></td>                                                

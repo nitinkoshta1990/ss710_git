@@ -59,8 +59,7 @@ class Income extends Admin_Controller
 
     public function download($id)
     {
-        $income = $this->income_model->get($id);
-     
+        $income = $this->income_model->get($id);     
         $this->media_storage->filedownload($income['documents'], "uploads/school_income");
     }
 
@@ -156,6 +155,7 @@ class Income extends Admin_Controller
                     $this->form_validation->set_message('handle_upload', $this->lang->line('extension_not_allowed'));
                     return false;
                 }
+				
                 if ($file_size > $result->file_size) {
                     $this->form_validation->set_message('handle_upload', $this->lang->line('file_size_shoud_be_less_than') . number_format($result->file_size / 1048576, 2) . " MB");
                     return false;
@@ -203,7 +203,6 @@ class Income extends Admin_Controller
             );
 
             if (isset($_FILES["documents"]) && $_FILES['documents']['name'] != '' && (!empty($_FILES['documents']['name']))) {
-
                 $img_name = $this->media_storage->fileupload("documents", "./uploads/school_income/");
             } else {
                 $img_name = $income['documents'];
@@ -260,6 +259,7 @@ class Income extends Admin_Controller
                 if ($this->rbac->hasPrivilege('income', 'can_edit')) {
                     $editbtn = "<a href='" . base_url() . "admin/income/edit/" . $value->id . "'   class='btn btn-default btn-xs'  data-toggle='tooltip' title='" . $this->lang->line('edit') . "'><i class='fa fa-pencil'></i></a>";
                 }
+				
                 if ($this->rbac->hasPrivilege('income', 'can_delete')) {
                     $deletebtn = '';
                     $deletebtn = "<a onclick='return confirm(" . '"' . $this->lang->line('delete_confirm') . '"' . "  )' href='" . base_url() . "admin/income/delete/" . $value->id . "' class='btn btn-default btn-xs' title='" . $this->lang->line('delete') . "' data-toggle='tooltip'><i class='fa fa-trash'></i></a>";
@@ -357,7 +357,6 @@ class Income extends Admin_Controller
             $resultList        = $this->income_model->search("", $date_from, $date_to);
 
         } else {
-
             $search_text = $this->input->post('search_text');
             $resultList  = $this->income_model->search($search_text, "", "");
             $resultList  = $resultList;

@@ -1,12 +1,15 @@
 <div class="content-wrapper">
     <section class="content pb0">
     	<div class="row">
+    		<?php 
+
+    		if ($this->customlib->get_user_dashboard_setting_status('welcome_student')) { ?>
     		<div class="col-lg-6 col-md-6 col-sm-12">
-	    		<div class="box box-primary borderwhite">
+	    		<div class="box borderwhite shadow">
 	                <div class="box-body direct-top-equal-scroll-22">
 	                	<div class="row">
 	                		<div class="col-lg-3 col-md-3 col-sm-3">
-								<?php 
+								<?php   
 									if (!empty($student_data["image"])) {
                                         $file = base_url() . $student_data["image"].img_time();
                                     } else {                            
@@ -20,6 +23,9 @@
 							
 	                			<img src="<?php echo $file.''.img_time(); ?>" class="img-rounded img-responsive img-h-150 mb-xs-1">						
 								
+								
+											
+											
 	                		</div><!--./col-lg-3-->
 	                		<div class="col-lg-9 col-md-9 col-sm-9">
 								
@@ -36,20 +42,29 @@
 								<?php } elseif($attendence_percentage > 0 && $attendence_percentage >= $low_attendance_limit && $low_attendance_limit != '0.00'){ ?>
 								
 									<h4 class="mt0"><?php echo $this->lang->line('welcome'); ?>, <?php echo $studentsession_username; ?>! <?php echo $this->lang->line('keep_going'); ?>.</h4>
-									<p class="text-success  "><?php echo $this->lang->line('your_current_attendance_is'); ?> <?php echo $attendence_percentage ; ?>% <?php echo $this->lang->line('which_is_above'); ?> <?php echo $low_attendance_limit; ?>% <?php echo $this->lang->line('of_minimum_attendance_mark'); ?>.</p>	
+									<p class="text-success"><?php echo $this->lang->line('your_current_attendance_is'); ?> <?php echo $attendence_percentage ; ?>% <?php echo $this->lang->line('which_is_above'); ?> <?php echo $low_attendance_limit; ?>% <?php echo $this->lang->line('of_minimum_attendance_mark'); ?>.</p>	
 									
 								<?php }else{ ?>	
 									
 									<h4 class="mt0"><?php echo $this->lang->line('welcome'); ?>, <?php echo $studentsession_username; ?></h4>
 								<?php } ?>
-	                		 
+								<div class="d-flex align-items-center">	
+									<a class="text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student_data['student_id'] . '.png'); ?>" target="_blank">
+                                            <img class="h-50" src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student_data['student_id'] . '.png'); ?>" width="auto" height="auto" /></a>
+									<a class="text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/barcodes/' . $student_data['student_id'] . '.png'); ?>" target="_blank">
+                                            <img src="<?php echo base_url('uploads/student_id_card/barcodes/' . $student_data['student_id'] . '.png'); ?>" width="auto" height="auto" /></a>
+	                		    </div>
 	                		</div><!--./col-lg-10-->
 	                	</div><!--./row-->
 	                </div>
 	            </div>   
 	        </div><!--./col-lg-6-->
+
+	    <?php } ?>
+		
+	    <?php if ($this->customlib->get_user_dashboard_setting_status('notice_board') && $this->module_lib->hasActive('communicate') && $this->studentmodule_lib->hasActive('notice_board')) { ?>
 			<div class="col-lg-6 col-md-6 col-sm-12">	    		 
-				<div class="box box-primary borderwhite">
+				<div class="box borderwhite shadow">
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('notice_board'); ?></h3>      
                     </div>
@@ -90,11 +105,13 @@
                     </div>                   
                 </div>	 
 	        </div><!--./col-lg-6-->  
+	    <?php } ?>
     	</div><!--./row-->	
 		 
 		<div class="row">
-			<div class="col-lg-4 col-md-4 col-sm-12">
-				<div class="box box-primary borderwhite">
+			<?php if ($this->customlib->get_user_dashboard_setting_status('subject_progress') && $this->module_lib->hasActive('lesson_plan') && $this->studentmodule_lib->hasActive('syllabus_status')) { ?>
+			<div class="col-lg-6 col-md-6 col-sm-12">
+				<div class="box borderwhite shadow">
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('subject_progress'); ?></h3>      
                     </div>
@@ -131,9 +148,11 @@
                     </div>
                 </div>
 			</div><!--./col-lg-4-->
-
-			<div class="col-lg-4 col-md-4 col-sm-12">
-				<div class="box box-primary borderwhite">
+		<?php } ?>
+		
+		<?php if ($this->customlib->get_user_dashboard_setting_status('upcomming_class') && $this->module_lib->hasActive('academics') && $this->studentmodule_lib->hasActive('class_timetable')) { ?>
+			<div class="col-lg-6 col-md-6 col-sm-12">
+				<div class="box borderwhite shadow">
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('upcomming_class'); ?></h3>      
                     </div>
@@ -200,9 +219,11 @@
                     </div>
                 </div>
 			</div><!--./col-lg-4-->
+		<?php } ?>
 
-			<div class="col-lg-4 col-md-4 col-sm-12">
-				<div class="box box-primary borderwhite">
+		<?php if ($this->customlib->get_user_dashboard_setting_status('homework') && $this->module_lib->hasActive('homework') && $this->studentmodule_lib->hasActive('homework') ) { ?>
+			<div class="col-lg-6 col-md-6 col-sm-12">
+				<div class="box borderwhite shadow">
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('homework'); ?></h3>      
                     </div>
@@ -255,13 +276,48 @@
 						<?php } ?>
                     </div>
                 </div>
-			</div><!--./col-lg-4-->			
+			</div><!--./col-lg-4-->	
+		<?php } ?>
+			
+		<?php if ($this->customlib->get_user_dashboard_setting_status('visitor_list') && $this->module_lib->hasActive('front_office') && $this->studentmodule_lib->hasActive('visitor_book')) { ?>
+			<div class="col-lg-6 col-md-6 col-sm-12">
+				<div class="box borderwhite shadow">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><?php echo $this->lang->line('visitor_list'); ?></h3>      
+                    </div>
+                    <div class="box-body direct-chat-messages">
+						<?php if(!empty($visitor_list)){ ?>
+                    	<ul class="user-progress ps">                    		 
+	                    <?php 
+							foreach($visitor_list as $visitor_value){
+							?>
+			                <li class="doc-file-type">			                   
+				                <div class="set-flex">
+					                <div class="text-muted mb0">
+										<b><?php echo $visitor_value['name']; ?></b><br> (<?php echo $this->lang->line('purpose'); ?>: <?php echo $visitor_value['purpose']; ?>)				
+									</div>									
+					                <div class="text-muted mb0"><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($visitor_value['date'])); ?>
+					               </div>
+			            		</div> 			               
+			                </li><!-- /.item -->
+			            <?php } ?>
+			                
+			            </ul>
+						<?php }else{ ?>
+						
+						<img src="https://smart-school.in/ssappresource/images/addnewitem.svg"  width="150" class="center-block mt20">
+						
+						<?php } ?>					
+                    </div>                   
+                </div>    
+			</div><!--./col-lg-4-->
+		<?php } ?>	
 		</div><!--./row-->	
 
 		<div class="row">
-		
+		<?php if ($this->customlib->get_user_dashboard_setting_status('teacher_list') && $this->module_lib->hasActive('human_resource')) { ?>
 			<div class="col-lg-3 col-md-3 col-sm-12">
-				<div class="box box-primary borderwhite">
+				<div class="box borderwhite shadow">
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('teacher_list'); ?></h3>      
                     </div>
@@ -313,41 +369,11 @@
                     </div>
                 </div>
 			</div><!--./col-lg-4-->	
+		<?php } ?>	
 		
-			<div class="col-lg-4 col-md-4 col-sm-12">
-				<div class="box box-primary borderwhite">
-                    <div class="box-header with-border">
-                        <h3 class="box-title"><?php echo $this->lang->line('visitor_list'); ?></h3>      
-                    </div>
-                    <div class="box-body direct-chat-messages">
-						<?php if(!empty($visitor_list)){ ?>
-                    	<ul class="user-progress ps">                    		 
-	                    <?php 
-							foreach($visitor_list as $visitor_value){
-							?>
-			                <li class="doc-file-type">			                   
-				                <div class="set-flex">
-					                <div class="text-muted mb0">
-										<b><?php echo $visitor_value['name']; ?></b><br> (<?php echo $this->lang->line('purpose'); ?>: <?php echo $visitor_value['purpose']; ?>)				
-									</div>									
-					                <div class="text-muted mb0"><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($visitor_value['date'])); ?>
-					               </div>
-			            		</div> 			               
-			                </li><!-- /.item -->
-			            <?php } ?>
-			                
-			            </ul>
-						<?php }else{ ?>
-						
-						<img src="https://smart-school.in/ssappresource/images/addnewitem.svg"  width="150" class="center-block mt20">
-						
-						<?php } ?>					
-                    </div>                   
-                </div>    
-			</div><!--./col-lg-4-->
-
-			<div class="col-lg-5 col-md-5 col-sm-12">
-				<div class="box box-primary borderwhite">
+		<?php if ($this->customlib->get_user_dashboard_setting_status('library') && $this->module_lib->hasActive('library') && $this->studentmodule_lib->hasActive('library')) { ?>
+			<div class="col-lg-12 col-md-12 col-sm-12">
+				<div class="box borderwhite shadow">
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('library_book_issue_list');?></h3>      
                     </div>
@@ -402,6 +428,8 @@
                     </div>
                 </div>    
 			</div><!--./col-lg-4-->
+		<?php } ?>
+		
 		</div><!--./row--> 
 	</section>
 </div>		

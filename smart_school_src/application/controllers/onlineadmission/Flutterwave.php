@@ -47,7 +47,7 @@ class Flutterwave extends OnlineAdmission_Controller
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CUSTOMREQUEST  => "POST",
             CURLOPT_POSTFIELDS     => json_encode([
-                'amount'         => convertBaseAmountCurrencyFormat($amount),
+                'amount'         => convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($amount)+$this->amount),
                 'customer_email' => $customer_email,
                 'currency'       => $currency,
                 'txref'          => $txref,
@@ -143,6 +143,8 @@ redirect(base_url("onlineadmission/checkout/paymentfailed/" . $online_data->refe
                 $gateway_response['transaction_id'] = $transactionid;
                 $gateway_response['payment_mode']   = 'flutterwave';
                 $gateway_response['payment_type']   = 'online';
+                $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
                 $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_flutterwave_txn_id')  . $transactionid;
                 $gateway_response['total_amount']   = $amount;
                 $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

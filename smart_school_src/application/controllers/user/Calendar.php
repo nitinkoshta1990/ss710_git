@@ -55,6 +55,9 @@ class Calendar extends Student_Controller
     {
         $userdata = $this->customlib->getLoggedInUserData();
         $result   = $this->calendar_model->getStudentEvents();
+
+        // echo $this->db->last_query();die;
+
         if (!empty($result)) {
             foreach ($result as $key => $value) {
                 $event_type = $value["event_type"];
@@ -68,8 +71,40 @@ class Calendar extends Student_Controller
                     }
                 }
 
-                if ($status == 1) {
-                    $eventdata[] = array('title' => $value["event_title"],
+                if($event_type == "task"){
+                if ($status == 1) { //task created by logged in user
+                    $eventdata[] = array(
+                        'title' => $value["event_title"],
+                        'start'                      => $value["start_date"],
+                        'end'                        => $value["end_date"],
+                        'description'                => $value["event_description"],
+                        'id'                         => $value["id"],
+                        'backgroundColor'            => $value["event_color"],
+                        'borderColor'                => $value["event_color"],
+                        'event_type'                 => $value["event_type"],
+                    );
+                }
+                }else if($event_type == "public"){
+                    $eventdata[] = array(
+                        'title' => $value["event_title"],
+                        'start'                      => $value["start_date"],
+                        'end'                        => $value["end_date"],
+                        'description'                => $value["event_description"],
+                        'id'                         => $value["id"],
+                        'backgroundColor'            => $value["event_color"],
+                        'borderColor'                => $value["event_color"],
+                        'event_type'                 => $value["event_type"],
+                    );
+                }else if($value["holiday_type"]!=null || $value["holiday_type"]!=0){
+                    
+                    if($value['is_default']==1){
+                        $event_title= $this->lang->line(strtolower($value['event_title']));
+                    }else{
+                        $event_title=  $value['event_title'];
+                    }
+
+                    $eventdata[] = array(
+                        'title' => $event_title,
                         'start'                      => $value["start_date"],
                         'end'                        => $value["end_date"],
                         'description'                => $value["event_description"],
@@ -80,7 +115,6 @@ class Calendar extends Student_Controller
                     );
                 }
             }
-
             echo json_encode($eventdata);
         }
     }
@@ -91,7 +125,6 @@ class Calendar extends Student_Controller
         $this->form_validation->set_rules('task_date', $this->lang->line('date'), 'trim|required|xss_clean');
 
         if ($this->form_validation->run() == false) {
-
             $msg = array(
                 'task_title' => form_error('task_title'),
                 'task_date'  => form_error('task_date'),
@@ -140,7 +173,7 @@ class Calendar extends Student_Controller
 
     public function gettaskbyid($id)
     {
-        $result = $this->calendar_model->getEvents($id);
+        $result = $this->calendar_model->getEventsById($id);
         echo json_encode($result);
     }
 

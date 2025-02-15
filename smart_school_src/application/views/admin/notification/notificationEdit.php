@@ -28,6 +28,20 @@ foreach ($prev_roles as $prev_roles_key => $prev_roles_value) {
                             <?php echo $this->customlib->getCSRF(); ?>
                             <div class="col-md-9">
                               <div class="row">
+
+                                 <?php if($sms_validation==1){
+                                        $class="show";
+                                    }else{
+                                        $class="hide";
+                                    } ?>
+
+                                <div class="col-md-12 <?php echo $class;?>" id="sms_template_id">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('sms_template'); ?></label>
+                                         <input type="text" name="template_id" id="template_id" class="form-control" autocomplete="off">
+                                        <span class="text-danger"><?php echo form_error('template_id'); ?></span>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('title'); ?><small class="req"> *</small></label>
@@ -52,7 +66,7 @@ foreach ($prev_roles as $prev_roles_key => $prev_roles_value) {
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('attachment'); ?></label>
-                                        <input type="file" id="file" name="file" class="form-control filestyle" autocomplete="off" />
+                                        <input type="file" id="file" name="file[]" class="form-control filestyle" autocomplete="off" />
                                         <span class="text-danger"><?php echo form_error('file'); ?></span>
                                     </div>
                                 </div>
@@ -77,7 +91,7 @@ if (isset($error_message)) {
                                     <div class="form-horizontal">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('message_to'); ?><small class="req"> *</small></label>
                                         <div class="checkbox">
-                                            <label><input type="checkbox" name="visible[]" value="student" <?php echo set_checkbox('visible[]', 'student', (set_value('visible[]', $notification['visible_student']) == 'Yes') ? true : false); ?> /> <b><?php echo $this->lang->line('student'); ?></b> </label>
+                                            <label><input type="checkbox" name="visible[]" id="student_checkbox" value="student" <?php echo set_checkbox('visible[]', 'student', (set_value('visible[]', $notification['visible_student']) == 'Yes') ? true : false); ?> /> <b><?php echo $this->lang->line('student'); ?></b> </label>
                                         </div>
                                         <div class="checkbox">
                                             <label><input type="checkbox" name="visible[]"  value="parent"  <?php echo set_checkbox('visible[]', 'student', (set_value('visible[]', $notification['visible_parent']) == 'Yes') ? true : false); ?>  /> <b><?php echo $this->lang->line('parent'); ?></b></label>
@@ -97,11 +111,43 @@ foreach ($roles as $role_key => $role_value) {
 ?>
                                     </div>
                                     <span class="text-danger"><?php echo form_error('visible[]'); ?></span>
+
+
+                                      <!-- DESCRIPTION TO SEND NOTIFICATION IN DIFFERENT MEDIUM -->
+                                    <br>
+                                    <div class="">
+                                    <?php
+                                    if (isset($error_message)) {
+                                        echo "<div class='alert alert-danger'>" . $error_message . "</div>";
+                                    }  ?>
+                                    <div class="form-horizontal">
+                                        <label for="exampleInputEmail1"><?php echo $this->lang->line('send_by'); ?></label>
+                                            <div class="">
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" name="mail" id="mail" value="1" <?php if(isset($mail)){ echo "checked"; }else{ echo "";}?> ><?php  echo $this->lang->line('email'); ?>
+                                                </label>
+                                            </div>
+                                            <div class="">
+                                               <label class="checkbox-inline">
+                                                    <input type="checkbox" name="sms" id="sms" value="1"  <?php if(isset($sms)){ echo "checked"; }else{ echo "";}?>><?php echo $this->lang->line('sms'); ?>
+                                                </label>
+                                            </div>
+                                            <div class="" id="student_notification" class="">
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" name="notification" id="notification"  value="1"  <?php if(isset($mobile_notification)){ echo "checked"; }else{ echo "";}?>><?php echo $this->lang->line('mobile_app') ?>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <span class="text-danger"><?php echo form_error('mail'); ?></span>
+                                        <span class="text-danger"><?php echo form_error('sms'); ?></span>
+                                        <span class="text-danger"><?php echo form_error('notification'); ?></span>
+                                    </div>
+                                    <!-- DESCRIPTION TO SEND NOTIFICATION IN DIFFERENT MEDIUM -->
                                 </div>
-                            </div>
+                            </div>                          
                             <div class="box-footer" style="clear: both;">
                                 <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> <?php echo $this->lang->line('send'); ?> </button>
+                                    <button type="submit"  id="submitbtn"  class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> <?php echo $this->lang->line('send'); ?> </button>
                                 </div>
                             </div>
                         </div>
@@ -120,4 +166,54 @@ foreach ($roles as $role_key => $role_value) {
     $(function () {
         $("#compose-textarea").wysihtml5();
     });
+</script>
+
+
+<script>
+    $(function(){
+        $('#form1'). submit( function() {
+            $("#submitbtn").button('loading');
+        });
+    })
+</script>
+
+
+<script>
+
+$("#sms").change(function () {
+    var sms_check= $('#sms').is(":checked"); 
+    if (sms_check==true){
+        $("#sms_template_id").addClass("show");
+        $("#sms_template_id").removeClass("hide");
+    }else{
+        $('#template_id').val("");
+        $("#sms_template_id").removeClass("show");
+        $("#sms_template_id").addClass("hide");
+    }
+});
+
+$(document).ready(function(){
+     var sms_check= $('#student_checkbox').is(":checked"); 
+        if (sms_check==true){
+            $("#student_notification").addClass("show");
+            $("#student_notification").removeClass("hide");
+        }else{
+            $('#notification').prop('checked', false);
+            $("#student_notification").removeClass("show");
+            $("#student_notification").addClass("hide");
+        }
+
+    $("#student_checkbox").change(function () {
+        var sms_check= $('#student_checkbox').is(":checked"); 
+        if (sms_check==true){
+            $("#student_notification").addClass("show");
+            $("#student_notification").removeClass("hide");
+        }else{
+            $('#notification').prop('checked', false);
+            $("#student_notification").removeClass("show");
+            $("#student_notification").addClass("hide");
+        }
+    });
+});
+
 </script>

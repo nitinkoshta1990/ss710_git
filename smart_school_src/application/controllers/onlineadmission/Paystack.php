@@ -32,7 +32,7 @@ class Paystack extends OnlineAdmission_Controller
     {
         $reference = $this->session->userdata('reference');
 
-        $amount       = convertBaseAmountCurrencyFormat($this->amount) * 100;
+        $amount       = convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount) * 100;
         $online_data = $this->onlinestudent_model->getAdmissionData($reference);
         $this->session->set_userdata('payment_amount',$this->amount);
         $ref          = time() . "02";
@@ -71,7 +71,7 @@ class Paystack extends OnlineAdmission_Controller
 
     public function complete($ref)
     {
-        $amount = $this->amount;
+        $amount = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $reference  = $this->session->userdata('reference');
         $online_data = $this->onlinestudent_model->getAdmissionData($reference);
         $apply_date=date("Y-m-d H:i:s");
@@ -107,6 +107,8 @@ class Paystack extends OnlineAdmission_Controller
                         $gateway_response['transaction_id'] = $ref;
                         $gateway_response['payment_mode']   = 'paystack';
                         $gateway_response['payment_type']   = 'online';
+                        $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
                         $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_paystack_txn_id') . $transactionid;
                         $gateway_response['date']           = date("Y-m-d H:i:s");
                         $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

@@ -71,17 +71,18 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1"><?php echo $this->lang->line('year'); ?></label>
+                                        <label for="exampleInputEmail1"><?php echo $this->lang->line('year'); ?></label><small class="req"> *</small>
                                         <select id="year" name="year" class="form-control">
                                             <option value=""><?php echo $this->lang->line('select'); ?></option>
                                             <?php
                                             foreach ($yearlist as $y_key => $year) {
                                             ?>
-                                                <option value="<?php echo $year["year"] ?>" <?php
-                                                                                            if ($year["year"] == date("Y")) {
-                                                                                                echo "selected";
-                                                                                            }
-                                                                                            ?>><?php echo $year["year"]; ?></option>
+                                            <option value="<?php echo $year["year"] ?>" 
+                                            <?php
+                                            if ($year["year"] == $year_selected) {
+                                                echo "selected";
+                                            }
+                                            ?>><?php echo $year["year"]; ?></option>
                                             <?php
                                             }
                                             ?>
@@ -230,19 +231,19 @@
                                                         <th><?php echo $monthAttendance[$i][$student_value['id']]['absent']; ?></th>
                                                         <th><?php echo $monthAttendance[$i][$student_value['id']]['half_day']; ?></th>
                                                         <th><?php echo $monthAttendance[$i][$student_value['id']]['holiday']; ?></th>
+                                                        <th><?php echo $monthAttendance[$i][$student_value['id']]['half_day_second_shift']; ?></th>
                                                         <?php
-                                                        foreach ($attendence_array as $at_key => $at_value) {
-                                                        ?>
+                                                        foreach ($attendence_array as $at_key => $at_value) {  ?>
                                                             <th class="tdcls text text-center">
-                                                                <span data-toggle="popover" class="detail_popover" data-original-title="" title=""><a href="#" style="color:#333"><?php
-                                                                                                                                                                                    print_r($resultlist[$at_value][$student_value['id']]['key']);
-                                                                                                                                                                                    ?></a></span>
-                                                                <div class="fee_detail_popover" style="display: none"><?php
-                                                                                                                        if (!empty($resultlist[$at_value][$student_value['id']]['remark'])) {
-                                                                                                                            echo $resultlist[$at_value][$student_value['id']]['remark'];
-                                                                                                                        }
-                                                                                                                        ?></div>
-                                                            </th>
+                                                                <center>
+                                                                <span data-toggle="popover" class="detail_popover" data-original-title="" title="">
+                                                                <a href="#" style="color:#333"><?php  print_r($resultlist[$at_value][$student_value['id']]['key']);  ?></a></span>
+                                                                <div class="fee_detail_popover" style="display: none">
+                                                                    <?php
+                                                                        if (!empty($resultlist[$at_value][$student_value['id']]['remark'])) {
+                                                                                echo $resultlist[$at_value][$student_value['id']]['remark'];
+                                                                    }  ?></div>
+                                                            </center></th>
                                                         <?php
                                                         }
                                                         ?>

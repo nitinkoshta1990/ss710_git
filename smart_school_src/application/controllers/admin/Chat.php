@@ -86,12 +86,9 @@ class Chat extends Admin_Controller {
         $data['recever_name'] = $this->Chat_model->receiver_name($_POST['receiver_id'], $_POST['type']);
         $data['conversation'] = $this->Chat_model->conversation($_POST['sender_id']);
         $status = count($data['conversation']);
-
         if ($status == 1) {
-
             echo "0";
         } else {
-
             echo "1";
         }
     }
@@ -204,37 +201,18 @@ class Chat extends Admin_Controller {
         echo json_encode($array);
     }
 
-
-    // //=========================================
-    // public function searchuser() {
-    //     $keyword = $this->input->post('keyword');
-    //     $staff_id = $this->customlib->getStaffID();
-    //     $chat_user = $this->chatuser_model->getMyID($staff_id, 'staff');
-    //     $chat_user_id = 0;
-    //     if (!empty($chat_user)) {
-    //         $chat_user_id = $chat_user->id;
-    //     }
-    //     $data['sch_setting']= $this->sch_setting_detail;
-    //     $data['chat_user'] = $this->chatuser_model->searchForUser($keyword, $chat_user_id, $staff_id, 'staff');
-    //     $userlist = $this->load->view('admin/chat/_partialSearchUser', $data, true);
-    //     $array = array('status' => '1', 'error' => '', 'page' => $userlist);
-
-    //     echo json_encode($array);
-    // }
-
     public function myuser() {
         $data = array();
         $staff_id = $this->customlib->getStaffID();
         $chat_user = $this->chatuser_model->getMyID($staff_id, 'staff');
         $data['chat_user'] = array();
         $data['userList'] = array();
-       $data['sch_setting']= $this->sch_setting_detail;
+        $data['sch_setting']= $this->sch_setting_detail;
         if (!empty($chat_user)) {
             $data['chat_user'] = $chat_user;
             $data['userList'] = $this->chatuser_model->myUser($staff_id, $chat_user->id);
         }
 
-        
         $data['super_admin_visibility'] = $this->customlib->superadmin_visible(); 
         $userlist = $this->load->view('admin/chat/_partialmyuser', $data, true);
         $array = array('status' => '1', 'error' => '', 'page' => $userlist);

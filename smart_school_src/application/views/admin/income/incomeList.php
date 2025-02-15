@@ -108,12 +108,12 @@ if ($this->rbac->hasPrivilege('income', 'can_add')) {
                         </div><!-- /.box-tools -->
                     </div><!-- /.box-header -->
                     <div class="box-body">
-                        <div class="table-responsive mailbox-messages overflow-visible-lg">
-                                 <table class="table table-striped table-bordered table-hover income-list" data-export-title="<?php echo $this->lang->line('income_list'); ?>">
+                        <div class="table-responsive mailbox-messages">
+                            <table class="table table-striped table-bordered table-hover income-list" data-export-title="<?php echo $this->lang->line('income_list'); ?>">
                                 <thead>
                                     <tr>
                                         <th><?php echo $this->lang->line('name'); ?></th>
-                                        <th><?php echo $this->lang->line('description'); ?></th>
+                                        <th width="20%"><?php echo $this->lang->line('description'); ?></th>
                                         <th class="white-space-nowrap"><?php echo $this->lang->line('invoice_number'); ?></th>
                                         <th class="white-space-nowrap"><?php echo $this->lang->line('date'); ?></th>
                                         <th class="white-space-nowrap"><?php echo $this->lang->line('income_head'); ?></th>

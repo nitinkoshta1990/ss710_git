@@ -163,9 +163,7 @@ class Calendar extends Admin_Controller
             );
 
             $this->calendar_model->saveEvent($eventdata);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
-
         }
         echo json_encode($array);
     }
@@ -212,9 +210,6 @@ class Calendar extends Admin_Controller
 
             $start_date = date('Y-m-d H:i:s', $this->customlib->dateTimeformatTwentyfourhour($this->input->post("event_from")));
             $end_date   = date('Y-m-d H:i:s', $this->customlib->dateTimeformatTwentyfourhour($this->input->post("event_to")));
-            // $this->customlib->dateFormatToYYYYMMDD($this->input->post('event_to'));
-            
-            
             $eventdata = array('id' => $id,
                 'event_title'           => $event_title,
                 'event_description'     => $event_description,
@@ -257,7 +252,6 @@ class Calendar extends Admin_Controller
                 }
 
                 if ($event_type == 'task') {
-
                     if (($event_for == $value["event_for"]) && ($value["role_id"] == $userdata["role_id"])) {
                         $eventdata[] = array('title' => $value["event_title"],
                             'start'                      => $value["start_date"],
@@ -291,10 +285,30 @@ class Calendar extends Admin_Controller
                             'event_type'                 => $value["event_type"],
                         );
                     }
-
                 }
-            }
+                if ($value["holiday_type"]!=null || $value["holiday_type"]!=0) { //for holidays
+                    if($value['is_default']==1){
+                        $event_title =  $this->lang->line(strtolower($value['event_title']));
+                    }else{
+                        $event_title =  $value['event_title'];
+                    }
 
+                    $title          =     $event_title;
+                    $from_date      =     $value["start_date"];
+                    $to_date        =     $value["end_date"];                            
+                    $eventdata[]    =     array(
+                        'title'                      => $title,
+                        'start'                      => $from_date,
+                        'end'                        => $to_date,
+                        'description'                => $value["event_description"],
+                        'id'                         => '',
+                        'backgroundColor'            => $value["event_color"],
+                        'borderColor'                => $value["event_color"],
+                        'event_type'                 => $value["event_type"],
+                         ); 
+
+                    }
+            }
             echo json_encode($eventdata);
         }
     }
@@ -304,7 +318,7 @@ class Calendar extends Admin_Controller
         if (!$this->rbac->hasPrivilege('calendar_to_do_list', 'can_view')) {
             access_denied();
         }
-        $result              = $this->calendar_model->getEvents($id);
+        $result              = $this->calendar_model->getEventsById($id);
         $start_date          = date($this->customlib->getSchoolDateFormat() . " H:i:s", strtotime($result["start_date"]));
         $end_date            = date($this->customlib->getSchoolDateFormat() . " H:i:s", strtotime($result["end_date"]));
         $colorid             = trim($result["event_color"], "#");
@@ -336,9 +350,7 @@ class Calendar extends Admin_Controller
         if (!$this->rbac->hasPrivilege('calendar_to_do_list', 'can_edit')) {
             access_denied();
         }
-
-        $result = $this->calendar_model->getEvents($id);
-
+        $result = $this->calendar_model->getEventsById($id);
         echo json_encode($result);
     }
 

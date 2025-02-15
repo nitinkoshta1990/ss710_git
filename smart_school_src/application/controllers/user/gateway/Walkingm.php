@@ -40,7 +40,7 @@ class Walkingm extends Studentgateway_Controller {
         $data['student_fees_master_array']=$data['params']['student_fees_master_array'];
             $this->load->view('user/gateway/walkingm/index', $data);
         } else {
-            $amount =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'])), 2, '.', '');
+            $amount =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge'])), 2, '.', '');
           $payment_array['payer']="Walkingm";
           $payment_array['amount']=$amount;
           $payment_array['currency']=$params['invoice']->currency_name;;
@@ -75,7 +75,9 @@ class Walkingm extends Studentgateway_Controller {
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+                        'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_walkingm_txn_id') . $transaction_id,
                         'received_by'     => '',
@@ -93,7 +95,7 @@ class Walkingm extends Studentgateway_Controller {
                     //========
                     }
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                      //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();
@@ -121,7 +123,6 @@ class Walkingm extends Studentgateway_Controller {
                             'fee_category' => $fee_category,
                         );
 
-
                         if ($response_value['student_transport_fee_id'] != 0 && $response_value['fee_category'] == "transport") {
 
                             $data['student_fees_master_id']   = null;
@@ -137,8 +138,6 @@ class Walkingm extends Studentgateway_Controller {
                             $fine_percentage[] = $mailsms_array->fine_percentage;
                             $fine_amount[]     = $mailsms_array->fine_amount;
                             $amount[]          = $mailsms_array->amount;
-
-
 
                         } else {
 
@@ -179,7 +178,6 @@ class Walkingm extends Studentgateway_Controller {
                     $obj_mail['code']            = "(".implode(',', $code).")";
                     $obj_mail['fee_category']    = $fee_category;
                     $obj_mail['send_type']    = 'group';
-
 
                     $this->mailsmsconf->mailsms('fee_submission', $obj_mail);
 

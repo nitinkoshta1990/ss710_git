@@ -242,9 +242,6 @@ class Payroll extends Admin_Controller
                         }
                                 
                         if ($allowance_prev_id[$i] != 0) {
-                        
-
-        
                             $update_payslip_allowance[] = array(
                                 'id'             => $allowance_prev_id[$i],
                                 'payslip_id'     => $payslipid,

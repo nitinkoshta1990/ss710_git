@@ -49,7 +49,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                             <th class="text-right"><?php echo $this->lang->line('monthly_fees'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?> </span></th>
                                             <th><?php echo $this->lang->line('distance_km'); ?></th>
                                             <th><?php echo $this->lang->line('pickup_time'); ?></th>
-                                            <th><?php echo $this->lang->line('action'); ?></th>
+                                            <th class="noExport"><?php echo $this->lang->line('action'); ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,7 +90,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                     <?php
 }?> </td>
 
-                                                        <td class="mailbox-date pull-right no-print">
+                                                    <td class="mailbox-date pull-right no-print noExport">
                                                         <?php if ($this->rbac->hasPrivilege('route_pickup_point', 'can_view')) {?>
                                                              <a onclick="reorder('<?php echo $data["transport_route_id"]; ?>')" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo ('Reorder'); ?>">
                                                                 <i class="fa fa-reorder"></i>
@@ -185,7 +185,7 @@ if (isset($error_message)) {
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('route_list'); ?></label><small class="req"> *</small>
                                     <input type="hidden" name="action_type" id="action_type">
-                                    <select class="form-control" onchange="get_pickup_point(this.value,'')" name="route_id" id="route_id">
+                                    <select class="form-control" name="route_id" id="route_id">
                                         <option value=""><?php echo $this->lang->line('select'); ?></option>
                                             <?php
 foreach ($vehroutelist as $vehroute) {

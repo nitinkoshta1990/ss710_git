@@ -215,7 +215,7 @@ $count++;
                                         <?php }if ($sch_setting->student_photo) {?>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="exampleInputFile"><?php echo $this->lang->line('student_photo'); ?></label>
+                                                    <label for="exampleInputFile"><?php echo $this->lang->line('student_photo'); ?> (100px X 100px)</label>
                                                     <input class="filestyle form-control" type='file' name='file' id="file" size='20' />
                                                 </div>
                                                 <span class="text-danger"><?php echo form_error('file'); ?></span>
@@ -537,10 +537,14 @@ echo set_value('hostel_id', $student['hostel_id']) == $hostel_value['id'] ? "sel
                                       <?php
 if (!empty($feesessiongroup_model)) {
         ?>
-<table class="table">
+<table class="table mb0">
     <tbody>
         <?php
 foreach ($feesessiongroup_model as $feesessiongroup_key => $feesessiongroup_value) {
+
+        if($feesessiongroup_value->nature=='custom' && $feesessiongroup_value->student_id!=$id){
+            continue;
+        }
             $total_fees = 0;
 
             if ($feesessiongroup_value->student_fees_master_id > 0) {
@@ -603,10 +607,99 @@ echo $this->customlib->dateformat($fee_type_value->due_date);
     <?php
 }
     ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
+     </div>
+   </div>
+</div>
 
+
+<!-- fees discount group -->
+
+<?php 
+if (!empty($feediscountList)) {
+    $total_amount=0;
+    foreach($feediscountList as $key=>$feediscount){
+        if(is_value_exist($student_fees_discount,$feediscount['id'])==true){ 
+            $total_amount+=$feediscount['amount'];
+        }
+    } 
+} 
+?>
+    <div class="mainstudent discount_div tshadow mb25">
+       <div id="fade"></div>
+        <div id="modal">
+            <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i><span class="sr-only">Loading...</span>
+            <img id="loader" src="">
+        </div>
+    <h4 class="pagetitleh2">
+       <?php echo $this->lang->line('fees_discount_details'); ?>
+    <span class="float-right bmedium total_discount_alloted">
+    </span></h4>
+    <div class="row around10">
+    <div class="col-md-12">
+    <?php
+    if (!empty($feediscountList)) {  ?>
+        <div class="table-responsive border0">
+            <table class="table mb0">
+            <tbody>
+            <?php
+            foreach($feediscountList as $key=>$feediscount){  ?>
+    <tr>
+      <td colspan="3" class="mailbox-name white-space-nowrap border0">
+        <div class="panel-group1 mb0">
+        <div class="panel panel-default1">
+      <div class="panel-heading pt5 pb5">
+        <h6 class="panel-title panel-title1 overflow-hidden">
+
+          <input class="discount_group_chk vertical-middle" type="checkbox" name="discount_id[]" value="<?php echo $feediscount['id']; ?>" 
+          <?php $idd=$feediscount['id'];echo set_checkbox('discount_id[]', $feediscount['id'],is_value_exist($student_fees_discount,$feediscount['id'])) ?>>
+          <a class="display-inline collapsed box-plus-panel" data-toggle="collapse" href="#collapse_fees_<?php echo $feediscount['id'] ?>">
+          <span class="font14"><?php  echo $feediscount['name']." - ".$feediscount['code']; ?></span></a>
+          <span class="float-right bmedium pt3 discount_group_total" data-discount="<?php echo $feediscount['amount']; ?>"><?php  ?></span>
+        </h6>
+    </div>
+
+    <div id="collapse_fees_<?php echo $feediscount['id']; ?>" class="panel-collapse collapse">
+            <ul class="list-group student_fee_list ui-sortable">
+                <li class="list-group-item">
+                    <div class="due_date bmedium font14 pl-65"><?php echo $this->lang->line('name'); ?></div>
+                    <div class="due_date bmedium font14 pl-65"><?php echo $this->lang->line('discount_code'); ?></div>
+                    <div class="due_date bmedium font14 pl-65"><?php echo $this->lang->line('type'); ?></div>
+                    <div class="tools bmedium font14"><?php echo $this->lang->line('amount'); ?> (<?php echo $currency_symbol; ?>)</div>
+                </li>
+                <li class="list-group-item">
+                    <div class="due_date font14 pl-65"><?php echo $feediscount['name']; ?></div>
+                    <div class="due_date font14 pl-65"><?php echo $feediscount['code']; ?></div>
+                    <div class="due_date font14 pl-65"><?php echo $this->lang->line($feediscount['type']); ?></div>
+                <div class="tools">
+                <?php
+
+                    if(isset($feediscount['type']) && $feediscount['type']=="percentage"){
+                        echo $feediscount['percentage']."%";
+                    }else if(isset($feediscount['amount'])){
+                        $amount   =  $feediscount['amount'];   
+                        if($amount > 0.00){
+                            echo amountFormat($amount)." (".$currency_symbol.")";
+                        } 
+                    } 
+                ?>
+                </div>
+                </li>
+         </ul>
+      </div>
+    </div>
+
+  </div>
+ </td>
+</tr>
+    <?php } ?>                                
+    </tbody>
+</table>
+</div>
+<?php } ?>
+   </div>
+ </div>
+</div>
+<!-- fees discount group -->
 
 <?php if (($sch_setting->father_name) || ($sch_setting->father_phone) || ($sch_setting->father_occupation) || ($sch_setting->father_pic) || ($sch_setting->mother_name) || ($sch_setting->mother_phone) || ($sch_setting->mother_occupation) || ($sch_setting->mother_pic) || ($sch_setting->guardian_relation) || ($sch_setting->guardian_phone) || ($sch_setting->guardian_email) || ($sch_setting->guardian_pic) || ($sch_setting->guardian_address)) {
     ?>
@@ -642,7 +735,7 @@ echo $this->customlib->dateformat($fee_type_value->due_date);
 <?php }if ($sch_setting->father_pic) {?>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="exampleInputFile"><?php echo $this->lang->line('father_photo'); ?></label>
+                                                    <label for="exampleInputFile"><?php echo $this->lang->line('father_photo'); ?> (100px X 100px)</label>
                                                     <div><input class="filestyle form-control" type='file' name='father_pic' id="file" size='20' />
                                                     </div>
                                                     <span class="text-danger"><?php echo form_error('father_pic'); ?></span></div>
@@ -677,7 +770,7 @@ echo $this->customlib->dateformat($fee_type_value->due_date);
 <?php }if ($sch_setting->mother_pic) {?>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="exampleInputFile"><?php echo $this->lang->line('mother_photo'); ?></label>
+                                                    <label for="exampleInputFile"><?php echo $this->lang->line('mother_photo'); ?> (100px X 100px)</label>
                                                     <div><input class="filestyle form-control" type='file' name='mother_pic' id="file" size='20' />
                                                     </div>
                                                     <span class="text-danger"><?php echo form_error('mother_pic'); ?></span></div>
@@ -769,7 +862,7 @@ if ($student['guardian_is'] == "other") {
 <?php }if ($sch_setting->guardian_pic) {?>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="exampleInputFile"><?php echo $this->lang->line('guardian_photo'); ?></label>
+                                                    <label for="exampleInputFile"><?php echo $this->lang->line('guardian_photo'); ?> (100px X 100px)</label>
                                                     <div><input class="filestyle form-control" type='file' name='guardian_pic' id="file" size='20' />
                                                     </div>
                                                     <span class="text-danger"><?php echo form_error('guardian_pic'); ?></span>
@@ -1181,6 +1274,7 @@ $count++;
     </div>
 </div>
 
+
 <script>
     $('#deleteModal').on('shown.bs.modal', function () {
         $(".del_modal_title").html("<?php echo $this->lang->line('delete_confirm') ?>");
@@ -1344,12 +1438,10 @@ $(document).on('change','#vehroute_id',function(){
     $(document).ready(function(){
         $(document).on('change','.fee_group_chk',function(){
 
-        if ($(this).prop("checked")) {
-
-        total_fees_alloted +=parseFloat($(this).closest('div').find('span.fee_group_total').data('amount'));
-        }
-        else {
-          total_fees_alloted -=parseFloat($(this).closest('div').find('span.fee_group_total').data('amount'));
+        if($(this).prop("checked")) {
+            total_fees_alloted +=parseFloat($(this).closest('div').find('span.fee_group_total').data('amount'));
+        }else {
+            total_fees_alloted -=parseFloat($(this).closest('div').find('span.fee_group_total').data('amount'));
         }
 
      //==============
@@ -1359,26 +1451,23 @@ $(document).on('change','#vehroute_id',function(){
             data: {'total_fees_alloted': total_fees_alloted},
             dataType: "json",
              beforeSend: function() {
-         $('#fade').css("display", "block");
-         $('#modal').css("display", "block");
+                $('#fade').css("display", "block");
+                $('#modal').css("display", "block");
              },
             success: function (data) {
-
-                 $('.total_fees_alloted').text(data.amount);
-               $("#fade").fadeOut(1000);
-         $("#modal").fadeOut(1000);
+                $('.total_fees_alloted').text(data.amount);
+                $("#fade").fadeOut(1000);
+                $("#modal").fadeOut(1000);
             },
              error: function(xhr) { // if error occured
-         $("#fade").fadeOut(1000);
-         $("#modal").fadeOut(1000);
+                $("#fade").fadeOut(1000);
+                $("#modal").fadeOut(1000);
             },
             complete: function() {
-              $("#fade").fadeOut(1000);
-         $("#modal").fadeOut(1000);
+                $("#fade").fadeOut(1000);
+                $("#modal").fadeOut(1000);
             }
         });
-//==============
-
     });
     });
 </script>
@@ -1445,3 +1534,25 @@ $(document).on('change','#vehroute_id',function(){
 </script>
 
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/js/savemode.js"></script>
+
+
+<script type="text/javascript">
+//fee discount  
+    $(document).ready(function(){
+       $(document).on('change','.discount_group_chk',function(){
+            var checked = $(this).is(':checked');
+            if(!checked) {
+                if(!confirm('<?php echo $this->lang->line('this_action_is_irreversible_so_please_confirm_this_action'); ?>')){                   
+                    $(this).prop("checked", true);
+                }else{           
+                    $(this).prop("checked", false);       
+                }
+            }
+            $(".discount_div").find('#fade').css("display", "block");
+            $(".discount_div").find('#modal').css("display", "block");
+            $(".discount_div").find("#fade").fadeOut(1000);
+            $(".discount_div").find("#modal").fadeOut(1000);
+        });
+    });
+//fee discount  
+</script>

@@ -157,7 +157,7 @@ if (!empty($fields)) {
 }
             }
             ?>
-                                                    <td class="pull-right">
+                                                    <td class="pull-right white-space-nowrap">
             <?php
 $userdata = $this->customlib->getUserData();
             if (($this->rbac->hasPrivilege('can_see_other_users_profile', 'can_view')) || ($userdata["id"] == $staff["id"])) {?>

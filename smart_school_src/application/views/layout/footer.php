@@ -501,7 +501,6 @@ if (isset($title)) {
                format:  calendar_date_time_format + ' hh:mm a'
         });
 
-
             $("#event_date").daterangepicker({
             timePickerIncrement: 5,
             locale: {
@@ -544,7 +543,6 @@ if (isset($_POST['date_from']) && $_POST['date_from'] != '' && isset($_POST['dat
     ?>
             var date_from = '<?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->datetostrtotime($_POST['date_from'])); ?>';
             var date_to = '<?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->datetostrtotime($_POST['date_to'])); ?>';
-
 
     <?php
 } else {

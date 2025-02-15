@@ -64,14 +64,11 @@ class Dispatch extends Admin_Controller
 
         if ($this->form_validation->run() == false) {
             $data['DispatchList'] = $this->dispatch_model->dispatch_list();
-
             $this->load->view('layout/header');
             $this->load->view('admin/frontoffice/dispatchedit', $data);
             $this->load->view('layout/footer');
         } else {
-
             $id;
-
             $dispatch = array(
                 'reference_no' => $this->input->post('ref_no'),
                 'to_title'     => $this->input->post('to_title'),
@@ -97,7 +94,6 @@ class Dispatch extends Admin_Controller
             }
 
             $this->dispatch_model->update_dispatch('dispatch_receive', $id, 'dispatch', $dispatch);
-
             $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('update_message') . '</div>');
             redirect('admin/dispatch');
         }
@@ -106,9 +102,7 @@ class Dispatch extends Admin_Controller
     public function download($id)
     {
         $dispatch_list = $this->dispatch_model->dis_rec_data($id, 'dispatch');     
-
         $this->media_storage->filedownload($dispatch_list['image'], "./uploads/front_office/dispatch_receive");
-        
     }
 
     public function delete($id)
@@ -127,7 +121,6 @@ class Dispatch extends Admin_Controller
 
     public function details($id, $type)
     {
-
         if (!$this->rbac->hasPrivilege('postal_dispatch', 'can_view')) {
             access_denied();
         }

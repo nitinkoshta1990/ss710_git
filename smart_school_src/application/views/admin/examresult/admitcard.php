@@ -16,7 +16,7 @@
 
                             <?php echo $this->customlib->getCSRF(); ?>
 
-                            <div class="col-sm-6 col-lg-4 col-md-4">
+                            <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                 <div class="form-group">
                                     <label ><?php echo $this->lang->line('exam_group'); ?><small class="req"> *</small></label>
                                     <select autofocus="" id="exam_group_id" name="exam_group_id" class="form-control" >
@@ -36,7 +36,7 @@ if (set_value('exam_group_id') == $ex_group_value->id) {
                                     <span class="text-danger"><?php echo form_error('exam_group_id'); ?></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-4 col-md-4">
+                            <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('exam'); ?><small class="req"> *</small></label>
                                     <select  id="exam_id" name="exam_id" class="form-control" >
@@ -45,7 +45,7 @@ if (set_value('exam_group_id') == $ex_group_value->id) {
                                     <span class="text-danger"><?php echo form_error('exam_id'); ?></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-4 col-md-4">
+                            <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('session'); ?><small class="req"> *</small></label>
                                     <select  id="session_id" name="session_id" class="form-control" >
@@ -65,7 +65,7 @@ if (set_value('session_id') == $session['id']) {
                                     <span class="text-danger"><?php echo form_error('session_id'); ?></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-4 col-md-4">
+                            <div class="col-sm-6 col-lg-3 col-md-6 col20">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('class'); ?><small class="req"> *</small></label>
                                     <select id="class_id" name="class_id" class="form-control" >
@@ -85,7 +85,7 @@ if (set_value('class_id') == $class['id']) {
                                     <span class="text-danger"><?php echo form_error('class_id'); ?></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-4 col-md-4">
+                            <div class="col-sm-6 col-lg-3 col-md-6 col20">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('section'); ?><small class="req"> *</small></label>
                                     <select  id="section_id" name="section_id" class="form-control" >
@@ -94,26 +94,11 @@ if (set_value('class_id') == $class['id']) {
                                     <span class="text-danger"><?php echo form_error('section_id'); ?></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-4 col-md-4">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1"><?php echo $this->lang->line('admit_card_template'); ?><small class="req"> *</small></label>
-                                    <select  id="admitcard" name="admitcard" class="form-control" >
-                                        <option value=""><?php echo $this->lang->line('select'); ?></option>
-                                        <?php
-foreach ($admitcardlist as $admitcard) {
-    ?>
-                                            <option value="<?php echo $admitcard->id ?>" <?php
-if (set_value('admitcard') == $admitcard->id) {
-        echo "selected=selected";
-    }
-    ?>><?php echo $admitcard->template; ?></option>
-                                                    <?php
-}
-?>
-                                    </select>
-                                    <span class="text-danger"><?php echo form_error('admitcard'); ?></span>
-                                </div>
+                           
+                            <div class="col-sm-6 col-lg-3 col-md-6 col20">
                             </div>
+
+
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <button type="submit" name="search" value="search_filter" class="btn btn-primary pull-right btn-sm checkbox-toggle"><i class="fa fa-search"></i> <?php echo $this->lang->line('search'); ?></button>
@@ -122,10 +107,10 @@ if (set_value('admitcard') == $admitcard->id) {
                         </form>
                     </div>
                     <?php
-if (isset($studentList)) {
+if (isset($studentList) && (!empty($get_active_admitcard))) {
     ?>
                         <form method="post" action="<?php echo base_url('admin/examresult/printCard') ?>" id="printCard">
-                            <input type="hidden" name="admitcard_template" value="<?php echo $admitcard_template; ?>">
+                            <input type="hidden" name="admitcard_template" value="<?php echo $get_active_admitcard->id; ?>">
                             <div  class="" >
                                 <div class="box-header ptbnull"></div>
                                 <div class="box-header ptbnull">
@@ -152,7 +137,7 @@ if (isset($studentList)) {
                                             </thead>
                                             <tbody>
                                                 <?php
-if (!empty($studentList)) {
+ 
         $count = 1;
         foreach ($studentList as $student_key => $student_value) {
             ?>
@@ -173,15 +158,9 @@ if (!empty($studentList)) {
                                                         <?php
 $count++;
         }
-    } else {
+   
         ?>
-                                                    <tr>
-                                                        <td colspan="8"><div class="alert alert-danger text-center">
-        <?php echo $this->lang->line('no_record_found'); ?>
-                                                            </div></td>
-
-                                                    <tr>        <?php }
-    ?>
+                                                            
                                             </tbody>
                                         </table>
                                     </div>
@@ -190,8 +169,11 @@ $count++;
                         </form>
                     </div>
                     <?php
-}
-?>
+}else{ ?>
+	
+		<div class="alert alert-danger text-center"><?php echo $this->lang->line('no_record_found'); ?></div>
+	
+<?php } ?>
             </div>
         </div>
     </section>
@@ -330,29 +312,36 @@ $count++;
 <script type="text/javascript">
 
     var base_url = '<?php echo base_url() ?>';
-    function Popup(data)
+    function Popup(data, winload = false)
     {
-        var frame1 = $('<iframe />');
-        frame1[0].name = "frame1";
-
-        $("body").append(frame1);
-        var frameDoc = frame1[0].contentWindow ? frame1[0].contentWindow : frame1[0].contentDocument.document ? frame1[0].contentDocument.document : frame1[0].contentDocument;
+        var frameDoc=window.open('', 'Print-Window');
         frameDoc.document.open();
-//Create a new HTML document.
+        //Create a new HTML document.
         frameDoc.document.write('<html>');
         frameDoc.document.write('<head>');
         frameDoc.document.write('<title></title>');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/bootstrap/css/bootstrap.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/font-awesome.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/ionicons.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/AdminLTE.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/skins/_all-skins.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/iCheck/flat/blue.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/morris/morris.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/jvectormap/jquery-jvectormap-1.2.2.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/datepicker/datepicker3.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/daterangepicker/daterangepicker-bs3.css">');
         frameDoc.document.write('</head>');
-        frameDoc.document.write('<body>');
+        frameDoc.document.write('<body onload="window.print()">');
         frameDoc.document.write(data);
         frameDoc.document.write('</body>');
         frameDoc.document.write('</html>');
         frameDoc.document.close();
         setTimeout(function () {
-            window.frames["frame1"].focus();
-            window.frames["frame1"].print();
-            frame1.remove();
-        }, 500);
+            frameDoc.close();      
+            if (winload) {
+                window.location.reload(true);
+            }
+        }, 5000);
 
         return true;
     }

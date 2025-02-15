@@ -50,6 +50,15 @@
 
                                 <div class="form-group">
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="exampleInputEmail1">
+                                        <?php echo $this->lang->line('email'); ?>
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input id="name" name="smtp_email" placeholder="" type="text" class="form-control col-md-7 col-xs-12" value="<?php echo set_value('smtp_email', $emaillist->smtp_email); ?>" />
+                                        <span class="text-danger"><?php echo form_error('smtp_email'); ?></span>
+                                    </div>
+                                </div>
+								<div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="exampleInputEmail1">
                                         <?php echo $this->lang->line('smtp_username'); ?>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">

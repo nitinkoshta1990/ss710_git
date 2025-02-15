@@ -134,8 +134,10 @@ class Student_Controller extends MY_Controller
             if (($active_class == "user" && (
                 $active_method == "fees"
                 || $active_method == "getcollectfee"
+                || $active_method == "geBalanceFee"
                 || $active_method == "change_currency"
                 || $active_method == "user_language"
+                || $active_method == "addstudentfee"
 
             ))
 

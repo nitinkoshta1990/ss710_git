@@ -20,8 +20,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <div class="row">
                             <div class="col-md-6 col-sm-6">
                                 <div class="row">
-                                    
-
                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label><?php echo $this->lang->line('class'); ?></label><small class="req">  *</small>

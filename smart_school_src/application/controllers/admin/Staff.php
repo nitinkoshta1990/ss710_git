@@ -12,6 +12,8 @@ class Staff extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
+		$this->load->library('SaasValidation');
+        $this->load->library('media_storage');
         $this->load->library('media_storage');
         $this->config->load("payroll");
         $this->config->load("app-config");
@@ -107,7 +109,6 @@ class Staff extends Admin_Controller
                     $data['searchby']    = "filter";
                     $role                = $this->input->post('role');
                     $data['employee_id'] = $this->input->post('empid');
-
                     $data['search_text'] = $this->input->post('search_text');
                     $resultlist          = $this->staff_model->getEmployee($role, 0);
                     $data['resultlist']  = $resultlist;
@@ -190,14 +191,12 @@ class Staff extends Admin_Controller
 
             if ($staff_rating['total'] >= 3) {
                 $data['rate'] = ($staff_rating['rate'] / $staff_rating['total']);
-
                 $data['rate_canview'] = 1;
             }
             $data['reviews'] = $staff_rating['total'];
         }
 
         $data['reviews_comment'] = $this->staff_model->staff_ratingById($id);
-
         $year = date("Y");
 
         $staff_list              = $this->staff_model->user_reviewlist($id);
@@ -257,17 +256,14 @@ class Staff extends Admin_Controller
 
     public function countAttendance($year, $emp)
     {
-
         $record = array();
 
         foreach ($this->staff_attendance as $att_key => $att_value) {
-
             $s           = $this->staff_model->count_attendance($year, $emp, $att_value);
             $r[$att_key] = $s;
         }
 
         $record[$year] = $r;
-
         return $record;
     }
 
@@ -346,11 +342,8 @@ class Staff extends Admin_Controller
             }
             $date    = $year . "-" . $startMonth;
             $newdate = date("Y-m-d", strtotime($date . "+1 month"));
-
-            $countAttendance = $this->countAttendance($year, $id);
-
-            $data["countAttendance"] = $countAttendance;
-
+            $countAttendance         = $this->countAttendance($year, $id);
+            $data["countAttendance"] = $countAttendance;         
             $data["id"]               = $id;
             $data["resultlist"]       = $res;
             $data["attendence_array"] = $attendence_array;
@@ -403,11 +396,22 @@ class Staff extends Admin_Controller
         $this->form_validation->set_rules('role', $this->lang->line('role'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('gender', $this->lang->line('gender'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('dob', $this->lang->line('date_of_birth'), 'trim|required|xss_clean');
+		
+		// $resource_params = ['resource' => 'no_of_staff'];
+        // $storage_params = [
+            // 'resource' => 'storage',
+            // 'fields'   => 'file,first_doc,second_doc,third_doc,fourth_doc'
+        // ];
+
+        // $this->form_validation->set_rules('validate_staff', "validate_staff", "callback_validateResource[" . json_encode($resource_params) . "]");
+        // $this->form_validation->set_rules('validate_storage', "validate_storage", "callback_validateStorage[" . json_encode($storage_params) . "]");
+		
         $this->form_validation->set_rules('file', $this->lang->line('image'), 'callback_handle_upload');
         $this->form_validation->set_rules('first_doc', $this->lang->line('image'), 'callback_handle_first_upload');
         $this->form_validation->set_rules('second_doc', $this->lang->line('image'), 'callback_handle_second_upload');
         $this->form_validation->set_rules('third_doc', $this->lang->line('image'), 'callback_handle_third_upload');
         $this->form_validation->set_rules('fourth_doc', $this->lang->line('image'), 'callback_handle_fourth_upload');
+		
         $this->form_validation->set_rules(
             'email', $this->lang->line('email'), array('required', 'valid_email',
                 array('check_exists', array($this->staff_model, 'valid_email_id')),
@@ -625,9 +629,7 @@ class Staff extends Admin_Controller
                 if ($this->sch_setting_detail->staffid_update_status) {
 
                     $employee_id = $this->sch_setting_detail->staffid_prefix . $this->sch_setting_detail->staffid_start_from;
-
                     $last_student = $this->staff_model->lastRecord();
-
                     $last_admission_digit = str_replace($this->sch_setting_detail->staffid_prefix, "", $last_student->employee_id);
 
                     $employee_id                = $this->sch_setting_detail->staffid_prefix . sprintf("%0" . $this->sch_setting_detail->staffid_no_digit . "d", $last_admission_digit + 1);
@@ -692,6 +694,11 @@ class Staff extends Admin_Controller
                 $data_doc = array('id' => $staff_id, 'resume' => $resume, 'joining_letter' => $joining_letter, 'resignation_letter' => $resignation_letter, 'other_document_name' => $fourth_title, 'other_document_file' => $fourth_doc);
                 $this->staff_model->add($data_doc);
 
+                //***** generate barcode and qrcode of staff ******//
+                    $scan_type= $this->sch_setting_detail->scan_code_type;
+                    $this->customlib->generatestaffbarcode($data_insert['employee_id'],$staff_id,$scan_type);
+                //***** generate barcode and qrcode of staff ******//
+
                 //===================
                 if ($staff_id) {
                     $teacher_login_detail = array('id' => $staff_id, 'credential_for' => 'staff', 'first_name' => $this->input->post("name"), 'last_name' => $this->input->post("surname"), 'username' => $email, 'password' => $password, 'contact_no' => $contact_no, 'email' => $email, 'employee_id' => $data_insert['employee_id']);
@@ -713,6 +720,61 @@ class Staff extends Admin_Controller
         $this->load->view('layout/header', $data);
         $this->load->view('admin/staff/staffcreate', $data);
         $this->load->view('layout/footer', $data);
+    }
+	
+	public function validateStorage($input, $storage_params_json)
+    {
+        $uploaded_size = 0;
+        // Decode the JSON string to an array
+        $storage_params = json_decode($storage_params_json);
+
+        $fields   = explode(',', ($storage_params->fields));  // e.g., ['file', 'father_pic', ...]
+
+        foreach ($fields as $field_key => $field_value) {
+            if (isset($_FILES[$field_value]) && !empty($_FILES[$field_value]['name']) && $_FILES[$field_value]['size'] > 0) {
+
+                $file_size = $_FILES[$field_value]['size'];
+                if ($file_size > 0) {
+                    // Convert size to KB or MB for easier reading if needed
+                    $file_size_kb = $file_size / 1024; // Size in KB
+                    $file_size_mb = $file_size_kb / 1024; // Size in MB
+                    $uploaded_size += $file_size_mb;
+                }
+            }
+        }
+        
+        if ($uploaded_size >= 0) {
+            try {
+                $limit_status=$this->saasvalidation->getStorageLimit('storage',$uploaded_size);
+                if(!$limit_status){ // if limit is remaining 
+                    $this->form_validation->set_message('validateStorage',"The Storage limit has reached.");
+                    return FALSE;
+                }
+            } catch (Exception $e) {
+                // Print the exception message for debugging or logging purposes       
+                $this->form_validation->set_message('validateStorage','Error: ' . $e->getMessage());
+                return FALSE;
+              
+            }
+        }
+        return TRUE;
+    }
+
+    public function validateResource($input, $resource_params_json)
+    {
+        try {
+            $limit_status=$this->saasvalidation->getResourceLimit('no_of_staff',1);
+                if(!$limit_status){ // if limit is remaining 
+                    $this->form_validation->set_message('validateResource',"The Resource limit has reached.");
+                    return FALSE;
+                }
+        } catch (Exception $e) {
+            // Print the exception message for debugging or logging purposes       
+            $this->form_validation->set_message('validateResource','Error: ' . $e->getMessage());
+            return FALSE;          
+        }
+
+       return TRUE;   
     }
 
     public function handle_upload()
@@ -781,6 +843,7 @@ class Staff extends Admin_Controller
                 $this->form_validation->set_message('handle_first_upload', $this->lang->line('extension_not_allowed'));
                 return false;
             }
+			
             if ($file_size > $result->file_size) {
                 $this->form_validation->set_message('handle_first_upload', $this->lang->line('file_size_shoud_be_less_than') . number_format($file_validate['upload_size'] / 1048576, 2) . " MB");
                 return false;
@@ -855,6 +918,7 @@ class Staff extends Admin_Controller
                 $this->form_validation->set_message('handle_third_upload', $this->lang->line('extension_not_allowed'));
                 return false;
             }
+			
             if ($file_size > $result->file_size) {
                 $this->form_validation->set_message('handle_third_upload', $this->lang->line('file_size_shoud_be_less_than') . number_format($file_validate['upload_size'] / 1048576, 2) . " MB");
                 return false;
@@ -892,6 +956,7 @@ class Staff extends Admin_Controller
                 $this->form_validation->set_message('handle_fourth_upload', $this->lang->line('extension_not_allowed'));
                 return false;
             }
+			
             if ($file_size > $result->file_size) {
                 $this->form_validation->set_message('handle_fourth_upload', $this->lang->line('file_size_shoud_be_less_than') . number_format($file_validate['upload_size'] / 1048576, 2) . " MB");
                 return false;
@@ -969,7 +1034,6 @@ class Staff extends Admin_Controller
         $custom_fields             = $this->customfield_model->getByBelong('staff');
 
         foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
-
             if ($custom_fields_value['validation']) {
                 $custom_fields_id   = $custom_fields_value['id'];
                 $custom_fields_name = $custom_fields_value['name'];
@@ -1157,9 +1221,7 @@ class Staff extends Admin_Controller
             }
 
             if (isset($_FILES["third_doc"]) && !empty($_FILES['third_doc']['name'])) {
-
                 $resignation_letter_doc = $this->media_storage->fileupload("third_doc", $upload_dir);
-
             } else {
                 $resignation_letter_doc = $resignation_letter;
             }
@@ -1174,6 +1236,12 @@ class Staff extends Admin_Controller
             $data_doc = array('id' => $id, 'resume' => $resume_doc, 'joining_letter' => $joining_letter_doc, 'resignation_letter' => $resignation_letter_doc, 'other_document_name' => $fourth_title, 'other_document_file' => $fourth_doc);
 
             $this->staff_model->add($data_doc);
+			
+			//***** generate barcode and qrcode of staff ******//
+            $scan_type= $this->sch_setting_detail->scan_code_type;
+            $this->customlib->generatestaffbarcode($employee_id,$id,$scan_type);
+            //***** generate barcode and qrcode of staff ******//
+				
             $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('update_message') . '</div>');
             redirect('admin/staff');
         }
@@ -1512,6 +1580,13 @@ class Staff extends Admin_Controller
 
                                 $insert_id = $this->staff_model->batchInsert($result[$r_key], $role_array);
                                 $staff_id  = $insert_id;
+                                if ($staff_id) {
+                                //***** generate barcode and qrcode of staff ******//
+                                $scan_type= $this->sch_setting_detail->scan_code_type;
+                                $this->customlib->generatestaffbarcode($result[$r_key]['employee_id'],$staff_id,$scan_type);
+                                //***** generate barcode and qrcode of staff ******//
+                                }
+
                                 if ($staff_id) {
 
                                     $teacher_login_detail = array('id' => $staff_id, 'credential_for' => 'staff', 'username' => $result[$r_key]['email'], 'password' => $password, 'contact_no' => $result[$r_key]['contact_no'], 'email' => $result[$r_key]['email']);

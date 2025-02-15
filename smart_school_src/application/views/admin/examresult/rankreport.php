@@ -16,7 +16,7 @@
                         <form role="form" action="<?php echo site_url('admin/examresult/rankreport') ?>" method="post">
                             <?php echo $this->customlib->getCSRF(); ?>
                             <div class="row">
-                                <div class="col-sm-6 col-lg-3 col-md-3 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('exam_group'); ?></label><small class="req"> *</small>
                                         <select  id="exam_group_id" name="exam_group_id" class="form-control select2" >
@@ -36,7 +36,7 @@ if (set_value('exam_group_id') == $ex_group_value->id) {
                                         <span class="text-danger"><?php echo form_error('exam_group_id'); ?></span>
                                     </div>
                                 </div><!--./col-md-3-->
-                                <div class="col-sm-6 col-lg-3 col-md-3 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('exam') ?></label><small class="req"> *</small>
                                         <select  id="exam_id" name="exam_id" class="form-control select2" >
@@ -45,7 +45,7 @@ if (set_value('exam_group_id') == $ex_group_value->id) {
                                         <span class="text-danger"><?php echo form_error('exam_id'); ?></span>
                                     </div>
                                 </div><!--./col-md-3-->
-                                <div class="col-sm-6 col-lg-3 col-md-3 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('session'); ?></label><small class="req"> *</small>
                                         <select  id="session_id" name="session_id" class="form-control select2" >

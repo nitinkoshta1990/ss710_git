@@ -101,12 +101,12 @@ if ($class_id == $class["id"]) {
                             </tr>
                             <tr>
                                 <th width="30">#</th>
-                                <th>
+                                <th style="min-width:600px">
                                 <div class="row">
-<div class="col-md-6 col-xs-7"> <?php echo $this->lang->line('lesson_topic'); ?></div>
-<div class="col-md-2 col-xs-3"><?php echo $this->lang->line('topic_completion_date'); ?></div>
-<div class="col-md-2 col-xs-2"><?php echo $this->lang->line('status'); ?></div>
-<div class="col-md-2 col-xs-2 relative text-right">
+<div class="col-lg-6 col-md-5 col-sm-4 col-xs-4"> <?php echo $this->lang->line('lesson_topic'); ?></div>
+<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"><?php echo $this->lang->line('topic_completion_date'); ?></div>
+<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3"><?php echo $this->lang->line('status'); ?></div>
+<div class="col-lg-1 col-md-2 col-sm-2 col-xs-2 relative text-right">
 <?php if ($this->rbac->hasPrivilege('manage_syllabus_status', 'can_edit')) {?>
     <div class="material-switch pull-right">
 
@@ -133,10 +133,10 @@ if (isset($value['topic'])) {
                 ?>
                                                     <li>
                                                         <div class="row">
-<div class="col-md-6 col-xs-7">
+<div class="col-lg-6 col-md-5 col-sm-4 col-xs-4">
 <span class="pr15"><?php echo $losson_count . "." . $topic_count; ?></span><?php echo $topic_value['name']; ?>
 </div>
-<div class="col-md-2 col-xs-3">
+<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
 <?php if ($topic_value['status'] == 1) {
                                                         ?> <?php if($topic_value['complete_date']!= '0000-00-00' && !empty($topic_value['complete_date'])){
                                                              echo date($this->customlib->getSchoolDateFormat(), strtotime($topic_value['complete_date'])); 
@@ -150,10 +150,10 @@ if (isset($value['topic'])) {
                                                  }
                                                  ?>
 </div>
-<div class="col-md-2 col-xs-2">
+<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
 <?php echo $status[$topic_value['status']]; ?>
 </div>
-<div class="col-md-2 col-xs-2 pb5">
+<div class="col-lg-1 col-md-2 col-sm-2 col-xs-2 pb5">
 <?php if ($this->rbac->hasPrivilege('manage_syllabus_status', 'can_edit')) {
             ?>
   <div class="relative text-right">          

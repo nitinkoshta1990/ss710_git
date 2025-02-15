@@ -55,7 +55,7 @@
                                     <tr>
                                         <th><?php echo $this->lang->line('session'); ?></th>
                                         <th><?php echo $this->lang->line('status'); ?></th>
-                                        <th class="text-right noExport"><?php echo $this->lang->line('action'); ?></th>
+                                        <th class="text-right noExport" hidden><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -74,7 +74,7 @@
                                                     
                                                 }
                                                 ?></td>
-                                            <td class="mailbox-date pull-right">
+                                            <td class="mailbox-date pull-right" hidden>
                                                 <?php if ($this->rbac->hasPrivilege('session_setting', 'can_edit')) { ?>
                                                     <a href="<?php echo base_url(); ?>sessions/edit/<?php echo $session['id'] ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
                                                         <i class="fa fa-pencil"></i>

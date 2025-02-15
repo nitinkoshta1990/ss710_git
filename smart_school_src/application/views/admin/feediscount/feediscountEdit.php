@@ -58,17 +58,31 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                    <div class="col-sm-6">
-                          <label for="exampleInputEmail1"><?php echo $this->lang->line('percentage') ?> (%)</label><small class="req"> *</small>
-                                            <input id="percentage" name="percentage" placeholder="" type="text" class="form-control"  value="<?php echo set_value('percentage', $feediscount['percentage']); ?>" />
-                                            <span class="text-danger"><?php echo form_error('percentage'); ?></span>
-                    </div>
-                    <div class="col-sm-6">
-                         <label for="exampleInputEmail1"><?php echo $this->lang->line('amount').' ('. $currency_symbol.')'; ?></label><small class="req"> *</small>
-                                            <input id="amount" name="amount" placeholder="" type="number" class="form-control"  value="<?php echo set_value('amount', convertBaseAmountCurrencyFormat($feediscount['amount'])); ?>" />
-                                            <span class="text-danger"><?php echo form_error('amount'); ?></span>
-                    </div>
-                </div>                              
+											<div class="col-sm-6">
+												<label for="exampleInputEmail1"><?php echo $this->lang->line('percentage') ?> (%)</label><small class="req"> *</small>
+												<input id="percentage" name="percentage" placeholder="" type="text" class="form-control"  value="<?php echo set_value('percentage', $feediscount['percentage']); ?>" />
+												<span class="text-danger"><?php echo form_error('percentage'); ?></span>
+											</div>
+											<div class="col-sm-6">
+												<label for="exampleInputEmail1"><?php echo $this->lang->line('amount').' ('. $currency_symbol.')'; ?></label><small class="req"> *</small>
+												<input id="amount" name="amount" placeholder="" type="text" class="form-control"  value="<?php echo set_value('amount', convertBaseAmountCurrencyFormat($feediscount['amount'])); ?>" />
+												<span class="text-danger"><?php echo form_error('amount'); ?></span>
+											</div>
+										</div>            
+                
+								<div class="form-group row">
+                                    <div class="col-sm-6">
+                                        <label for="exampleInputEmail1"><?php echo $this->lang->line('number_of_use_count'); ?> </label><small class="req"> *</small>
+                                        <input id="discount_limit" name="discount_limit" type="number" min="0" step="1" class="form-control" value="<?php echo set_value('discount_limit', $feediscount['discount_limit']); ?>" />
+                                        <span class="text-danger"><?php echo form_error('discount_limit'); ?></span>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="exampleInputEmail1"><?php echo $this->lang->line('expiry_date'); ?></label>
+                                        <input id="expire_date" name="expire_date" type="text" class="form-control date" value="<?php echo set_value('expire_date', $this->customlib->dateformat($feediscount['expire_date'])); ?>" />
+                                        <span class="text-danger"><?php echo form_error('expire_date'); ?></span>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('description'); ?></label>
                                     <textarea class="form-control" id="description" name="description" rows="3"><?php echo set_value('description'); ?><?php echo set_value('description', $feediscount['description']); ?></textarea>
@@ -108,6 +122,8 @@
                                         <th><?php echo $this->lang->line('discount_code'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('percentage'); ?> (%)</th>
                                         <th class="text-right"><?php echo $this->lang->line('amount').' ('.$currency_symbol.')'; ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('number_of_use_count'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('expiry_date'); ?></th>                                         
                                         <th class="text text-right noExport"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -144,7 +160,12 @@
                                                  <td class="mailbox-name text-right"><?php echo $feediscount['percentage'] ?></td> 
                                                  
                                                 <td class="mailbox-name text-right"><?php $amount   =   amountFormat($feediscount['amount']); if($amount > 0.00){ echo $amount;}?></td>    
-                                                
+                                                <td class="mailbox-name text-right">
+                                                <?php echo $feediscount['discount_limit'] ?>
+                                            </td>
+                                            <td class="mailbox-name text-right">
+                                                <?php echo $this->customlib->dateformat($feediscount['expire_date']); ?>
+                                            </td>
                                                 <td class="mailbox-date pull-right white-space-nowrap">
                                                     <?php
                                                     if ($this->rbac->hasPrivilege('fees_discount_assign', 'can_view')) {

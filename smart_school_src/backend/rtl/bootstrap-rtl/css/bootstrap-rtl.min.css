@@ -13,7 +13,7 @@ position: relative;*/
 .text-danger {color: #ff0000;display: block; clear:both;}
 
 .pull-right {float: left !important;}
-.dropdown-menu {left: 0;right: auto !important;}
+.dropdown-menu {left: 0;/*right: auto !important;*/}
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
    

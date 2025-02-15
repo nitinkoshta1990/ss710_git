@@ -44,7 +44,7 @@ class Mollie extends Studentgateway_Controller {
             $apidetails = $this->paymentsetting_model->getActiveMethod();
             $data = array();
             $data['name'] = $params['name'];
-            $amount =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'])), 2, '.', '');
+            $amount =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge'])), 2, '.', '');
             $api=' '.$apidetails->api_publishable_key;
             $order=time();
             $currency=$params['invoice']->currency_name;;
@@ -101,7 +101,6 @@ class Mollie extends Studentgateway_Controller {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 
-
         $headers = array();
         $headers[] = 'Authorization: Bearer'.$api;
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -123,7 +122,9 @@ class Mollie extends Studentgateway_Controller {
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+                        'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_mollie_txn_id') . $payment_id,
                         'received_by'     => '',
@@ -141,7 +142,7 @@ class Mollie extends Studentgateway_Controller {
                     //========
                     }
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                      //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();
@@ -169,7 +170,6 @@ class Mollie extends Studentgateway_Controller {
                             'fee_category' => $fee_category,
                         );
 
-
                         if ($response_value['student_transport_fee_id'] != 0 && $response_value['fee_category'] == "transport") {
 
                             $data['student_fees_master_id']   = null;
@@ -185,8 +185,6 @@ class Mollie extends Studentgateway_Controller {
                             $fine_percentage[] = $mailsms_array->fine_percentage;
                             $fine_amount[]     = $mailsms_array->fine_amount;
                             $amount[]          = $mailsms_array->amount;
-
-
 
                         } else {
 
@@ -227,7 +225,6 @@ class Mollie extends Studentgateway_Controller {
                     $obj_mail['code']            = "(".implode(',', $code).")";
                     $obj_mail['fee_category']    = $fee_category;
                     $obj_mail['send_type']    = 'group';
-
 
                     $this->mailsmsconf->mailsms('fee_submission', $obj_mail);
 

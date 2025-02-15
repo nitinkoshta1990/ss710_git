@@ -18,7 +18,6 @@ class Print_headerfooter extends Admin_Controller
         if (!($this->rbac->hasPrivilege('print_header_footer', 'can_view'))) {
             access_denied();
         }
-        
         $this->session->set_userdata('top_menu', 'System Settings');
         $this->session->set_userdata('sub_menu', 'admin/print_headerfooter');
         $data['title']  = 'SMS Config List';
@@ -35,13 +34,15 @@ class Print_headerfooter extends Admin_Controller
             $is_required = $this->setting_model->check_haederimage($_POST['type']);
             $this->form_validation->set_rules('header_image', $this->lang->line('header_image'), 'trim|xss_clean|callback_handle_upload[' . $is_required . ']');
 
-            if ($_POST['type'] == 'staff_payslip') {
+            if($_POST['type'] == 'staff_payslip'){
                 $message = 'message';
-            } else if ($_POST['type'] == 'online_admission_receipt') {
+            }else if($_POST['type'] == 'online_admission_receipt') {
                 $message = "admission_message";
-            } else if ($_POST['type'] == 'online_exam') {
+            }else if($_POST['type'] == 'online_exam') {
                 $message = 'online_exam_message';
-            } else {
+            }else if($_POST['type'] == 'general_purpose') {
+                $message = 'general_purpose_message';
+            }else{
                 $message = 'message1';
             }
         }
@@ -78,6 +79,14 @@ class Print_headerfooter extends Admin_Controller
 
                     if (!empty($row['header_image'])) {
                         $this->media_storage->filedelete($row['header_image'], "uploads/print_headerfooter/online_exam/");
+                    }
+                }else if ($_POST['type'] == 'general_purpose') {
+
+                    $img_name = $this->media_storage->fileupload("header_image", "./uploads/print_headerfooter/general_purpose/");
+                    $row = $this->setting_model->get_general_purpose_header();
+
+                    if (!empty($row['header_image'])) {
+                        $this->media_storage->filedelete($row['header_image'], "uploads/print_headerfooter/general_purpose/");
                     }
                 } else {
 

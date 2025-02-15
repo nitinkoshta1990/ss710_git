@@ -85,9 +85,21 @@
                                         <?php
                                     }
                                     ?>
-                                    <tr class="bordertoplightgray">
-                                        <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');  $totalamt=amountFormat((float)($params['fine_amount_balance']+$params['total']), 2, '.', '')?></td>
-                                    </tr>
+                                    <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('discount'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['applied_fee_discount'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('processing_fees'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['gateway_processing_charge'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="bordertoplightgray">
+                                            <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)(($params['fine_amount_balance'] + $params['total']) - $params['applied_fee_discount']+$params['gateway_processing_charge']), 2, '.', ''); ?></td>
+                                        </tr>
                                 </table>
                                 <div class="divider"></div>
                                 <form class="paddtlrb" action="<?php echo site_url('user/gateway/stripe/complete'); ?>" method="POST">
@@ -95,7 +107,7 @@
                                     <script
                                         src="https://checkout.stripe.com/checkout.js" class="stripe-button pull-right"
                                         data-key="<?php echo $params['api_publishable_key']; ?>"
-                                        data-amount="<?php echo (convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'])*100); ?>"
+                                        data-amount="<?php echo (convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total']- $params['applied_fee_discount']+$params['gateway_processing_charge'])*100); ?>"
                                         data-name="<?php echo $setting[0]['name']; ?>"
                                         data-description="<?php echo 'Online fees deposit'; ?>"
                                         data-image="<?php echo $img; ?>"

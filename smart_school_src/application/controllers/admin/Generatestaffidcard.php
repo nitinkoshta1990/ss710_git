@@ -70,7 +70,7 @@ class Generatestaffidcard extends Admin_Controller
         $staffs = $this->Generatestaffidcard_model->getEmployee($staffid_arr, 1);
 
         foreach ($staffs as $key => $staffs_value) {
-            $staffs[$key]->barcode = $this->customlib->generatestaffbarcode($staffs_value->employee_id,$scan_type);
+            $staffs[$key]->barcode = $this->customlib->generatestaffbarcode($staffs_value->employee_id,$staffs_value->id,$scan_type);
         }
 
         $data['staffs'] = $staffs;

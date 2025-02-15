@@ -67,7 +67,7 @@
                                 <?php } ?>
                             </div>
                             <?php foreach ($editlessonname as $editlessonname_value) { ?>
-                                <div class="form-group" id="<?php echo $editlessonname_value['id']; ?>"><label><?php echo $this->lang->line('lesson_name'); ?></label><small class="req"> *</small><input type="text" name="lessons_<?php echo $editlessonname_value['id']; ?>" value="<?php echo $editlessonname_value['name']; ?>"  style="width:95%" />  <?php if ($this->rbac->hasPrivilege('lesson', 'can_delete')) {
+                                <div class="form-group" id="<?php echo $editlessonname_value['id']; ?>"><label><?php echo $this->lang->line('lesson_name'); ?></label><small class="req"> *</small><input class="lessinput" type="text" name="lessons_<?php echo $editlessonname_value['id']; ?>" value="<?php echo $editlessonname_value['name']; ?>"  />  <?php if ($this->rbac->hasPrivilege('lesson', 'can_delete')) {
                                     ?><span  onclick="remove_lesson('<?php echo $editlessonname_value['id']; ?>')" class="section_id_error text-danger">&nbsp;<i class="fa fa-remove"></i></span><?php } ?></div>
                                 <?php } ?>
                             <div id="lesson_result"></div>

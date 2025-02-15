@@ -20,7 +20,6 @@ class ExamSchedule extends Admin_Controller
         }
         $this->session->set_userdata('top_menu', 'Examinations');
         $this->session->set_userdata('sub_menu', 'examschedule/index');
-        //$data['title'] = 'Exam Schedule';
         $class             = $this->class_model->get();
         $data['classlist'] = $class;
         $userdata          = $this->customlib->getUserData();
@@ -60,7 +59,6 @@ class ExamSchedule extends Admin_Controller
 
     public function delete($id)
     {
-
         $data['title'] = 'Exam Schedule List';
         $this->exam_model->remove($id);
         redirect('admin/exam_schedule/index');

@@ -54,7 +54,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <?php } ?>
                             </div>
 
-                            <h3 class="widget-user-username"><?php echo $this->customlib->getFullname($student['firstname'], $student['middlename'], $student['lastname'], $sch_setting->middlename, $sch_setting->lastname); ?></h3>
+                            <h3 class="widget-user-username"><?php echo $student_name=$this->customlib->getFullname($student['firstname'], $student['middlename'], $student['lastname'], $sch_setting->middlename, $sch_setting->lastname); ?></h3>
                             <h5 class="widget-user-desc mb5"><?php echo $this->lang->line('admission_no'); ?> <span class="text-aqua"><?php echo $student['admission_no']; ?></span></h5>
                             <?php if ($sch_setting->roll_no) { ?>
                                 <h5 class="widget-user-desc"><?php echo $this->lang->line('roll_number'); ?> <span class="text-aqua"><?php echo $student['roll_no']; ?></span></h5>
@@ -73,7 +73,11 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </li>
                             <?php if ($sch_setting->rte) { ?>
                                 <li class="list-group-item">
-                                    <b><?php echo $this->lang->line('rte'); ?></b> <a class="pull-right text-aqua"> <?php echo $this->lang->line(strtolower($student['rte'])); ?></a>
+                                    <b><?php echo $this->lang->line('rte'); ?></b> <a class="pull-right text-aqua"> <?php 
+                                    if(isset($student['rte'])){ 
+                                        echo $this->lang->line(strtolower($student['rte']));
+                                    }
+                                    ?></a>
                                 </li>
                             <?php } ?>
 
@@ -84,18 +88,18 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <?php if ($sch_setting->student_barcode == 1) { ?>
                                 <li class="list-group-item listnoback">
                                     <b><?php echo $this->lang->line('barcode'); ?></b>
-                                    <?php if (file_exists("./uploads/student_id_card/barcodes/" . $student['admission_no'] . ".png")) { ?>
-                                        <a class="pull-right text-aqua">
-                                            <img src="<?php echo base_url('uploads/student_id_card/barcodes/' . $student['admission_no'] . '.png'); ?>" width="auto" height="auto" /></a>
+                                    <?php if (file_exists("./uploads/student_id_card/barcodes/" . $student['id'] . ".png")) { ?>
+                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/barcodes/' . $student['id'] . '.png'); ?>" target="_blank">
+                                            <img src="<?php echo base_url('uploads/student_id_card/barcodes/' . $student['id'] . '.png'); ?>" width="auto" height="auto" /></a>
                                     <?php } ?>
                                 </li>
                             <?php } ?>
                             <?php if ($sch_setting->student_barcode == 1) { ?>
                                 <li class="list-group-item listnoback">
                                     <b><?php echo $this->lang->line('qrcode'); ?></b>
-                                    <?php if (file_exists("./uploads/student_id_card/qrcode/" . $student['admission_no'] . ".png")) { ?>
-                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['admission_no'] . '.png'); ?>" target="_blank">
-                                            <img class="h-50" src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['admission_no'] . '.png'); ?>" width="auto" height="auto" /></a>
+                                    <?php if (file_exists("./uploads/student_id_card/qrcode/" . $student['id'] . ".png")) { ?>
+                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['id'] . '.png'); ?>" target="_blank">
+                                            <img class="h-50" src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $student['id'] . '.png'); ?>" width="auto" height="auto" /></a>
                                     <?php } ?>
                                 </li>
                             <?php } ?>
@@ -113,6 +117,17 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             }
                             ?>
                             <!------- Behaviour Report End--------->
+
+                            <!-- download student resume/cv  -->
+                            <?php  if ($sch_setting->student_resume_download) { ?>
+                            <li class="list-group-item listnoback">
+                                <b><?php echo $this->lang->line('download_resume'); ?></b> <a class="pull-right text-aqua">
+                                
+                            <button type="button" class="btn btn-default btn-xs download_pdf" data-action="download" data-toggle="tooltip" data-original-title="<?php echo $this->lang->line('download'); ?>" data-student_id="<?php echo $student['id'] ?>" data-student_name="<?php echo $student_name; ?>" data-admission_no="<?php echo $student['admission_no']; ?>" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>" autocomplete="off"><i class="fa fa-download"></i></button>
+                                </a>
+                            </li>
+                        <?php } ?>
+                            <!-- download student resume/cv  -->
 
                         </ul>
                     </div>
@@ -184,7 +199,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <?php
                         }
                         ?>
-
+							<li class="pull-right">
+								<button type="button" class="btn btn-default btn-xs print_student_details mt10" data-student_id="<?php echo $student['id'] ?>" data-student_name="<?php echo $student_name; ?>" data-admission_no="<?php echo $student['admission_no']; ?>" data-action="download" data-toggle="tooltip" data-original-title="<?php echo $this->lang->line('print') ?>" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>" autocomplete="off"><i class="fa fa-print"></i></button>
+							</li>
+							
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="activity">
@@ -591,7 +609,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <div class="tab-pane" id="fee">
                                 <!--<div class="download_label"><?php echo $this->lang->line("fees"); ?></div>-->
                                 <?php
-                                if (empty($student_due_fee) && empty($student_discount_fee)) {
+                         
+                                if (empty($student_due_fee) && empty($student_discount_fee) && empty($transport_fees)) {
                                 ?>
                                     <div class="alert alert-danger">
                                         <?php echo $this->lang->line('no_record_found'); ?>
@@ -603,12 +622,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <table class="table table-striped" id="feetable">
                                             <thead>
                                                 <tr>
-                                                    <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                                    <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                                    <th><?php echo $this->lang->line('fees'); ?></th>
+                                                    <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                                    <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                                     <th class="text text-left"><?php echo $this->lang->line('due_date'); ?></th>
                                                     <th class="text text-left"><?php echo $this->lang->line('status'); ?></th>
                                                     <th class="text text-right"><?php echo $this->lang->line('amount'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
-                                                    <th class="text text-right"><?php echo $this->lang->line('payment_id'); ?></th>
+                                                    <th class="text text-left"><?php echo $this->lang->line('payment_id'); ?></th>
                                                     <th class="text text-left"><?php echo $this->lang->line('mode'); ?></th>
                                                     <th class="text text-left"><?php echo $this->lang->line('date'); ?></th>
                                                     <th class="text text-right"><?php echo $this->lang->line('discount'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
@@ -618,7 +638,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 </tr>
                                             </thead>
                                             <?php
-                                            if (empty($student_due_fee) && empty($student_discount_fee)) {
+                                            if (empty($student_due_fee) && empty($student_discount_fee) && empty($transport_fees)) {
                                             ?>
                                             <?php
                                             } else {
@@ -632,6 +652,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                     $total_balance_amount   = "0";
                                                     $alot_fee_discount      = 0;
                                                     $total_fees_fine_amount = 0;
+													 $fees_fine_amount=0;
                                                     foreach ($student_due_fee as $key => $fee) {
 
                                                         foreach ($fee->fees as $fee_key => $fee_value) {
@@ -656,12 +677,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                             $total_balance_amount  = $total_balance_amount + $feetype_balance;
                                                             if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
 
-                                                                $total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
+                                                               // $total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
                                                             }
 
                                                     ?>
                                                             <?php
-                                                            if ($feetype_balance > 0 && strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) {
+                                                            if ($feetype_balance > 0 && ($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) {
                                                             ?>
                                                                 <tr class="danger">
                                                                 <?php
@@ -671,29 +692,15 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                                 <?php
                                                             }
                                                                 ?>
-                                                                <td>
 
-                                                                    <?php
-                                                                    if ($fee_value->is_system) {
-                                                                        echo $this->lang->line($fee_value->name) . " (" . $this->lang->line($fee_value->type) . ")";
-                                                                    } else {
-                                                                        echo $fee_value->name . " (" . $fee_value->type . ")";
-                                                                    }
-
-                                                                    ?>
-
-                                                                </td>
                                                                 <td>
                                                                     <?php
                                                                     if ($fee_value->is_system) {
-                                                                        echo  $this->lang->line($fee_value->code);
+                                                                        echo $this->lang->line($fee_value->type) . " (" . $this->lang->line($fee_value->code) . ")";
                                                                     } else {
-                                                                        echo $fee_value->code;
+                                                                        echo $fee_value->type . " (" . $fee_value->code . ")";
                                                                     }
-
-
                                                                     ?>
-
                                                                 </td>
                                                                 <td class="text text-left">
                                                                     <?php
@@ -718,8 +725,30 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
                                                                     <?php echo amountFormat($fee_value->amount);
                                                                     if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
+																		
+																		
+                                                                         // get cumulative fine amount as delay days 
+                                                                        if($fee_value->fine_type=='cumulative'){
+                                                                            $date1=date_create("$fee_value->due_date");
+                                                                            $date2=date_create(date('Y-m-d'));
+                                                                            $diff=date_diff($date1,$date2);
+                                                                            $due_days= $diff->format("%a");;
+                                                                            
+                                                                            if($this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days)){
+                                                                                $due_fine_amount=$this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days);
+                                                                            }else{
+                                                                                $due_fine_amount=0;
+                                                                            }
+                                                                            $fees_fine_amount       = $due_fine_amount;
+                                                                            $total_fees_fine_amount = $total_fees_fine_amount + $due_fine_amount;
+                                                            
+                                                                        }else if($fee_value->fine_type=='fix' || $fee_value->fine_type=='percentage'){
+                                                                            $fees_fine_amount       = $fee_value->fine_amount;
+                                                                            $total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
+                                                                        }
+                                                                        // get cumulative fine amount as delay days
                                                                     ?>
-                                                                        <span class="text text-danger"><?php echo " + " . amountFormat($fee_value->fine_amount); ?></span>
+                                                                        <span class="text text-danger"><?php echo " + " . amountFormat($fees_fine_amount); ?></span>
                                                                     <?php
 
                                                                     }
@@ -756,7 +785,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                                     foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                                 ?>
                                                                         <tr class="white-td">
-                                                                            <td></td>
+                                                                            <!-- <td></td> -->
                                                                             <td></td>
                                                                             <td></td>
                                                                             <td></td>
@@ -840,8 +869,11 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                                 }
                                                                     ?>
 
-                                                                    <td align="left"><?php echo $this->lang->line('transport_fees'); ?></td>
-                                                                    <td align="left"><?php echo $transport_fee_value->month; ?></td>
+                                                                   <!--  <td align="left"><?php //echo $this->lang->line('transport_fees'); ?></td>
+                                                                    <td align="left"><?php //echo $transport_fee_value->month; ?></td> -->
+
+                                                                    <td align="left"><?php echo $this->lang->line('transport_fees')." (".$transport_fee_value->month.")"; ?></td>
+                                                                    
                                                                     <td align="left" class="text text-left">
                                                                         <?php echo $this->customlib->dateformat($transport_fee_value->due_date); ?> </td>
                                                                     <td align="left" class="text text-left width85">
@@ -914,8 +946,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                                         foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                                     ?>
                                                                             <tr class="white-td">
-                                                                                <td align="left"></td>
-                                                                                <td align="left"></td>
+                                                                                <!-- <td align="left"></td> -->
+                                                                                <!-- <td align="left"></td> -->
                                                                                 <td align="left"></td>
                                                                                 <td align="left"></td>
                                                                                 <td align="left"></td>
@@ -940,8 +972,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
 
                                                                                 </td>
-                                                                                <td class="text text-left"><?php echo $this->lang->line(strtolower($fee_deposits_value->payment_mode)); ?></td>
-                                                                                <td class="text text-left">
+                                                                                <td class="text text-center"><?php echo $this->lang->line(strtolower($fee_deposits_value->payment_mode)); ?></td>
+                                                                                <td class="text text-center">
 
                                                                                     <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); ?>
                                                                                 </td>
@@ -959,66 +991,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                             <?php
                                                             }
                                                         }
-
-                                                            ?>
-                                                            <?php
-                                                            if (!empty($student_discount_fee)) {
-
-                                                                foreach ($student_discount_fee as $discount_key => $discount_value) {
-                                                            ?>
-                                                                    <tr class="dark-light">
-                                                                        <td align="left"> <?php echo $this->lang->line('discount'); ?> </td>
-                                                                        <td align="left">
-                                                                            <?php echo $discount_value['code']; ?>
-                                                                        </td>
-                                                                        <td align="left"></td>
-                                                                        <td align="left" class="text text-left">
-                                                                            <?php
-                                                                            if ($discount_value['status'] == "applied") {
-                                                                            ?>
-
-                                                                                <a href="#" data-toggle="popover" class="detail_popover">
-
-                                                                                    <?php echo $this->lang->line('discount_of') . " " . (($discount_value['type'] == "fix") ?  $currency_symbol . amountFormat($discount_value['amount']) : $discount_value['percentage'] . "%")  . " " . $this->lang->line($discount_value['status']) . " : " . $discount_value['payment_id']; ?>
-                                                                                </a>
-                                                                                <div class="fee_detail_popover" style="display: none">
-                                                                                    <?php
-                                                                                    if ($fee_deposits_value->description == "") {
-                                                                                    ?>
-                                                                                        <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
-                                                                                    <?php
-                                                                                    } else {
-                                                                                    ?>
-                                                                                        <p class="text text-danger"><?php echo $discount_value['student_fees_discount_description'] ?></p>
-                                                                                    <?php
-                                                                                    }
-                                                                                    ?>
-                                                                                </div>
-                                                                            <?php
-                                                                            } else {
-                                                                                echo '<p class="text text-danger">' . $this->lang->line('discount_of') . " " . (($discount_value['type'] == "fix") ?  $currency_symbol . amountFormat($discount_value['amount']) : $discount_value['percentage'] . "%") . " " . $this->lang->line($discount_value['status']);
-                                                                            }
-                                                                            ?>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td class="text text-left"></td>
-                                                                        <td class="text text-left"></td>
-                                                                        <td class="text text-left"></td>
-                                                                        <td class="text text-right">
-                                                                            <?php
-                                                                            $alot_fee_discount = $alot_fee_discount;
-                                                                            ?>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                            <?php
-                                                                }
-                                                            }
-                                                            ?>
-                                                            <tr class="box box-solid total-bg">
-                                                                <td></td>
+                                                        ?>
+                                                          
+                                                        <tr class="box box-solid total-bg">
+                                                                <!-- <td></td> -->
                                                                 <td></td>
                                                                 <td class="text text-right" colspan="2"><?php echo $this->lang->line('grand_total'); ?></td>
                                                                 <td class="text text-right">
@@ -1040,7 +1016,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                                 <td class="text text-right"><?php
                                                                                             echo ($currency_symbol . amountFormat($total_balance_amount - $alot_fee_discount));
                                                                                             ?></td>
-                                                            </tr>
+                                                        </tr>
                                                         <?php
                                                     }
                                                         ?>
@@ -1062,9 +1038,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </div>
 
                             <div class="timeline-header no-border">
-                                <div id="timeline_list">
+                                <div id="timeline_list" class="mt10">
                                     <?php if (empty($timeline_list)) { ?>
-                                        <br /><br>
+                                        
                                         <div class="alert alert-info"><?php echo $this->lang->line("no_record_found") ?></div>
                                     <?php } else { ?>
                                         <ul class="timeline timeline-inverse">
@@ -1297,12 +1273,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <div class="tab-pane" id="documents">
                             <!-- <div class="download_label"><?php echo "Uploaded Documents" ?></div> -->
                             <div class="timeline-header no-border">
-                                <?php
-                                if (!empty($student_doc)) {
-                                ?>
-                                    <button type="button" data-student-session-id="<?php echo $student['student_session_id'] ?>" class="btn btn-xs btn-primary pull-right myTransportFeeBtn"> <i class="fa fa-upload"></i> <?php echo $this->lang->line('upload_documents'); ?></button>
-                                    <!-- <button type="button"  data-student-session-id="<?php echo $student['student_session_id'] ?>" class="btn btn-xs btn-primary pull-right myTransportFeeBtn mb10"> <i class="fa fa-upload"></i>  <?php echo $this->lang->line('upload_documents'); ?></button> -->
-                                <?php } ?>
+                                
+								<button type="button" data-student-session-id="<?php echo $student['student_session_id'] ?>" class="btn btn-xs btn-primary pull-right myTransportFeeBtn mb5"> <i class="fa fa-upload"></i> <?php echo $this->lang->line('upload_documents'); ?></button>
+								
                                 <div class="table-responsive" style="clear: both;">
                                     <?php
                                     if (!empty($student_doc)) {
@@ -3192,6 +3165,89 @@ function getCalculatedExam($array, $exam_id)
     }));
 </script>
 
+<script type="text/javascript">
+
+$(document).on('click','.download_pdf',function(){
+  var admission_no = $(this).attr('data-admission_no');
+  var student_name = $(this).attr('data-student_name');
+  let $button_     = $(this);  
+     $.ajax({
+        type: 'POST',
+        url: baseurl+'user/user/printpdfresume',
+        data: {
+        },         
+        beforeSend: function() { 
+           $button_.button('loading');    
+        },
+         xhr: function () {// Seems like the only way to get access to the xhr object
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob'           
+            return xhr;
+        },
+       success: function (data, jqXHR, response) {    
+               var blob = new Blob([data], {type: 'application/pdf'});
+               var link = document.createElement('a');
+               link.href = window.URL.createObjectURL(blob);
+               link.download =  student_name+'_'+admission_no;
+               document.body.appendChild(link);
+               link.click();
+               document.body.removeChild(link);
+               $button_.button('reset');
+        },
+        error: function(xhr) { // if error occured
+            $button_.button('reset');
+        },
+        complete: function() {             
+            $button_.button('reset');
+        }
+    });
+});
+
+</script>
+<script type="text/javascript">
+	$(document).on('click', '.print_student_details', function() {
+    let $button_ = $(this);
+    var admission_no = $(this).attr('data-admission_no');
+	var student_name = $(this).attr('data-student_name');
+    $.ajax({
+        type: 'POST',
+        url: baseurl + 'user/user/printStudentDetails',  // Assuming baseurl is defined elsewhere
+        data: {},  // Add any data you need to send here
+        beforeSend: function() {
+            $button_.button('loading');  // Change button state to loading
+        },
+        xhr: function() {
+            var xhr = new XMLHttpRequest();  // Fixed the typo here
+            xhr.responseType = 'blob';  // Set response type to blob
+            return xhr;
+        },
+        success: function(data, jqXHR, response) {
+            // Create a Blob with the response data (PDF)
+            var blob = new Blob([data], {type: 'application/pdf'});
+
+            // Create an anchor element to trigger the file download
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = student_name + '_' + admission_no + '.pdf';  // Assumes student_name and admission_no are defined
+            document.body.appendChild(link);  // Append to body to trigger download
+            link.click();
+            document.body.removeChild(link);  // Clean up by removing the link
+
+            $button_.button('reset');  // Reset the button to its original state
+        },
+        error: function(xhr, status, error) {
+            // If an error occurs, reset the button
+            console.error("Error occurred:", status, error);  // You can log errors for debugging
+            $button_.button('reset');
+        },
+        complete: function() {
+            // Reset the button regardless of success or failure
+            $button_.button('reset');
+        }
+    });
+});
+</script>
+
 
 
 <?php
@@ -3267,6 +3323,7 @@ function findAssessmentValue($find_subject_id, $find_cbse_exam_assessment_type_i
 
     return $return_array;
 }
+
 
 //-----------CBSE Exam End----------------------
 

@@ -16,7 +16,7 @@
                                        ?>
 <form action="<?php echo site_url('admin/examgroup/saveexamremark') ?>" method="get" accept-charset="utf-8" method="POST" id="remark_form">
      <div class="table-responsive" >
-      <table class="table table-striped mb10 ">
+      <table class="table table-striped mb10">
       <thead>
         <tr>
           <th><?php echo $this->lang->line('name') ; ?></th>
@@ -38,8 +38,8 @@
               <td><?php echo $student->student_section; ?></td>            
               <td><?php echo ($examgroupDetail->use_exam_roll_no)?$student->exam_roll_no:$student->roll_no;; ?> </td>
               <td>
-                <div class="form-group">  
-                  <textarea id="remark_<?php echo $student->exam_group_class_batch_exam_student_id; ?>" name="remark_<?php echo $student->exam_group_class_batch_exam_student_id; ?>" class="form-control"><?php echo $student->teacher_remark; ?></textarea>  
+                <div class="form-group mb0">  
+                  <textarea id="remark_<?php echo $student->exam_group_class_batch_exam_student_id; ?>" name="remark_<?php echo $student->exam_group_class_batch_exam_student_id; ?>" class="form-control min-w-sm-200"><?php echo $student->teacher_remark; ?></textarea>  
                 </div>
               </td>
             </tr>                                        

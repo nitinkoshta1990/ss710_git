@@ -41,13 +41,21 @@
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('session_list'); ?></h3>
                     </div>
+					
+					
                     <div class="box-body">
                         <?php if ($this->session->flashdata('list_msg')) { ?>
                             <?php 
                                 echo $this->session->flashdata('list_msg');
                                 $this->session->unset_userdata('list_msg');
                             ?>
-                        <?php } ?>
+                        <?php } ?>					
+						 
+							 
+					<div class="alert alert-info"><?php echo $this->lang->line('note'); ?>: <?php echo $this->lang->line('changing_the_session_name_format_may_cause_issues_on_some_pages_or_features_so_it_is_recommended_not_to_change_the_session_name_format'); ?> </div>
+							 
+					 
+					
                         <div class="mailbox-messages">
                             <div class="">
                                 <div class="download_label"><?php echo $this->lang->line('session_list'); ?></div>
@@ -56,7 +64,7 @@
                                         <tr>
                                             <th><?php echo $this->lang->line('session'); ?></th>
                                             <th><?php echo $this->lang->line('status'); ?></th>
-                                            <th class="text-right noExport"><?php echo $this->lang->line('action'); ?></th>
+                                            <th class="text-right noExport" hidden><?php echo $this->lang->line('action'); ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -75,7 +83,7 @@
                                                         
                                                     }
                                                     ?></td>
-                                                <td class="mailbox-date text-right">
+                                                <td class="mailbox-date text-right" hidden>
                                                     <?php if ($this->rbac->hasPrivilege('session_setting', 'can_edit')) { ?>
                                                         <a href="<?php echo base_url(); ?>sessions/edit/<?php echo $session['id'] ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
                                                             <i class="fa fa-pencil"></i>

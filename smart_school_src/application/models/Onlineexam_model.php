@@ -50,12 +50,11 @@ class Onlineexam_model extends MY_model
         $exam_ides=array();
 
         if ($this->sch_setting_detail->class_teacher == 'yes' && $this->userdata['role_id']=='2') {
-            $exam_ides=$this->get_myexam($this->userdata['role_id']);
-           
+            $exam_ides=$this->get_myexam($this->userdata['role_id']);           
         }
         $this->db->select('onlineexam.*,(select count(*) from onlineexam_questions where onlineexam_questions.onlineexam_id=onlineexam.id ) as `total_ques`, (select count(*) from onlineexam_questions INNER JOIN questions on questions.id=onlineexam_questions.question_id where onlineexam_questions.onlineexam_id=onlineexam.id and questions.question_type="descriptive" ) as `total_descriptive_ques` , ')->from('onlineexam');
-
-        if(!empty($exam_ides)){
+		
+        if(!empty($exam_ides['onlineexam_id'])){
             $this->db->group_start();
 
             foreach ($exam_ides as $key => $value) {
@@ -100,7 +99,7 @@ class Onlineexam_model extends MY_model
              ->where('onlineexam.session_id',$this->current_session)
             ->sort('onlineexam.exam_from','desc');
             $this->datatables->where('onlineexam.exam_to  >= ',$today_date);                
-            if(!empty($exam_ides)){
+            if(!empty($exam_ides['onlineexam_id'])){
                 $this->datatables->group_start();
                 foreach ($exam_ides as $key => $value) {
                     $this->datatables->or_where('onlineexam.id',$value['onlineexam_id']); 
@@ -149,8 +148,7 @@ class Onlineexam_model extends MY_model
             }            
         }
        
-        return $exam_id;
-        
+        return $exam_id;        
     }
 
     public function getclosedexamlist()
@@ -170,7 +168,7 @@ class Onlineexam_model extends MY_model
             ->where('onlineexam.session_id',$this->current_session)            
             ->where('onlineexam.exam_to  < ',$today_date);            
             
-            if(!empty($exam_ides)){
+            if(!empty($exam_ides['onlineexam_id'])){
                 $this->datatables->group_start();
             foreach ($exam_ides as $key => $value) {
               $this->datatables->or_where('onlineexam.id',$value['onlineexam_id']); 
@@ -206,7 +204,6 @@ class Onlineexam_model extends MY_model
             $action    = "Insert";
             $record_id = $id;
             $this->log($message, $record_id, $action);
-
         }
         //======================Code End==============================
         $this->db->trans_complete(); # Completing transaction
@@ -245,7 +242,6 @@ class Onlineexam_model extends MY_model
 
     public function searchOnlineExamStudents($class_id, $section_id, $onlineexam_id)
     {
-
         $this->db->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no , students.roll_no,students.admission_date,students.firstname,students.middlename,  students.lastname,students.image,  students.mobileno,students.email,students.state,students.city,students.pincode,students.religion,     students.dob ,students.current_address,students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name,students.ifsc_code, students.guardian_name , students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active ,students.created_at ,students.updated_at,students.father_name,students.rte,students.gender,IFNULL(onlineexam_students.id, 0) as onlineexam_student_id,IFNULL(onlineexam_students.student_session_id, 0) as onlineexam_student_session_id')->from('students');
         $this->db->join('student_session', 'student_session.student_id = students.id');
         $this->db->join('classes', 'student_session.class_id = classes.id');
@@ -262,7 +258,6 @@ class Onlineexam_model extends MY_model
 
         $query = $this->db->get();
         return $query->result_array();
-
     }
 
     public function searchAllOnlineExamStudents($onlineexam_id, $class_id = null, $section_id = null,$is_attempted=null)
@@ -430,9 +425,7 @@ class Onlineexam_model extends MY_model
     public function onlineexamReport($condition)
     {   
         $class_section_array=$this->customlib->get_myClassSectionQuerystring('student_session');
-
         $query = "SELECT onlineexam.*,(select count(*) from onlineexam_students WHERE onlineexam_students.onlineexam_id = onlineexam.id) as assign,(select count(*) from onlineexam_questions where onlineexam_questions.onlineexam_id=onlineexam.id) as questions FROM `onlineexam` inner join onlineexam_students on onlineexam_students.onlineexam_id=onlineexam.id inner join student_session on student_session.id=onlineexam_students.student_session_id   where " . $condition .$class_section_array. " ";
-
         $this->datatables->query($query)
         ->searchable('onlineexam.exam,onlineexam.attempt,onlineexam.exam_from,onlineexam.exam_to,onlineexam.duration')
         ->orderable('onlineexam.exam,onlineexam.attempt,onlineexam.exam_from,onlineexam.exam_to,onlineexam.duration,null,null,null') 
@@ -446,7 +439,6 @@ class Onlineexam_model extends MY_model
         $userdata = $this->customlib->getUserData();
         $class_section_array=$this->customlib->get_myClassSectionQuerystring('student_session');
         $query = "SELECT student_session.id,students.admission_no,students.id as sid, CONCAT_WS(' ',firstname,middlename,lastname) as name,firstname,middlename,lastname,GROUP_CONCAT(onlineexam.id,'@',onlineexam.exam,'@',onlineexam.attempt,'@',onlineexam.exam_from,'@',onlineexam.exam_to,'@',onlineexam.duration,'@',onlineexam.passing_percentage,'@',onlineexam.is_active,'@',onlineexam.publish_result) as exams,GROUP_CONCAT(onlineexam_students.onlineexam_id) as attempt,`classes`.`id` AS `class_id`, `student_session`.`id` as `student_session_id`, `students`.`id`, `classes`.`class`, `sections`.`id` AS `section_id`, `sections`.`section`, `students`.`id`, `students`.`admission_no` FROM `student_session` INNER JOIN onlineexam_students on onlineexam_students.student_session_id=student_session.id INNER JOIN students on students.id=student_session.student_id JOIN `classes` ON `student_session`.`class_id` = `classes`.`id` JOIN `sections` ON `sections`.`id` = `student_session`.`section_id` LEFT JOIN `categories` ON `students`.`category_id` = `categories`.`id` INNER JOIN onlineexam on onlineexam_students.onlineexam_id=onlineexam.id WHERE  student_session.session_id=" . $this->db->escape($this->current_session) . " and students.is_active='yes' " . $condition.$class_section_array;
-
         $this->datatables->query($query)
         ->group_by("students.id",true)
         ->searchable('students.firstname,students.lastname,students.middlename,students.admission_no,classes.class,sections.section,null,null,null')

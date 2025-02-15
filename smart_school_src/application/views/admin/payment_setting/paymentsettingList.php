@@ -1,3 +1,4 @@
+<?php $currency_symbol = $this->customlib->getSchoolCurrencyFormat();  ?>
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -34,14 +35,13 @@
                         <li><a href="#tab_24" data-toggle="tab"><?php echo $this->lang->line('onepay'); ?></a></li>
                     </ul>
                     <div class="tab-content pb0">
+                        <!-- /.tab-pane -->
                         <div class="tab-pane active" id="tab_1">
                             <form role="form" id="paypal" action="<?php echo site_url('admin/paymentsettings/paypal') ?>" class="form-horizontal" method="post">
                                 <div class="box-body">
                                     <div class="row">
                                             <div class="col-md-7">
-                                                <?php
-$paypal_result = check_in_array('paypal', $paymentlist);
-?>
+                                                <?php $paypal_result = check_in_array('paypal', $paymentlist); ?>
                                                 <div class="form-group">
                                                     <label class="col-sm-5 control-label" for="exampleInputEmail1">
                                                         <?php echo $this->lang->line('paypal_username'); ?><small class="req"> *</small>
@@ -68,6 +68,41 @@ $paypal_result = check_in_array('paypal', $paymentlist);
                                                         <span class=" text text-danger paypal_signature_error"></span>
                                                     </div>
                                                 </div>
+                                                  <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4 col-md-12 col-lg-4">
+                                                                <label class="radio-inline">
+                                                                    <input checked="checked" name="charge_type" class="finetype" onclick="get_payment_type('paypal_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($paypal_result->charge_type) && $paypal_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4 col-md-12 col-lg-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($paypal_result->charge_type) && $paypal_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('paypal_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)     
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4 col-md-12 col-lg-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($paypal_result->charge_type) && $paypal_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('paypal_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="paypal_charge_value" name="paypal_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($paypal_result->charge_value) ? $paypal_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger paypal_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.paypal.com/in/home" target="_blank">
@@ -94,9 +129,7 @@ $paypal_result = check_in_array('paypal', $paymentlist);
                                 <div class="box-body minheight149">
                                     <div class="row">
                                             <div class="col-md-7">
-                                                <?php
-$stripe_result = check_in_array('stripe', $paymentlist);
-?>
+                                                <?php $stripe_result = check_in_array('stripe', $paymentlist);?>
                                                 <div class="form-group">
                                                     <label class="col-sm-5 control-label"><?php echo $this->lang->line('stripe_api_secret_key'); ?><small class="req"> *</small></label>
                                                     <div class="col-sm-7">
@@ -112,6 +145,41 @@ $stripe_result = check_in_array('stripe', $paymentlist);
                                                         <span class=" text text-danger api_publishable_key_error"></span>
                                                     </div>
                                                 </div>
+                                                  <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input  checked="checked" name="charge_type" class="finetype" onclick="get_payment_type('stripe_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($stripe_result->charge_type) && $stripe_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>   
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($stripe_result->charge_type) && $stripe_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('stripe_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($stripe_result->charge_type) && $stripe_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('stripe_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="stripe_charge_value" name="stripe_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($stripe_result->charge_value) ? $stripe_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger stripe_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://stripe.com/" target="_blank">
@@ -138,9 +206,7 @@ $stripe_result = check_in_array('stripe', $paymentlist);
                                 <div class="box-body minheight149">
                                     <div class="row">
                                             <div class="col-md-7">
-                                                <?php
-$payu_result = check_in_array('payu', $paymentlist);
-?>
+                                                <?php $payu_result = check_in_array('payu', $paymentlist); ?>
                                                 <div class="form-group">
                                                     <label class="col-sm-5 control-label"><?php echo $this->lang->line('payu_money_key'); ?><small class="req"> *</small>
                                                     </label>
@@ -157,6 +223,41 @@ $payu_result = check_in_array('payu', $paymentlist);
                                                         <span class="text text-danger salt_error"></span>
                                                     </div>
                                                 </div>
+                                                <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input  checked="checked"  name="charge_type" class="finetype" onclick="get_payment_type('payu_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($payu_result->charge_type) && $payu_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($payu_result->charge_type) && $payu_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('payu_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($payu_result->charge_type) && $payu_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('payu_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="payu_charge_value" name="payu_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($payu_result->charge_value) ? $payu_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger payu_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.payumoney.com" target="_blank">
@@ -183,9 +284,7 @@ $payu_result = check_in_array('payu', $paymentlist);
                                 <div class="box-body minheight149">
                                     <div class="row">
                                             <div class="col-md-7">
-                                                <?php
-$ccavenue_result = check_in_array('ccavenue', $paymentlist);
-?>
+                                                <?php $ccavenue_result = check_in_array('ccavenue', $paymentlist); ?>
                                                 <div class="form-group">
                                                     <label class="col-sm-5 control-label"><?php echo $this->lang->line('ccavenue_merchant_id'); ?><small class="req"> *</small>
                                                     </label>
@@ -210,6 +309,44 @@ $ccavenue_result = check_in_array('ccavenue', $paymentlist);
                                                         <span class="text text-danger ccavenue_api_publishable_key_error"></span>
                                                     </div>
                                                 </div>
+
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?><small class="req"> </small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('ccavenue_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($ccavenue_result->charge_type) && $ccavenue_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($ccavenue_result->charge_type) && $ccavenue_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('ccavenue_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($ccavenue_result->charge_type) && $ccavenue_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('ccavenue_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="ccavenue_charge_value" name="ccavenue_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($ccavenue_result->charge_value) ? $ccavenue_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger ccavenue_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
+
+
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.ccavenue.com" target="_blank">
@@ -263,6 +400,41 @@ $instamojo_result = check_in_array('instamojo', $paymentlist);
                                                         <span class="text text-danger instamojo_salt_error"></span>
                                                     </div>
                                                 </div>
+                                                  <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('instamojo_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($instamojo_result->charge_type) && $instamojo_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($instamojo_result->charge_type) && $instamojo_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('instamojo_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($instamojo_result->charge_type) && $instamojo_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('instamojo_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="instamojo_charge_value" name="instamojo_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($instamojo_result->charge_value) ? $instamojo_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger instamojo_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.instamojo.com/" target="_blank">
@@ -303,6 +475,41 @@ $paystack_result = check_in_array('paystack', $paymentlist);
                                                         <span class=" text text-danger paystack_secretkey_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('paystack_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($paystack_result->charge_type) && $paystack_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($paystack_result->charge_type) && $paystack_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('paystack_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($paystack_result->charge_type) && $paystack_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('paystack_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                       <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="paystack_charge_value" name="paystack_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($paystack_result->charge_value) ? $paystack_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger paystack_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://paystack.com/" target="_blank">
@@ -350,6 +557,41 @@ $razorpay_result = check_in_array('razorpay', $paymentlist);
                                                         <span class=" text text-danger razorpay_secretkey_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('razorpay_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($razorpay_result->charge_type) && $razorpay_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($razorpay_result->charge_type) && $razorpay_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('razorpay_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($razorpay_result->charge_type) && $razorpay_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('razorpay_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="razorpay_charge_value" name="razorpay_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($razorpay_result->charge_value) ? $razorpay_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger razorpay_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://razorpay.com/" target="_blank">
@@ -412,6 +654,41 @@ $paytm_result = check_in_array('paytm', $paymentlist);
                                                         <span class=" text text-danger paytm_industrytype_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('paytm_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($paytm_result->charge_type) && $paytm_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($paytm_result->charge_type) && $paytm_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('paytm_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($paytm_result->charge_type) && $paytm_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('paytm_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="paytm_charge_value" name="paytm_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($paytm_result->charge_value) ? $paytm_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger paytm_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://paytm.com/" target="_blank">
@@ -452,6 +729,41 @@ $midtrans_result = check_in_array('midtrans', $paymentlist);
                                                         <span class=" text text-danger midtrans_serverkey_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('midtrans_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($midtrans_result->charge_type) && $midtrans_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($midtrans_result->charge_type) && $midtrans_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('midtrans_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($midtrans_result->charge_type) && $midtrans_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('midtrans_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="midtrans_charge_value" name="midtrans_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($midtrans_result->charge_value) ? $midtrans_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger midtrans_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://midtrans.com/" target="_blank">
@@ -499,6 +811,41 @@ $pesapal_result = check_in_array('pesapal', $paymentlist);
                                                         <span class=" text text-danger pesapal_consumer_secret_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                       <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('pesapal_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($pesapal_result->charge_type) && $pesapal_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($pesapal_result->charge_type) && $pesapal_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('pesapal_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($pesapal_result->charge_type) && $pesapal_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('pesapal_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="pesapal_charge_value" name="pesapal_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($pesapal_result->charge_value) ? $pesapal_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger pesapal_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.pesapal.com/" target="_blank">
@@ -545,6 +892,41 @@ $flutterwave_result = check_in_array('flutterwave', $paymentlist);
                                                         <span class=" text text-danger secret_key_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('flutterwave_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($flutterwave_result->charge_type) && $flutterwave_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($flutterwave_result->charge_type) && $flutterwave_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('flutterwave_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($flutterwave_result->charge_type) && $flutterwave_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('flutterwave_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="flutterwave_charge_value" name="flutterwave_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($flutterwave_result->charge_value) ? $flutterwave_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger flutterwave_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://flutterwave.com/us/" target="_blank">
@@ -590,6 +972,41 @@ $ipayafrica_result = check_in_array('ipayafrica', $paymentlist);
                                                         <span class=" text text-danger ipayafrica_hashkey_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('ipayafrica_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($ipayafrica_result->charge_type) && $ipayafrica_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($ipayafrica_result->charge_type) && $ipayafrica_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('ipayafrica_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($ipayafrica_result->charge_type) && $ipayafrica_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('ipayafrica_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="ipayafrica_charge_value" name="ipayafrica_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($ipayafrica_result->charge_value) ? $ipayafrica_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger ipayafrica_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://ipayafrica.com/" target="_blank">
@@ -636,6 +1053,41 @@ $jazzcash_result = check_in_array('jazzcash', $paymentlist);
                                                         <span class=" text text-danger jazzcash_pp_Password_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('jazzcash_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($jazzcash_result->charge_type) && $jazzcash_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($jazzcash_result->charge_type) && $jazzcash_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('jazzcash_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($jazzcash_result->charge_type) && $jazzcash_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('jazzcash_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="jazzcash_charge_value" name="jazzcash_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($jazzcash_result->charge_value) ? $jazzcash_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger jazzcash_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.jazzcash.com.pk/" target="_blank">
@@ -683,6 +1135,41 @@ $billplz_result = check_in_array('billplz', $paymentlist);
                                                         <span class=" text text-danger billplz_customer_service_email_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('billplz_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($billplz_result->charge_type) && $billplz_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($billplz_result->charge_type) && $billplz_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('billplz_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($billplz_result->charge_type) && $billplz_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('billplz_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="billplz_charge_value" name="billplz_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($billplz_result->charge_value) ? $billplz_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger billplz_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.billplz.com/" target="_blank">
@@ -729,6 +1216,41 @@ $sslcommerz_result = check_in_array('sslcommerz', $paymentlist);
                                                         <input  name="sslcommerz_store_password" placeholder="" type="text" class="form-control col-md-7 col-xs-12"  value="<?php echo isset($sslcommerz_result->api_password) ? $sslcommerz_result->api_password : ""; ?>" />
                                                         <span class=" text text-danger sslcommerz_store_password_error"></span>
                                                     </div>  </div>
+                                                     <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('sslcommerz_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($sslcommerz_result->charge_type) && $sslcommerz_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($sslcommerz_result->charge_type) && $sslcommerz_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('sslcommerz_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($sslcommerz_result->charge_type) && $sslcommerz_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('sslcommerz_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="sslcommerz_charge_value" name="sslcommerz_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($sslcommerz_result->charge_value) ? $sslcommerz_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger sslcommerz_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.sslcommerz.com/" target="_blank">
@@ -775,6 +1297,41 @@ $walkingm_result = check_in_array('walkingm', $paymentlist);
                                                         <input  name="walkingm_client_secret" placeholder="" type="text" class="form-control col-md-7 col-xs-12"  value="<?php echo isset($walkingm_result->api_secret_key) ? $walkingm_result->api_secret_key : ""; ?>" />
                                                         <span class=" text text-danger walkingm_client_secret_error"></span>
                                                     </div>  </div>
+                                                     <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('walkingm_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($walkingm_result->charge_type) && $walkingm_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($walkingm_result->charge_type) && $walkingm_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('walkingm_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($walkingm_result->charge_type) && $walkingm_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('walkingm_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="walkingm_charge_value" name="walkingm_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($walkingm_result->charge_value) ? $walkingm_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger walkingm_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://walkingm.com/" target="_blank">
@@ -814,6 +1371,41 @@ $mollie_result = check_in_array('mollie', $paymentlist);
                                                         <span class=" text text-danger mollie_api_key_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('mollie_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($mollie_result->charge_type) && $mollie_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($mollie_result->charge_type) && $mollie_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('mollie_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($mollie_result->charge_type) && $mollie_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('mollie_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="mollie_charge_value" name="mollie_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($mollie_result->charge_value) ? $mollie_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger mollie_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.mollie.com/" target="_blank">
@@ -861,6 +1453,41 @@ $cashfree_result = check_in_array('cashfree', $paymentlist);
                                                         <span class=" text text-danger cashfree_secret_key_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                       <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('cashfree_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($cashfree_result->charge_type) && $cashfree_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($cashfree_result->charge_type) && $cashfree_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('cashfree_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($cashfree_result->charge_type) && $cashfree_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('cashfree_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="cashfree_charge_value" name="cashfree_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($cashfree_result->charge_value) ? $cashfree_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger cashfree_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.cashfree.com/" target="_blank">
@@ -916,6 +1543,41 @@ $payfast_result = check_in_array('payfast', $paymentlist);
                                                         <span class=" text text-danger payfast_salt_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"    name="charge_type" class="finetype" onclick="get_payment_type('payfast_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($payfast_result->charge_type) && $payfast_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($payfast_result->charge_type) && $payfast_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('payfast_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($payfast_result->charge_type) && $payfast_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('payfast_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="payfast_charge_value" name="payfast_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($payfast_result->charge_value) ? $payfast_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger payfast_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.payfast.co.za/" target="_blank">
@@ -962,6 +1624,41 @@ $toyyibpay_result = check_in_array('toyyibpay', $paymentlist);
                                                         <span class=" text text-danger toyyibpay_category_code_error"></span>
                                                     </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                       <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('toyyibpay_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($toyyibpay_result->charge_type) && $toyyibpay_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($toyyibpay_result->charge_type) && $toyyibpay_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('toyyibpay_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($toyyibpay_result->charge_type) && $toyyibpay_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('toyyibpay_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="toyyibpay_charge_value" name="toyyibpay_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($toyyibpay_result->charge_value) ? $toyyibpay_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger toyyibpay_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://toyyibpay.com/" target="_blank">
@@ -1016,6 +1713,41 @@ $twocheckout_result = check_in_array('twocheckout', $paymentlist);
                                                 <?php echo 'IPN Endpoint for 2Checkout  (' . base_url() . 'gateway_ins/twocheckout)'; ?>
                                                 </label>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('twocheckout_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($twocheckout_result->charge_type) && $twocheckout_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($twocheckout_result->charge_type) && $twocheckout_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('twocheckout_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($twocheckout_result->charge_type) && $twocheckout_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('twocheckout_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="twocheckout_charge_value" name="twocheckout_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($twocheckout_result->charge_value) ? $twocheckout_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger twocheckout_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
 
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
@@ -1065,6 +1797,41 @@ $skrill_result = check_in_array('skrill', $paymentlist);
                                                 <span class=" text text-danger skrill_salt_error"></span>
                                                 </div>
                                                 </div>
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('skrill_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($skrill_result->charge_type) &&  $skrill_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($skrill_result->charge_type) && $skrill_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('skrill_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)       
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($skrill_result->charge_type) && $skrill_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('skrill_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="skrill_charge_value" name="skrill_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($skrill_result->charge_value) ? $skrill_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger skrill_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
 
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
@@ -1119,6 +1886,42 @@ $payhere_result = check_in_array('payhere', $paymentlist);
                                                 <span class=" text text-danger payhere_api_secret_key_error"></span>
                                                 </div>
                                                 </div>
+
+                                                 <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('payhere_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($payhere_result->charge_type) && $payhere_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($payhere_result->charge_type) && $payhere_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('payhere_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)      
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($payhere_result->charge_type) && $payhere_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('payhere_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="payhere_charge_value" name="payhere_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($payhere_result->charge_value) ? $payhere_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger payhere_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
 
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
@@ -1178,6 +1981,42 @@ $onepay_result = check_in_array('onepay', $paymentlist);
                                                         <input  name="onepay_api_signature" placeholder="" type="text" class="form-control col-md-7 col-xs-12"  value="<?php echo isset($onepay_result->api_signature) ? $onepay_result->api_signature : ""; ?>" />
                                                         <span class=" text text-danger onepay_api_signature_error"></span>
                                                     </div>  </div>
+
+                                                     <!-- processing charge -->
+                                                  <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('processing_fees_type'); ?>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <div id="input-type" class="row">
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input   checked="checked"   name="charge_type" class="finetype" onclick="get_payment_type('onepay_charge_value',this.value)" id="charge_type" value="none" type="radio" <?php if(isset($onepay_result->charge_type) &&  $onepay_result->charge_type=='none'){ ?> checked="checked" <?php } ?>><?php echo $this->lang->line('none'); ?>    
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline">
+                                                                    <input <?php if(isset($onepay_result->charge_type) && $onepay_result->charge_type=='percentage'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('onepay_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="percentage" type="radio"><?php echo $this->lang->line('percentage'); ?> (%)      
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label class="radio-inline" class="control-label col-lg-5 col-md-5 col-sm-5">
+                                                                    <input <?php if(isset($onepay_result->charge_type) && $onepay_result->charge_type=='fix'){ ?> checked="checked" <?php } ?> onclick="get_payment_type('onepay_charge_value',this.value)" name="charge_type" class="finetype" id="charge_type" value="fix" type="radio"><?php echo $this->lang->line('fix_amount'); ?> (<?php echo $currency_symbol; ?>)
+                                                                </label>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-lg-5 col-md-5 col-sm-5 col-xs-12" for="exampleInputEmail1">
+                                                        <?php echo $this->lang->line('percentage_fix_Amount'); ?><small class="req"></small>
+                                                    </label>
+                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                        <input id="onepay_charge_value" name="onepay_charge_value" placeholder="" type="text" class="form-control"  value="<?php echo isset($onepay_result->charge_value) ? $onepay_result->charge_value : ""; ?>" />
+                                                        <span class=" text text-danger onepay_charge_value_error"></span>
+                                                    </div>
+                                                </div>
+                                                <!-- processing charge -->
                                             </div>
                                             <div class="col-md-5 text text-center disblock">
                                                 <a href="https://www.onepay.vn/" target="_blank">
@@ -1525,6 +2364,48 @@ function check_in_array($find, $array)
 ?>
 
 <script type="text/javascript">
+
+    function get_payment_type(id,value){
+        $("#"+id).val("");
+        if(value=="none"){
+            $("#"+id).attr("readonly",true);
+        }else{
+            $("#"+id).attr("readonly",false);
+        }
+    }
+
+    $("#payment_gateway_config").submit(function (e) {
+        $("[class$='_error']").html("");
+        var $this = $(".payment_gateway_save");
+        $this.button('loading');
+        var url = $(this).attr('action'); // the script where you handle the form input.
+
+        $.ajax({
+            type: "POST",
+            dataType: 'JSON',
+            url: url,
+            data: $("#payment_gateway_config").serialize(), // serializes the form's elements.
+            success: function (data, textStatus, jqXHR)
+            {
+                if (data.st === 1) {
+                    $.each(data.msg, function (key, value) {
+                        $('.' + key + "_error").html(value);
+                    });
+                } else {
+                    successMsg(data.msg);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                $(".custom_loader").html("");
+                //if fails
+            }, complete: function () {
+                $this.button('reset');
+            }
+        });
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
     $("#payment_gateway").submit(function (e) {
         $("[class$='_error']").html("");
         var $this = $(".payment_gateway_save");

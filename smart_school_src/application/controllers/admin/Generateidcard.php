@@ -12,7 +12,7 @@ class Generateidcard extends Admin_Controller
         parent::__construct();
 
         $this->load->library('Customlib');
-            $this->load->library('media_storage');
+        $this->load->library('media_storage');
         $this->sch_setting_detail = $this->setting_model->getSetting();
     }
 
@@ -55,7 +55,6 @@ class Generateidcard extends Admin_Controller
                     $data['idcardResult'] = $idcardResult;
                     $resultlist           = $this->student_model->searchByClassSection($class, $section);
                     $data['resultlist']   = $resultlist;
-                     
                 }
             }
 
@@ -92,7 +91,7 @@ class Generateidcard extends Admin_Controller
         }
         $students = $this->student_model->getStudentsByArray($std_arr);
         foreach ($students as $key => $students_value) {
-            $students[$key]->barcode = $this->customlib->generatebarcode($students_value->admission_no,$scan_type);
+            $students[$key]->barcode = $this->customlib->generatebarcode($students_value->admission_no,$students_value->id,$scan_type);
         }
     
         $data['students']        = $students;

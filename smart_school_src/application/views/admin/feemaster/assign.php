@@ -1,11 +1,7 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 ?>
-<div class="content-wrapper">   
-    <section class="content-header">
-        <h1>
-            <i class="fa fa-money"></i> <?php echo $this->lang->line('fees_collection'); ?></h1>
-    </section>
+<div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -20,7 +16,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('class'); ?></label>
-                                    <select autofocus="" id="class_id" name="class_id" class="form-control" >
+                                    <select autofocus="" id="class_id" name="class_id" class="form-control">
                                         <option value=""><?php echo $this->lang->line('select'); ?></option>
                                         <?php
                                         foreach ($classlist as $class) {

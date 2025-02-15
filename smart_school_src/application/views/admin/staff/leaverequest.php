@@ -20,7 +20,7 @@
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="tab-pane active table-responsive no-padding overflow-visible">
+                                <div class="tab-pane active table-responsive no-padding">
                                     <div class="download_label"><?php echo $this->lang->line('leaves'); ?></div>
                                     <table class="table table-striped table-bordered table-hover example">
                                         <thead>

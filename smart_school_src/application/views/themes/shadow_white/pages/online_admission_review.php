@@ -1,5 +1,4 @@
 <style type="text/css">
-  
   #fade {
     display: none;
     position:absolute;

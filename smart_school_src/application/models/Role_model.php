@@ -20,8 +20,7 @@ class Role_model extends MY_Model {
 
         if ($this->session->has_userdata('admin')) {
             $getStaffRole     = $this->customlib->getStaffRole();
-            $staffrole   =   json_decode($getStaffRole);       
-            //$superadmin_rest = $this->session->userdata['admin']['superadmin_restriction'];
+            $staffrole   =   json_decode($getStaffRole);
             $superadmin_rest = $this->customlib->superadmin_visible(); 
             if ($superadmin_rest == 'disabled' && $staffrole->id != 7) {
                 $this->db->where("roles.id !=", 7);             
@@ -170,6 +169,37 @@ class Role_model extends MY_Model {
 
         return $query->result();
     }
+    
+    public function updatePermission($upate_array) {
+        $this->db->trans_start();
+        $this->db->trans_strict(FALSE);
+        $this->db->where('role_id', $upate_array['role_id']);
+        $this->db->where('perm_cat_id', $upate_array['perm_cat_id']);
+        $query = $this->db->get('roles_permissions');
+        if ($query->num_rows() > 0) {          
+            $result=$query->row();
+            $this->db->where('id', $result->id);           
+            $this->db->update('roles_permissions', [$upate_array['action']=>$upate_array['value']]);
+        } else {
+            $insert_data=[
+              'role_id'=> $upate_array['role_id'],
+              'perm_cat_id'=>$upate_array['perm_cat_id'],
+              $upate_array['action']=>$upate_array['value']
+
+            ];
+            $this->db->insert('roles_permissions', $insert_data);
+        }   
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
+        } else {
+            $this->db->trans_commit();
+            return TRUE;
+        }
+    }
 
     public function getInsertBatch($role_id, $to_be_insert = array(), $to_be_update = array(), $to_be_delete = array()) {
         $this->db->trans_start();
@@ -182,7 +212,6 @@ class Role_model extends MY_Model {
             $this->db->update_batch('roles_permissions', $to_be_update, 'id');
         }
 
-
 // # Updating data
         if (!empty($to_be_delete)) {
             $this->db->where('role_id', $role_id);
@@ -190,22 +219,17 @@ class Role_model extends MY_Model {
             $this->db->delete('roles_permissions');
         }
         $this->db->trans_complete();
-
         if ($this->db->trans_status() === FALSE) {
-
             $this->db->trans_rollback();
             return FALSE;
         } else {
-
             $this->db->trans_commit();
             return TRUE;
         }
     }
 
     public function count_roles($id) {
-
         $query = $this->db->select("*")->join("staff", "staff.id = staff_roles.staff_id")->where("staff_roles.role_id", $id)->where("staff.is_active", 1)->get("staff_roles");
-
         return $query->num_rows();
     }
 

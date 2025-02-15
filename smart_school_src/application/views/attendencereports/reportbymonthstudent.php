@@ -87,7 +87,7 @@ $count++;
 $lang = "january";
 foreach ($monthlist as $m_key => $month) {
     ?>
-                                                <option value="<?php echo $m_key ?>" <?php echo set_select('month', $m_key, set_value('month')) ?>><?php echo $this->lang->line(strtolower($month)); ?></option>
+                                                <option value="<?php echo $m_key ?>" <?php echo set_select('month', $m_key, set_value('month')) ?>><?php echo $month; ?></option>
                                                 <?php
 }
 ?>

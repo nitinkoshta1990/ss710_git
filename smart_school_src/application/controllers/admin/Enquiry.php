@@ -146,12 +146,12 @@ class Enquiry extends Admin_Controller
         $data['created_by']      = $this->staff_model->get($created_by);
         $data['enquiry_status']  = $this->enquiry_status;
         $userdata                = $this->customlib->getUserData();
-        $login_staff_id          = $userdata["id"];
+        $data['login_staff_id']  = $userdata["id"];
         $getStaffRole            = $this->customlib->getStaffRole();
         $staffrole               = json_decode($getStaffRole);
         $data['staff_role']      = $staffrole->id;
-        $data['login_staff_id']  = $login_staff_id;
-        $data['superadmin_rest'] = $this->session->userdata['admin']['superadmin_restriction'];
+         
+        $data['superadmin_rest'] = $this->session->userdata['admin']['superadmin_restriction']; 
         $this->load->view('admin/frontoffice/follow_up_modal', $data);
     }
 

@@ -92,6 +92,11 @@ class Onlinestudent extends Admin_Controller
         $data['houses']                = $houses;
         $data['sch_setting']           = $this->sch_setting_detail;
 
+        //fees discount
+        $feesdiscount_result           = $this->feediscount_model->get();
+        $data['feediscountList']       = $feesdiscount_result;
+        //fees discount
+
         if ($this->input->post('save') == 'enroll') {
             if (!$this->sch_setting_detail->adm_auto_insert) {
 
@@ -103,8 +108,7 @@ class Onlinestudent extends Admin_Controller
                     'valid_email',
                     array('check_student_email_exists', array($this->student_model, 'check_student_email_exists')),
                 )
-            );
-            
+            );            
              
             $transport_feemaster_id = $this->input->post('transport_feemaster_id');
             if($transport_feemaster_id){
@@ -133,8 +137,7 @@ class Onlinestudent extends Admin_Controller
         }
         if ($this->sch_setting_detail->rte) {
             $this->form_validation->set_rules('rte', $this->lang->line('rtl'), 'trim|required|xss_clean');
-        } 
-       
+        }        
 
         $custom_fields = $this->customfield_model->getByBelong('students');
         foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
@@ -143,44 +146,26 @@ class Onlinestudent extends Admin_Controller
                 $custom_fields_name = $custom_fields_value['name'];
                 $this->form_validation->set_rules("custom_fields[students][" . $custom_fields_id . "]", $custom_fields_name, 'trim|required');
             }
-        }
-       
+        }       
 
         if ($this->form_validation->run() == false) {
             $this->load->view('layout/header', $data);
             $this->load->view('admin/onlinestudent/studentEdit', $data);
             $this->load->view('layout/footer', $data);
         } else {
-
             $fee_session_group_id   = $this->input->post('fee_session_group_id');
             $transport_feemaster_id = $this->input->post('transport_feemaster_id');
+            $discount_id            = $this->input->post('discount_id[]');
 
             $student_id     = $this->input->post('student_id');
             $class_id       = $this->input->post('class_id');
             $section_id     = $this->input->post('section_id');
             $hostel_room_id = empty2null($this->input->post('hostel_room_id'));
-            $fees_discount  = $this->input->post('fees_discount');
-
-            // if (empty($hostel_room_id)) {
-                // $hostel_room_id = 0;
-            // }  
+            $fees_discount  = $this->input->post('fees_discount');            
 
             $route_pickup_point_id = empty2null($this->input->post('route_pickup_point_id'));
             $vehroute_id           = empty2null($this->input->post('vehroute_id'));
-            $category_id           = empty2null($this->input->post('category_id'));
-            
-
-            // if (empty($category_id)) {
-                // $category_id = null;
-            // }
-            
-            // if (empty($vehroute_id)) {
-                // $vehroute_id = null;
-            // }
-
-            // if (empty($route_pickup_point_id)) {
-                // $route_pickup_point_id = null;
-            // }
+            $category_id           = empty2null($this->input->post('category_id'));           
 
             $data = array(
                 'id'                    => $student_id,
@@ -227,6 +212,7 @@ class Onlinestudent extends Admin_Controller
                 'route_pickup_point_id' => $route_pickup_point_id,
                 'vehroute_id'           => $vehroute_id,
             );
+			
             if ($this->sch_setting_detail->guardian_name) {
                 $data['guardian_is'] = $this->input->post('guardian_is');
             }
@@ -253,14 +239,12 @@ class Onlinestudent extends Admin_Controller
             if ($this->sch_setting_detail->measurement_date) {
                 $data['measurement_date'] = $this->customlib->dateFormatToYYYYMMDD($this->input->post('measure_date'));
             }
- 
-            $response = $this->onlinestudent_model->update($data, $fee_session_group_id, $transport_feemaster_id, $this->input->post('save'));
+
+            $response = $this->onlinestudent_model->update($data, $fee_session_group_id, $transport_feemaster_id,$discount_id, $this->input->post('save'));
 
             if ($response) {
                 $response = json_decode($response);
-
                 $custom_field_post = $this->input->post("custom_fields[students]");
-
                 if (isset($custom_field_post)) {
                     $custom_value_array = array();
                     foreach ($custom_field_post as $key => $value) {
@@ -304,18 +288,23 @@ class Onlinestudent extends Admin_Controller
                     $this->student_model->adddoc($data_img);
                 }
 
+                //generate student id card only student enrolled
+                if ($this->input->post('save') == "enroll") {
+                    $student_details  = $this->student_model->get($response->student_id);
+                    $scan_type= $this->sch_setting_detail->scan_code_type;
+                    $this->customlib->generatebarcode($student_details['admission_no'],$student_details['id'],$scan_type);
+                }
+                //generate student id card only student enrolled
+
                 // to upload father mother student and guardian image
                 if ($this->input->post('save') == "enroll") {
-
                     if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
-
                         $fileInfo = pathinfo($_FILES["file"]["name"]);
                         $img_name = $response->student_id . '.' . $fileInfo['extension'];
                         move_uploaded_file($_FILES["file"]["tmp_name"], "./uploads/student_images/" . $img_name);
                         $data_img = array('id' => $response->student_id, 'image' => 'uploads/student_images/' . $img_name);
                         $this->student_model->add($data_img);
                     } else {
-
                         if ($student['image'] != "") {
                             $filePath = $student['image'];
 
@@ -329,7 +318,6 @@ class Onlinestudent extends Admin_Controller
                             $data_img = array('id' => $response->student_id, 'image' => 'uploads/student_images/' . $img_name);
                             $this->student_model->add($data_img);
                         }
-
                     }
 
                     if (isset($_FILES["father_pic"]) && !empty($_FILES['father_pic']['name'])) {
@@ -341,7 +329,6 @@ class Onlinestudent extends Admin_Controller
                         $this->student_model->add($data_img);
                     } else {
                         if ($student['father_pic'] != "") {
-
                             $filePath            = $student['father_pic'];
                             $fileInfo            = pathinfo($student['father_pic']);
                             $img_name            = $response->student_id . "father" . '.' . $fileInfo['extension'];
@@ -360,7 +347,6 @@ class Onlinestudent extends Admin_Controller
                         $data_img = array('id' => $response->student_id, 'mother_pic' => 'uploads/student_images/' . $img_name);
                         $this->student_model->add($data_img);
                     } else {
-
                         if ($student['mother_pic'] != "") {
                             $filePath            = $student['mother_pic'];
                             $fileInfo            = pathinfo($student['mother_pic']);
@@ -370,7 +356,6 @@ class Onlinestudent extends Admin_Controller
                             copy($filePath, $destinationFilePath);
                             $data_img = array('id' => $response->student_id, 'mother_pic' => 'uploads/student_images/' . $img_name);
                             $this->student_model->add($data_img);
-
                         }
                     }
 
@@ -385,13 +370,11 @@ class Onlinestudent extends Admin_Controller
                             $filePath = $student['guardian_pic'];
                             $fileInfo = pathinfo($student['guardian_pic']);
                             $img_name = $response->student_id . "guardian" . '.' . $fileInfo['extension'];
-
                             $uploaddir           = './uploads/student_images/' . $img_name;
                             $destinationFilePath = $uploaddir;
                             copy($filePath, $destinationFilePath);
                             $data_img = array('id' => $response->student_id, 'guardian_pic' => 'uploads/student_images/' . $img_name);
                             $this->student_model->add($data_img);
-
                         }
                     }
 
@@ -568,7 +551,6 @@ class Onlinestudent extends Admin_Controller
                     } else {
                         $row[] = '<span class="label label-danger">' . $this->lang->line('unpaid') . '</span>';
                     }
-
                 }
 
                 $row[]     =  $enroll;

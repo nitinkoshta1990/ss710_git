@@ -302,6 +302,13 @@ if (!empty($cartdata)) {
                     <a href="#" class="pull-left forgotbtn" data-toggle="modal" data-target="#forgotmodal"><i class="fa fa-key"></i> <?php echo $this->lang->line('forgot_password'); ?></a>                    
                     <button type="button" class="signup modalclosebtn btn mdbtn" data-dismiss="modal"><?php echo $this->lang->line('signup'); ?> </button>
                     <button type="submit" id="loginformbtn" class="onlineformbtn mdbtn" ><?php echo $this->lang->line('submit'); ?></button>
+					
+					<div class="col-lg-12 col-md-12">
+                        <div class="admin-text">
+                            <a href="<?php echo site_url('site/userlogin') ?>" target="_blank" ><i class="fa fa-users"></i><?php echo $this->lang->line('student_parent_login'); ?></a>
+                        </div>      
+                    </div>
+					
                 </div>
             </form>
             <form action="<?php echo site_url('course/user_submit_login') ?>" method="post" class="gauthenticate-form" id="gauthenticate-form">
@@ -355,14 +362,14 @@ if (!empty($cartdata)) {
 }
 ?>
 
-        <div class="container spacet50">
+        <div class="container spacet50 spaceb50">
             <div class="row">
                 <?php
 $page_colomn = "col-md-12";
 
 if ($page_side_bar) {
 
-    $page_colomn = "col-md-9 col-sm-9";
+    $page_colomn = "col-lg-12 col-md-12 col-sm-12";
 }
 ?>
                 <div class="<?php echo $page_colomn; ?>">

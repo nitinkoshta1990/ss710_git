@@ -281,8 +281,9 @@ if (!empty($feeList)) {
                                     <thead>
                                         <tr>
                                             <th><?php echo $this->lang->line('date'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                            <th><?php echo $this->lang->line('fees'); ?></th>
+                                            <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                            <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                             <th><?php echo $this->lang->line('mode'); ?></th>
                                             <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
                                             <th class="text text-right"><?php echo $this->lang->line('discount'); ?></th>
@@ -300,7 +301,7 @@ $amount    = 0;
     if (empty($feeList)) {
         ?>
                                             <tr>
-                                                <td colspan="11" class="text-danger text-center">
+                                                <td colspan="10" class="text-danger text-center">
                                                     <?php echo $this->lang->line('no_transaction_found'); ?>
                                                 </td>
                                             </tr>
@@ -313,7 +314,7 @@ $amount    = 0;
                                                 <td>
                                                     <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($record->date)); ?>
                                                 </td>
-                                                <td>                                                     
+                                                <!-- <td>                                                     
                                                     <?php
                                                     if ($feeList->is_system) {
                                                         echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
@@ -330,7 +331,19 @@ $amount    = 0;
                                                             echo $feeList->code ;
                                                         }
                                                     ?>
+                                                </td> -->
+
+                                                <td>                                                     
+                                                    <?php
+                                                    if ($feeList->is_system) {
+                                                        echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                    } else {
+                                                        echo $feeList->type . " (" . $feeList->code . ")";
+                                                    }
+                                                    ?>
                                                 </td>
+
+
                                                 <td>
                                                     <?php echo $this->lang->line(strtolower($record->payment_mode)); ?>
                                                 </td>
@@ -464,8 +477,9 @@ if (in_array('1', $print_copy)) {
                                         <thead>
                                             <tr>
                                                 <th><?php echo $this->lang->line('date'); ?></th>
-                                                <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                                <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                                <th><?php echo $this->lang->line('fees'); ?></th>
+                                                <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                                <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                                 <th><?php echo $this->lang->line('mode'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('discount'); ?></th>
@@ -482,7 +496,7 @@ $amount    = 0;
         if (empty($feeList)) {
             ?>
                                                 <tr>
-                                                    <td colspan="11" class="text-danger text-center">
+                                                    <td colspan="10" class="text-danger text-center">
                                                         <?php echo $this->lang->line('no_transaction_found'); ?>
                                                     </td>
                                                 </tr>
@@ -498,7 +512,7 @@ $amount    = 0;
                                                         <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($record->date)); ?>
 
                                                     </td>
-                                                    <td>
+                                                   <!--  <td>
                                                          
                                                         <?php
                                                     if ($feeList->is_system) {
@@ -516,7 +530,19 @@ $amount    = 0;
                                                             echo $feeList->code ;
                                                         }
                                                         ?>
+                                                    </td> -->
+
+                                                    <td>                                                     
+                                                    <?php
+                                                        if ($feeList->is_system) {
+                                                            echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                        } else {
+                                                            echo $feeList->type . " (" . $feeList->code . ")";
+                                                        }
+                                                    ?>
                                                     </td>
+
+
                                                     <td>
                                                         <?php echo $this->lang->line(strtolower($record->payment_mode)); ?>
                                                     </td>
@@ -645,8 +671,9 @@ if (in_array('2', $print_copy)) {
                                         <thead>
                                             <tr>
                                                 <th><?php echo $this->lang->line('date'); ?></th>
-                                                <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                                <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                                <th><?php echo $this->lang->line('fees'); ?></th>
+                                                <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                                <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                                 <th><?php echo $this->lang->line('mode'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('discount'); ?></th>
@@ -663,7 +690,7 @@ $amount    = 0;
         if (empty($feeList)) {
             ?>
                                                 <tr>
-                                                    <td colspan="11" class="text-danger text-center">
+                                                    <td colspan="10" class="text-danger text-center">
                                                         <?php echo $this->lang->line('no_transaction_found'); ?>
                                                     </td>
                                                 </tr>
@@ -679,7 +706,7 @@ $amount    = 0;
                                                         <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($record->date)); ?>
 
                                                     </td>
-                                                    <td>                                                         
+                                                    <!-- <td>                                                         
                                                         <?php
                                                     if ($feeList->is_system) {
                                                         echo $this->lang->line($feeList->name) . " (" . $this->lang->line($feeList->type) . ")";
@@ -696,7 +723,16 @@ $amount    = 0;
                                                             echo $feeList->code ;
                                                         }
                                                         ?>
+                                                    </td> -->
+                                                    <td>                                                     
+                                                    <?php
+                                                    if ($feeList->is_system) {
+                                                        echo $this->lang->line($feeList->type) . " (" . $this->lang->line($feeList->code) . ")";
+                                                    } else {
+                                                        echo $feeList->type . " (" . $feeList->code . ")";
+                                                    }  ?>
                                                     </td>
+
                                                     <td>
                                                         <?php echo $this->lang->line(strtolower($record->payment_mode)); ?>
                                                     </td>

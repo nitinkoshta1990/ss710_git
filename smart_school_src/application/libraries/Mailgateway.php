@@ -284,6 +284,25 @@ class Mailgateway
         }
     }
 
+    public function sentPresentStudentMail($detail, $template, $subject, $send_to)
+    {
+        $msg     = $this->getPresentStudentContent($detail, $template);
+        $subject = $this->getmailsubject($detail['id'], $subject);
+        if (!empty($this->_CI->mail_config) && $send_to != "") {
+            $this->_CI->mailer->send_mail($send_to, $subject, $msg);
+        }
+    }
+
+    public function getPresentStudentContent($student_detail, $template)
+    {
+        $session_name                           = $this->_CI->setting_model->getCurrentSessionName();
+        $student_detail['current_session_name'] = $session_name;
+        foreach ($student_detail as $key => $value) {
+              $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
+        }
+        return $template;
+    }
+
     public function getAddFeeContent($data, $template)
     {
         $currency_symbol      = $this->_CI->customlib->getSchoolCurrencyFormat();
@@ -312,13 +331,8 @@ class Mailgateway
         $data->fine_amount   = $currency_symbol . $record->amount_fine;
         $data->student_name = $this->_CI->customlib->getFullName($fee->firstname, $fee->middlename, $fee->lastname, $this->sch_setting->middlename, $this->sch_setting->lastname);
         
-       
-
         foreach ($data as $key => $value) {
-             
-              
                $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', '--', $template);
-               
         }
 
         return $template;
@@ -545,5 +559,39 @@ class Mailgateway
 
         return $template;
     }
+
+    //send staff attandance present
+    public function sentPresentStaffMail($detail, $template, $subject, $send_to)
+    {
+        $msg = $this->getPresentStaffContent($detail, $template);
+        if (!empty($this->_CI->mail_config) && $send_to != "") {
+            $this->_CI->mailer->send_mail($send_to, $subject, $msg);
+        }
+    }
+    public function getPresentStaffContent($student_detail, $template)
+    {
+        foreach ($student_detail as $key => $value) {
+              $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
+        }
+        return $template;
+    }
+    //send staff attandance present
+
+    //send staff attandance absent
+    public function sentAbsentStaffMail($detail, $template, $subject, $send_to)
+    {
+        $msg = $this->getAbsentStaffContent($detail, $template);
+        if (!empty($this->_CI->mail_config) && $send_to != "") {
+            $this->_CI->mailer->send_mail($send_to, $subject, $msg);
+        }
+    }
+    public function getAbsentStaffContent($student_detail, $template)
+    {
+        foreach ($student_detail as $key => $value) {
+              $template = $value ? str_replace('{{' . $key . '}}', $value, $template) :  str_replace('{{' . $key . '}}', $key, $template);
+        }
+        return $template;
+    }
+    //send staff attandance absent
 
 }

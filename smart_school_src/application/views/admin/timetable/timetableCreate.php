@@ -107,7 +107,7 @@ if (isset($getDaysnameList)) {
                 <form action="#" method="POST" id="universal_from">           
          
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4 col-lg-2 col-md-2">
                 <div class="form-group">
                     <label for="form_name"><?php echo $this->lang->line('period_start_time'); ?><small class="req"> *</small></label>
                    
@@ -121,7 +121,7 @@ if (isset($getDaysnameList)) {
                     <div class="text text-danger"></div>
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4 col-lg-2 col-md-3">
                 <div class="form-group">
                     <label for="form_email"><?php echo $this->lang->line('duration_minute'); ?><small class="req"> *</small></label>                     
                     <div class="input-group">
@@ -133,7 +133,7 @@ if (isset($getDaysnameList)) {
                     <div class="text text-danger"></div>
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3 col-lg-2 col-md-2">
                 <div class="form-group">
                     <label for="form_phone"><?php echo $this->lang->line('interval_minute'); ?><small class="req"> *</small></label>
                    <div class="input-group">
@@ -145,7 +145,7 @@ if (isset($getDaysnameList)) {
                     <div class="text text-danger"></div>
                 </div>
             </div>
-                 <div class="col-sm-2">
+                 <div class="col-sm-8 col-lg-2 col-md-2">
                 <div class="form-group">
                     <label for="form_phone"><?php echo $this->lang->line('room_no'); ?></label>
 <input type="text" name="rroom_no" class="form-control" id="froom_no">
@@ -155,8 +155,8 @@ if (isset($getDaysnameList)) {
             </div>
               <div class="col-sm-2">
                 <div class="form-group">
-                    <label for="form_phone" class="displayblock opacity">&nbsp;</label>
-                    <input type="submit" class="btn btn-primary btn-sm btn-send" value="<?php echo $this->lang->line('apply'); ?>">
+                    <label for="form_phone" class="displayblock opacity d-sm-none">&nbsp;</label>
+                    <input type="submit" class="btn btn-primary btn-sm btn-send smallbtn28" value="<?php echo $this->lang->line('apply'); ?>">
                     <div class="help-block with-errors"></div>
                 </div>
             </div>

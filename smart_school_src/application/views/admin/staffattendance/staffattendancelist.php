@@ -75,6 +75,8 @@
 
     .radio.radio-inline {
         margin-top: 0;
+        margin-right: 10px;
+        margin-left: 0;
     }
 
     .radio-primary input[type="radio"]+label::after {
@@ -115,16 +117,14 @@
 
     @media (max-width:767px) {
         .radio.radio-inline {
-            display: inherit;
+            display: block;
+            margin-left: 0;
         }
     }
+
 </style>
 
-<div class="content-wrapper" style="min-height: 946px;">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1><i class="fa fa-sitemap"></i> <?php echo $this->lang->line('human_resource'); ?></h1>
-    </section>
+<div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -199,7 +199,7 @@
                                     <?php echo $this->customlib->getCSRF(); ?>
                                     <div class="mailbox-controls">
                                     <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-8">
                                                 
                                                     <div class="form-group">
                                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('set_attendance_for_all_staff_as'); ?> &nbsp;</label>
@@ -209,9 +209,9 @@
 
                                                         ?>
                                                             <div class="radio radio-info radio-inline">
-                                                                <input type="radio" name="attendencetype" class="default_radio" value="radio_<?php echo $type['id'] ?>" id="attendencetype<?php echo $type['id'] ?>">
+                                                                <input type="radio" data-record_id="<?php echo $type['id'] ?>" name="attendencetype" class="default_radio" value="radio_<?php echo $type['id'] ?>" id="attendencetype<?php echo $type['id'] ?>"   onclick="getatten(<?php echo $type['id'] ?>)">
                                                                 <label for="attendencetype<?php echo $type['id'] ?>">
-                                                                    <?php echo $this->lang->line($att_type); ?>
+                                                                    <?php echo  $this->lang->line($att_type); ?> 
                                                                 </label>
 
                                                             </div>
@@ -219,20 +219,18 @@
 
                                                         }
                                                         ?>
-
                                                     </div>
-                                              
-                                           
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="pull-right">
-                                                     
-                                                                <button type="submit" name="search" value="saveattendence" id="saveattendence" class="btn btn-primary btn-sm pull-right checkbox-toggle"><i class="fa fa-save"></i> <?php echo $this->lang->line('save_attendance'); ?> </button>
-                                                        
+														<?php if (($this->rbac->hasPrivilege('staff_attendance', 'can_add')) || ($this->rbac->hasPrivilege('staff_attendance', 'can_edit'))) { ?>
+                                                        <button type="submit" name="search" value="saveattendence" id="saveattendence" class="btn btn-primary btn-sm pull-right checkbox-toggle"><i class="fa fa-save"></i> <?php echo $this->lang->line('save_attendance'); ?> </button>
+														<?php } ?>
                                                     </div>
                                                 </div>
                                             </div>                                        
                                     </div>
+                                    <input type="hidden" name="is_first_time_attendance" value="<?php echo $is_first_time_attendance;?>">
                                     <input type="hidden" name="user_id" value="<?php echo $user_type_id; ?>">
                                     <input type="hidden" name="section_id" value="">
                                     <input type="hidden" name="date" value="<?php echo $date; ?>">
@@ -242,18 +240,15 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th><?php echo $this->lang->line('staff_id'); ?></th>
-                                                 
                                                     <th><?php echo $this->lang->line('name'); ?></th>
                                                     <th><?php echo $this->lang->line('role'); ?></th>
-                                                    <th width="30%"><?php echo $this->lang->line('attendance'); ?></th>
-                                                    <?php
-                                                    if ($sch_setting->biometric) {
-                                                    ?>
+                                                    <th ><?php echo $this->lang->line('attendance'); ?></th>
+                                                    <?php  if ($sch_setting->biometric) {  ?>
                                                         <th width="10%"><?php echo $this->lang->line('date'); ?></th>
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                    <th width="10%" ><?php echo $this->lang->line('source'); ?></th>
+                                                    <?php  }  ?>
+                                                    <th width="8%" ><?php echo $this->lang->line('source'); ?></th>
+                                                    <th class="white-space-nowrap"><?php echo $this->lang->line('entry_time'); ?></th>
+                                                    <th class="white-space-nowrap"><?php echo $this->lang->line('exit_time'); ?></th>
                                                     <th class="text-right"><?php echo $this->lang->line('note'); ?></th>
                                                 </tr>
                                             </thead>
@@ -266,14 +261,14 @@
                                                 ?>
                                                     <tr>
                                                         <td>
+                                                            <input type="hidden" name="staff_role[]" id="staff_role_<?php echo $value['role_id']; ?>" value="<?php echo $value['role_id']; ?>">
                                                             <input type="hidden" name="student_session[]" value="<?php echo $value['staff_id']; ?>">
                                                             <input type="hidden" value="<?php echo $attendendence_id ?>" name="attendendence_id<?php echo $value["staff_id"]; ?>">
                                                             <?php echo $row_count; ?>
                                                         </td>
                                                         <td>
                                                             <?php echo $value['employee_id']; ?>
-                                                        </td>
-                                                      
+                                                        </td>                                                      
                                                         <td>
                                                             <?php echo $value['name'] . " " . $value['surname']; ?>
                                                         </td>
@@ -282,19 +277,18 @@
                                                             <?php
                                                             $c     = 1;
                                                             $count = 0;
-                                                            foreach ($attendencetypeslist as $key => $type) {
+                                                            foreach ($attendencetypeslist as $key => $type) {  
 
-                                                                // if ($type['key_value'] != "H") {
                                                                     $att_type = str_replace(" ", "_", strtolower($type['type']));
                                                                     if ($value["date"] != "xxx") {
                                                             ?>
                                                                         <div class="radio radio-info radio-inline">
-                                                                            <input <?php if ($value['staff_attendance_type_id'] == $type['id']) {
+                                                                            <input onclick="disable_enable(this.value,<?php echo $value["staff_id"] ?>)"  <?php if ($value['staff_attendance_type_id'] == $type['id']) {
                                                                                         echo "checked";
                                                                                     }
                                                                                     ?> type="radio" id="attendencetype<?php echo $value['staff_id'] . "-" . $count; ?>" value="<?php echo $type['id'] ?>" name="attendencetype<?php echo $value['staff_id']; ?>" class="radio_<?php echo $type['id'] ?>">
                                                                             <label for="attendencetype<?php echo $value['staff_id'] . "-" . $count; ?>">
-                                                                                <?php echo $this->lang->line(strtolower($type['type'])); ?>
+                                                                                <?php echo $this->lang->line(($type['long_lang_name'])); ?>
                                                                             </label>
                                                                         </div>
                                                                     <?php
@@ -310,19 +304,20 @@
                                                                                         }
                                                                                         ?> type="radio" id="attendencetype<?php echo $value['staff_id'] . "-" . $count; ?>" value="<?php echo $type['id'] ?>" name="attendencetype<?php echo $value['staff_id']; ?>" class="radio_<?php echo $type['id'] ?>">
                                                                                 <label for="attendencetype<?php echo $value['staff_id'] . "-" . $count; ?>">
-                                                                                    <?php echo $this->lang->line(strtolower($type['type'])); ?>
+                                                                                    <?php echo $this->lang->line(($type['long_lang_name'])); ?>
                                                                                 </label>
                                                                             </div>
                                                                         <?php
                                                                         } else {
                                                                         ?>
                                                                             <div class="radio radio-info radio-inline">
-                                                                                <input <?php if (($c == 1) && ($resultlist[0]['staff_attendance_type_id'] != 5)) {
+                                                                                <input  onclick="disable_enable(this.value,<?php echo $value["staff_id"] ?>)"  <?php if (($c == 1) && ($resultlist[0]['staff_attendance_type_id'] != 5)) {
                                                                                             echo "checked";
                                                                                         }
                                                                                         ?> type="radio" id="attendencetype<?php echo $value['staff_id'] . "-" . $count; ?>" value="<?php echo $type['id'] ?>" name="attendencetype<?php echo $value['staff_id']; ?>" class="radio_<?php echo $type['id'] ?>">
                                                                                 <label for="attendencetype<?php echo $value['staff_id'] . "-" . $count; ?>">
-                                                                                    <?php echo $this->lang->line(strtolower($type['type'])); ?>
+                                                                                    <?php
+                                                                                     echo $this->lang->line(($type['long_lang_name'])); ?>
                                                                                 </label>
                                                                             </div>
                                                                         <?php
@@ -331,7 +326,7 @@
                                                                         }
                                                                         $c++;
                                                                         $count++;
-                                                                    // }
+                                                                    
                                                                 }
                                                                             ?>
                                                         </td>
@@ -365,10 +360,23 @@
                                                             ?>
                                                         </td>
 
+                                                        <?php
+                                                        if($value['staff_attendance_type_id']==3 || $value['staff_attendance_type_id']==5){
+                                                            $disable_input_attr="disabled";
+                                                        }else{
+                                                            $disable_input_attr="";
+                                                        }  ?>
+
+                                                    <td class="relative">
+                                                        <input <?php echo $disable_input_attr;?> type="text" value="<?php if($value["in_time"]!="00:00:00"){ echo $value["in_time"]; }else{ echo "";} ?>"  name="in_time_<?php echo $value["staff_id"] ?>" id="in_time_<?php echo $value["staff_id"] ?>" class="form-control datetime in_time time in_time_<?php echo $value['role_id']; ?>">
+                                                    </td>                                                        
+                                                    <td class="relative">
+                                                        <input  <?php echo $disable_input_attr;?>  type="text" value="<?php if($value["out_time"]!="00:00:00"){ echo $value["out_time"]; }else{ echo "";} ?>"  name="out_time_<?php echo $value["staff_id"] ?>"  id="out_time_<?php echo $value["staff_id"] ?>" class="form-control datetime out_time time out_time_<?php echo $value['role_id']; ?>">
+                                                    </td>  
                                                         <?php if ($value["date"] == 'xxx') { ?>
-                                                            <td class="text-right"><input type="text" name="remark<?php echo $value["staff_id"] ?>"></td>
+                                                            <td class="text-right"><input type="text"  class="form-control"  name="remark<?php echo $value["staff_id"] ?>"></td>
                                                         <?php } else { ?>
-                                                            <td class="text-right"><input type="text" name="remark<?php echo $value["staff_id"] ?>" value="<?php echo $value["remark"]; ?>"></td>
+                                                            <td class="text-right"><input type="text"  class="form-control" name="remark<?php echo $value["staff_id"] ?>" value="<?php echo $value["remark"]; ?>"></td>
                                                         <?php } ?>
                                                     </tr>
                                                 <?php
@@ -416,20 +424,26 @@
   
     $(document).ready(function() {
         $('.default_radio').click(function() {
-       let radio_default=($(this).val());
-       
-
+            let radio_default=($(this).val());
             var returnVal = confirm("<?php echo $this->lang->line('are_you_sure'); ?>");
             if(returnVal){
+                
                 $("input[type=radio][class='"+radio_default+"']").prop("checked", returnVal);
+                
+                let attendance_type_id = ($(this).data('record_id'));
+                if(attendance_type_id==3 || attendance_type_id==5){
+                    //absent or holiday
+                    $('.in_time').attr("disabled",true);
+                    $('.out_time').attr("disabled",true);
+                }else{
+                    $('.in_time').attr("disabled",false);
+                    $('.out_time').attr("disabled",false);
+                }
+
             }else{
-                console.log('sdfsdfdsfs');
                 return false;
             }
-            
-     
     });
-
     });
 </script>
 
@@ -483,4 +497,78 @@
             init();
         });
     });
+</script>
+
+<script type="text/javascript">
+//**** staff attendance ****//
+ $(function() {
+     $('.time').datetimepicker({
+            format: 'LT'
+     });
+ });
+ 
+  $(function()
+        {
+            $('.time').datetimepicker().on('dp.show',function()
+            {
+                $(this).closest('.table-responsive').removeClass('table-responsive').addClass('temp');
+            }).on('dp.hide',function()
+            {
+                $(this).closest('.temp').addClass('table-responsive').removeClass('temp')
+            });
+        });
+
+function tConvert(time) {
+if (time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/)) {
+    const [timeWithoutPeriod, period] = time.split(" ");
+    let [hours, minutes, seconds] = timeWithoutPeriod.split(":");
+    let AM_PM = null;
+    AM_PM = hours < 12 ? 'AM' : 'PM'; // Set AM/PM
+    hours = hours % 12 || 12; // Adjust hours
+    return `${hours}:${minutes} ${AM_PM}`;
+} else {
+    return time;
+}
+}
+
+var attendance_setting = <?php echo json_encode($staff_settings) ?>;
+
+function getatten(atten_type){
+    //3 for absent 5 for holiday
+    if(atten_type==3 || atten_type==5){
+      $('.in_time').val('');
+      $('.out_time').val('');  
+      return false;
+    }else{
+        var role_id = $("input[name='staff_role[]']").map(function(){return $(this).val();}).get();
+        let nm = (attendance_setting);     
+        for(var i=0;i<role_id.length;i++){
+        var returnValue = false;
+        $.each(nm, function(key, value) {
+            if (value.staff_attendence_type_id == atten_type  &&  value.role_id==role_id[i]) {                
+                returnValue = [tConvert(value.entry_time_from), tConvert(value.entry_time_to)];
+                $('.in_time_'+role_id[i]).val(returnValue[0]);
+                $('.out_time_'+role_id[i]).val(returnValue[1]);                
+            }else{
+                            
+            }
+        }); 
+    }
+    }
+}
+
+let disable_enable=(type,staff_id)=>{
+    if(type==3 || type==5){
+        $("#in_time_"+staff_id).val("");
+        $("#out_time_"+staff_id).val("");
+        $("#in_time_"+staff_id).attr("disabled",true);
+        $("#out_time_"+staff_id).attr("disabled",true);
+    }else{
+        $("#in_time_"+staff_id).val("");
+        $("#out_time_"+staff_id).val("");
+        $("#in_time_"+staff_id).attr("disabled",false);
+        $("#out_time_"+staff_id).attr("disabled",false);
+    }
+}
+
 </script>

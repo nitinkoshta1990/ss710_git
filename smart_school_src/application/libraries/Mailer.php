@@ -68,6 +68,7 @@ class Mailer
                 $mail->SMTPSecure = $this->CI->mail_config->ssl_tls;
                 $mail->Host       = $this->CI->mail_config->smtp_server;
                 $mail->Port       = $this->CI->mail_config->smtp_port;
+				$mail->From 	  = $this->CI->mail_config->smtp_email;
                 $mail->Username   = $this->CI->mail_config->smtp_username;
                 $mail->Password   = $this->CI->mail_config->smtp_password;
                 $mail->SetFrom($this->CI->mail_config->smtp_username, $school_name);
@@ -152,6 +153,7 @@ class Mailer
                 $mail->SMTPSecure = $this->CI->mail_config->ssl_tls;
                 $mail->Host       = $this->CI->mail_config->smtp_server;
                 $mail->Port       = $this->CI->mail_config->smtp_port;
+				$mail->From 	  = $this->CI->mail_config->smtp_email;
                 $mail->Username   = $this->CI->mail_config->smtp_username;
                 $mail->Password   = $this->CI->mail_config->smtp_password;
                 $mail->SetFrom($this->CI->mail_config->smtp_username, $school_name);
@@ -240,6 +242,7 @@ class Mailer
                 $mail->SMTPSecure = $this->CI->mail_config->ssl_tls;
                 $mail->Host       = $this->CI->mail_config->smtp_server;
                 $mail->Port       = $this->CI->mail_config->smtp_port;
+				$mail->From 	  = $this->CI->mail_config->smtp_email;
                 $mail->Username   = $this->CI->mail_config->smtp_username;
                 $mail->Password   = $this->CI->mail_config->smtp_password;
                 $mail->SetFrom($this->CI->mail_config->smtp_username, $school_name);

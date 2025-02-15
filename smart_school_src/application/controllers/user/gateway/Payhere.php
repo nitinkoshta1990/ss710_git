@@ -45,7 +45,7 @@ class Payhere extends Studentgateway_Controller {
 
 
         $data['name'] = $data['params']['name'];
-        $amount =number_format((float)(convertBaseAmountCurrencyFormat($data['params']['fine_amount_balance']+$data['params']['total'])), 2, '.', ''); 
+        $amount =number_format((float)(convertBaseAmountCurrencyFormat($data['params']['fine_amount_balance']+$data['params']['total'] - $data['params']['applied_fee_discount']+ $data['params']['gateway_processing_charge'])), 2, '.', ''); 
         $htmlform=array(
             'merchant_id'=>$this->api_config->api_publishable_key,
             'return_url'=>base_url().'user/gateway/payhere/success',
@@ -82,7 +82,9 @@ class Payhere extends Studentgateway_Controller {
          $json_array = array(
             'amount'          =>  $fee_value['amount_balance'],
             'date'            => date('Y-m-d'),
-            'amount_discount' => 0,
+            'amount_discount' => $fee_value['applied_fee_discount'],
+			'processing_charge_type'=>$data['params']['processing_charge_type'],
+            'gateway_processing_charge'=>$data['params']['gateway_processing_charge'],
             'amount_fine'     => $fee_value['fine_balance'],
             'description'     => $this->lang->line('online_fees_deposit_through_payhere_txn_id') . $htmlform['order_id'],
             'received_by'     => '',

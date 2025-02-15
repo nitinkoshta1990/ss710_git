@@ -644,8 +644,7 @@ class Examgroup extends Admin_Controller
 
             if (count($total_subjects) !== count(array_unique($total_subjects))){
                 $this->form_validation->set_rules('duplicate_subjects', 'duplicate_subjects', 'trim|required|xss_clean', array('required' =>$this->lang->line('duplicate_entry')));
-            }
-            
+            }            
         }
 
         if ($this->form_validation->run() == false) {

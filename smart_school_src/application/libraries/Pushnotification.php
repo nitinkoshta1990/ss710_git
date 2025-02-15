@@ -14,8 +14,8 @@ class Pushnotification
 
     public $CI;
 
-    //com.qdocs.smartschool
-    private $fcmUrl = 'https://fcm.googleapis.com/v1/projects/smart-school-2019/messages:send';
+    //com.qdocs.ssre241123
+    private $fcmUrl = 'https://fcm.googleapis.com/v1/projects/smartschool-re-2411-ab67d/messages:send';
     private $key_file_path = APPPATH . "third_party/firebase_notification_key.json";
     private $scope = "https://www.googleapis.com/auth/firebase.messaging";
     private $token;

@@ -22,12 +22,22 @@ class Gateway_ins_model extends CI_Model
     {
         return $this->db->select('gateway_ins.unique_id,gateway_ins.id as gateway_ins_id,gateway_ins.parameter_details,student_fees_processing.*')->from('gateway_ins')->join('student_fees_processing', '`student_fees_processing`.`gateway_ins_id`=gateway_ins.id')->where(array('gateway_ins.gateway_name' => $gateway_name, 'gateway_ins.unique_id' => $unique_id))->get()->result_array();
     }
-
+	
+    public function get_fees_processing($gateway_ins_id)
+    {
+        return $this->db->select('gateway_ins.unique_id,gateway_ins.id as gateway_ins_id,gateway_ins.parameter_details,student_fees_processing.*')->from('gateway_ins')->join('student_fees_processing', '`student_fees_processing`.`gateway_ins_id`=gateway_ins.id')->where(array('student_fees_processing.gateway_ins_id' => $gateway_ins_id))->get()->row_array();
+    }
+	
     public function get_gateway_ins($unique_id, $gateway_name)
     {
         return $this->db->select('*')->from('gateway_ins')->where(array('gateway_ins.gateway_name' => $gateway_name, 'gateway_ins.unique_id' => $unique_id))->get()->row_array();
     }
-
+	
+    public function get_gateway_ins_by_name($gateway_name)
+    {
+        return $this->db->select('*')->from('gateway_ins')->where(array('gateway_ins.gateway_name' => $gateway_name, 'gateway_ins.gateway_name' => $gateway_name))->get()->result_array();
+    }
+	
     public function add_gateway_ins($gateway_ins)
     {
         $this->db->insert('gateway_ins', $gateway_ins);
@@ -76,12 +86,9 @@ class Gateway_ins_model extends CI_Model
                 $fee_data['student_transport_fee_id'] = null;
                 $this->db->where('student_fees_master_id', $fee_data['student_fees_master_id']);
                 $this->db->where('fee_groups_feetype_id', $fee_data['fee_groups_feetype_id']);
-
             } elseif ($fee_data['student_transport_fee_id'] > 0 && $fee_data['fee_category'] == "transport") {
-
                 $fee_data['student_fees_master_id'] = null;
                 $fee_data['fee_groups_feetype_id']  = null;
-
                 $this->db->where('student_transport_fee_id', $fee_data['student_transport_fee_id']);
             }
             $desc                      = $fee_data['amount_detail']['description'];

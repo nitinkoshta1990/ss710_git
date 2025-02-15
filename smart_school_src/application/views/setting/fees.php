@@ -140,6 +140,7 @@
                                         </div>
                                     </div>
                                     </div>
+                                   
                                     <div class="row">
                                         <div class="col-md-12">
                                         <div class="col-md-12">
@@ -165,6 +166,38 @@
                                         </div>
                                         </div>
                                     </div>
+
+ 
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-4"> <?php echo $this->lang->line("student_guardian_panel_fees_discount"); ?></label>
+                                                <div class="col-sm-8">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="fees_discount" value="0" <?php
+                                                        if (!$result->fees_discount) {
+                                                            echo "checked";
+                                                        }
+                                                        ?> ><?php echo $this->lang->line('disabled'); ?>
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="fees_discount" value="1" <?php
+                                                        if ($result->fees_discount) {
+                                                            echo "checked";
+                                                        }
+                                                        ?>><?php echo $this->lang->line('enabled'); ?>
+                                                    </label>
+                                                </div>   
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
                                 </div><!--./row--> 
                             </div><!-- /.box-body -->
                             <div class="box-footer">

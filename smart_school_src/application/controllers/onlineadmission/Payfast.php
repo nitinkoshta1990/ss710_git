@@ -37,7 +37,7 @@ class Payfast extends OnlineAdmission_Controller
         }else{
             $customer_phone = '9999999999';
         }
-            $cartTotal = convertBaseAmountCurrencyFormat($data['total']);// This amount needs to be sourced from your application
+            $cartTotal = convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount);// This amount needs to be sourced from your application
             $payfast_data = array(
             'merchant_id' => $this->pay_method->api_publishable_key,
             'merchant_key' => $this->pay_method->api_secret_key,
@@ -91,7 +91,7 @@ class Payfast extends OnlineAdmission_Controller
     }
  
     public function success() {
-    	$amount = $this->amount;
+    	$amount = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $reference  = $this->session->userdata('reference');
         
         $currentdate = date('Y-m-d');
@@ -122,6 +122,8 @@ class Payfast extends OnlineAdmission_Controller
             $gateway_response['transaction_id'] = $transactionid;
             $gateway_response['payment_mode']   = 'payfast';
             $gateway_response['payment_type']   = 'online';
+            $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_payfast_txn_id') . $transactionid;
             $gateway_response['date']           = date("Y-m-d H:i:s");
             $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

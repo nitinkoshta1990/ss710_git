@@ -46,9 +46,9 @@ class Flutterwave extends Studentgateway_Controller {
             $api_publishable_key = $details->api_publishable_key;
 
             $params = $this->session->userdata('params');
-            $data = array();
+            
             $student_id = $params['student_id'];
-            $data['total'] =number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');
+            $data['total'] =number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', '');
             $data['symbol'] = $params['invoice']->symbol;
             $data['currency_name'] = $params['invoice']->currency_name;
             $data['name'] = $params['name'];
@@ -120,7 +120,7 @@ redirect(base_url('user/gateway/payment/paymentfailed'));
              redirect(base_url("user/gateway/payment/paymentfailed"));
         }else{
         $ref = $_GET['txref'];
-        $amount=number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', ''); //Get the correct amount of your product
+        $amount=number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', ''); //Get the correct amount of your product
         $currency = $params['invoice']->currency_name;; //Correct Currency from Server
 
         $query = array(
@@ -166,7 +166,9 @@ redirect(base_url('user/gateway/payment/paymentfailed'));
              $json_array = array(
                 'amount'          =>  $fee_value['amount_balance'],
                 'date'            => date('Y-m-d'),
-                'amount_discount' => 0,
+                'amount_discount' => $fee_value['applied_fee_discount'],
+				'processing_charge_type'=>$params['processing_charge_type'],
+				'gateway_processing_charge'=>$params['gateway_processing_charge'],
                 'amount_fine'     => $fee_value['fine_balance'],
                 'description'     => $this->lang->line('online_fees_deposit_through_flutterwave_txn_id') . $payment_id,
                 'received_by'     => '',
@@ -184,7 +186,7 @@ redirect(base_url('user/gateway/payment/paymentfailed'));
             //========
             }
             $send_to     = $params['guardian_phone'];
-            $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+             $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
             //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();

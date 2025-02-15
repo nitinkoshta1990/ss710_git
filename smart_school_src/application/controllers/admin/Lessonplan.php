@@ -267,7 +267,7 @@ class Lessonplan extends Admin_Controller
     public function saveCopyLesson()
     {
         $data['title'] = 'Add Library';
-        $this->form_validation->set_rules('topic_id[]', $this->lang->line('topic'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('topic_id[]', $this->lang->line('topic'), 'required|xss_clean');
         $this->form_validation->set_rules('class_id', $this->lang->line('class'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('section_id', $this->lang->line('section'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('subject_group_id', $this->lang->line('subject_group'), 'trim|required|xss_clean');

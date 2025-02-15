@@ -1,36 +1,13 @@
-<style type="text/css">
-    @media print {
-        .pagebreak { page-break-before: always; } /* page-break-after works, as well */
-    }
+<link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/print-admit-card.css" />
+<?php if ($this->customlib->getRTL() != "") { ?>
+<link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/print-admit-card-rtl.css" />
 
-    *{padding: 0; margin:0;}
-    /*body{padding: 0; margin:0; font-family: arial; color: #000; font-size: 14px; line-height: normal;}*/
-    .tableone{}
-    .tableone td{padding:5px 10px}
-    table.denifittable  {border: 1px solid #999;border-collapse: collapse;}
-    .denifittable th {padding: 10px 10px; font-weight: normal;  border-collapse: collapse;border-right: 1px solid #999; border-bottom: 1px solid #999;}
-    .denifittable td {padding: 10px 10px; font-weight: bold;border-collapse: collapse;border-left: 1px solid #999;}
-
-    .mark-container{
-        width: 1000px;position: relative;z-index: 2; margin: 0 auto; padding: 20px 30px;}
-
-    .tcmybg {
-        background:top center;
-        background-size: 100% 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 1;
-    }
-    .tablemain{position: relative;z-index: 2}
-
-</style>
-<?php
+<?php }
 if (!empty($student_details)) {
     foreach ($student_details as $student_key => $student_value) {
         ?>
         <div class="mark-container">
+            <div class="pagebreak">
             <?php
 if ($admitcard->background_img != "") {
             ?>
@@ -237,7 +214,7 @@ if ($admitcard->exam_center != "") {
                                 <?php
 if ($admitcard->is_photo) {
             ?>
-                                    <td valign="top" width="25%" align="right">
+                                    <td valign="top" width="25%" class="photo-align">
                                         <?php
 if ($student_value->image != '') {
                 ?>
@@ -307,9 +284,13 @@ if ($admitcard->sign != "") {
 }
         ?>
             </table>
+              </div>
         </div>
-        <div class="pagebreak"> </div>
+       
         <?php
 }
 }
 ?>
+<script type="text/javascript">
+window.pagebreak();
+</script>

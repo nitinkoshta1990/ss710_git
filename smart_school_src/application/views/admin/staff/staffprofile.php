@@ -195,18 +195,18 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             if ($sch_setting->staff_barcode) { ?>
                                 <li class="list-group-item listnoback">
                                     <b><?php echo $this->lang->line('barcode'); ?></b>
-                                    <?php if (file_exists("./uploads/staff_id_card/barcodes/" . $staff['employee_id'] . ".png")) { ?>
-                                        <a class="pull-right text-aqua">
-                                            <img src="<?php echo $this->media_storage->getImageURL('uploads/staff_id_card/barcodes/' . $staff['employee_id'] . '.png'); ?>" width="auto" height="auto" /></a>
+                                    <?php if (file_exists("./uploads/staff_id_card/barcodes/" . $staff['id'] . ".png")) { ?>
+                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/staff_id_card/barcodes/' . $staff['id'] . '.png'); ?>" target="_blank">
+                                            <img src="<?php echo $this->media_storage->getImageURL('uploads/staff_id_card/barcodes/' . $staff['id'] . '.png'); ?>" width="auto" height="auto" /></a>
                                     <?php } ?>
                                 </li>
                             <?php }
                               if ($sch_setting->staff_barcode) { ?>
                                 <li class="list-group-item listnoback">
                                     <b><?php echo $this->lang->line('qrcode'); ?></b>
-                                    <?php if (file_exists("./uploads/staff_id_card/qrcode/" . $staff['employee_id'] . ".png")) { ?>
-                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/staff_id_card/qrcode/' . $staff['employee_id'] . '.png'); ?>" target="_blank">
-                                            <img src="<?php echo $this->media_storage->getImageURL('uploads/staff_id_card/qrcode/' . $staff['employee_id'] . '.png'); ?>" width="auto" height="auto" class="h-50" /></a>
+                                    <?php if (file_exists("./uploads/staff_id_card/qrcode/" . $staff['id'] . ".png")) { ?>
+                                        <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/staff_id_card/qrcode/' . $staff['id'] . '.png'); ?>" target="_blank">
+                                            <img src="<?php echo $this->media_storage->getImageURL('uploads/staff_id_card/qrcode/' . $staff['id'] . '.png'); ?>" width="auto" height="auto" class="h-50" /></a>
                                     <?php } ?>
                                 </li>
                             <?php }
@@ -532,7 +532,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </div>
                         <div class="tab-pane" id="payroll">
                             <div class="row row-flex">
-                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                                     <div class="staffprofile">
                                         <h5><?php echo $this->lang->line('total_net_salary_paid'); ?></h5>
                                         <h4><?php
@@ -547,7 +547,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         </div>
                                     </div>
                                 </div><!--./col-md-3-->
-                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                                     <div class="staffprofile">
                                         <h5><?php echo $this->lang->line('total_gross_salary'); ?></h5>
                                         <h4><?php
@@ -563,7 +563,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         </div>
                                     </div>
                                 </div><!--./col-md-3-->
-                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                                     <div class="staffprofile">
                                         <h5><?php echo $this->lang->line('total_earning'); ?></h5>
                                         <h4><?php
@@ -578,7 +578,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         </div>
                                     </div>
                                 </div><!--./col-md-3-->
-                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                                     <div class="staffprofile">
                                         <h5><?php echo $this->lang->line('total_deduction'); ?></h5>
                                         <h4><?php
@@ -852,10 +852,20 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         </div>
                                     </div>
                                 </div><!--./col-md-3-->
+
                                 <div class="col-lg-3 col-md-4 col-sm-6 col20per">
                                     <div class="staffprofile">
                                         <h5><?php echo $this->lang->line('total_holiday'); ?></h5>
                                         <h4 class="total_holiday"><?php echo count($countAttendance['Holiday']); ?></h4>
+                                        <div class="icon">
+                                            <i class="fa  fa-check-square-o"></i>
+                                        </div>
+                                    </div>
+                                </div><!--./col-md-3-->
+                                 <div class="col-lg-3 col-md-4 col-sm-6 col20per">
+                                    <div class="staffprofile">
+                                        <h5><?php echo $this->lang->line('half_day_second_shift'); ?></h5>
+                                        <h4 class="total_half_day_second_shift"><?php echo count($countAttendance['Half Day Second Shift']); ?></h4>
                                         <div class="icon">
                                             <i class="fa  fa-check-square-o"></i>
                                         </div>
@@ -1004,7 +1014,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 ?>
                                     <?php if (!empty($ldvalue["alloted_leave"])) {
                                     ?>
-                                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                                             <div class="staffprofile">
                                                 <h5><?php echo $ldvalue["type"] . " (" . $ldvalue["alloted_leave"] . ")"; ?></h5>
                                                 <p><?php echo $this->lang->line('used'); ?>: <?php
@@ -1620,12 +1630,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             },
             success: function(result) {
                 $("#ajaxattendance").html(result.page);
-                console.log(result.countAttendance);
                 $('.total_present').text(result.countAttendance.present);
                 $('.total_late').text(result.countAttendance.late);
                 $('.total_absent').text(result.countAttendance.absent);
                 $('.total_half_day').text(result.countAttendance.half_day);
                 $('.total_holiday').text(result.countAttendance.holiday);
+                $('.total_half_day_second_shift').text(result.countAttendance.half_day_second_shift);
                 $('.modal_inner_loader').fadeOut("slow");
             },
             error: function(xhr) { // if error occured

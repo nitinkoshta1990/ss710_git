@@ -79,10 +79,31 @@ foreach ($classlist as $class) {
                                             </div>
                                             <div class="dual-list list-right">
                                                 <div class="well minheight260">
-                                                    <div class="wellscroll">
-                                                        <b><?php echo $this->lang->line('section'); ?></b>
-                                                        <ul class="list-group section_list listcheckbox">
-                                                        </ul>
+                                                    <div class="wellscroll row">
+
+                                                        <div class="col-md-2">
+                                                            <b><?php echo $this->lang->line('section'); ?></b>
+                                                            <ul class="list-group section_list listcheckbox"></ul>
+                                                        </div>
+
+                                                        <div class="col-md-10 ">
+                                                            <?php
+                                                            if($send_to==null){
+                                                                $send_to_user=[];
+                                                            }else{
+                                                                 $send_to_user=json_decode($send_to);
+                                                            }  ?>
+                                                            <b><?php echo $this->lang->line('send_to'); ?></b>
+                                                            <ul class="list-group listcheckbox hide"  id="send_to">
+                                                                <li class="checkbox"><a href="#" class="small"><label>
+                                                                    <input class="reset_checkbox" type="checkbox" name="send_to[]" <?php if(in_array('student',($send_to_user)) && $send_to!=null){ echo "checked"; } ?> value="student"/><?php echo $this->lang->line('students'); ?></label></a></li>
+                                                                <?php if ($sch_setting->guardian_name) {?>
+                                                                <li class="checkbox"><a href="#" class="small"><label>
+                                                                    <input class="reset_checkbox" type="checkbox" name="send_to[]" <?php if(in_array('parent',($send_to_user)) && $send_to!=null){ echo "checked"; } ?>  value="parent"/><?php echo $this->lang->line('guardians'); ?></label></a></li>
+                                                                <?php } ?>
+                                                            </ul>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -149,7 +170,16 @@ if (($userdata["role_id"] == 2)) {
                 div_data += '<li class="checkbox"><a href="#" class="small"><label><input type="checkbox" name="user[]" value ="' + obj.section_id +'"'+ selected_checked +'/>' + obj.section + '</label></a></li>';
 
             });
+
             $('.section_list').append(div_data);
+
+            if(class_id!=""){
+                $("#send_to").addClass("show");
+                $("#send_to").removeClass("hide");
+            }else{
+                $("#send_to").addClass("hide");
+                $("#send_to").removeClass("show");
+            }
         }
     });
 })
@@ -229,6 +259,8 @@ $("#class_form").submit(function (event) {
                     CKEDITOR.instances[instance].setData(" ");
                 }
                 $('.section_list').html("");
+                $("#send_to").addClass("hide");
+                $("#send_to").removeClass("show");
                 successMsg(data.msg);
                 window.location = "<?php echo base_url(); ?>admin/mailsms/schedule";
             }

@@ -44,16 +44,11 @@ class Twocheckout extends Studentgateway_Controller {
             $this->load->view('user/gateway/twocheckout/index', $data);
         } else {
             $data['currency']=$data['params']['invoice']->currency_name;;
-            $data['amount'] =number_format((float)(convertBaseAmountCurrencyFormat($data['params']['fine_amount_balance']+$data['params']['total'])), 2, '.', '');
+            $data['amount'] =number_format((float)(convertBaseAmountCurrencyFormat($data['params']['fine_amount_balance']+$data['params']['total'] - $data['params']['applied_fee_discount']+ $data['params']['gateway_processing_charge'])), 2, '.', '');
             $data['api_config']=$this->api_config;
             $this->load->view('user/gateway/twocheckout/pay', $data);
             
-                }
-                
-            
-            
-            
-        
+                }       
        
     }
 

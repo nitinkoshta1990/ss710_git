@@ -1,58 +1,20 @@
-<style type="text/css">
-    @media print {
-      .page-break { display: block; page-break-before: always; }
+<link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/idcard.css">
+<?php if ($this->customlib->getRTL() != "") { ?>
+<link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/idcard-rtl.css" />
+<?php } ?>
+<?php
+$school = $sch_setting[0];
+$i = 0;
 
-    *{ margin:0; padding: 0;}
-    table{ font-family: 'arial'; margin:0; padding: 0;font-size: 12px; color: #000;}
-    .tc-container{width: 100%;position: relative; text-align: center;margin-bottom:60px;padding-bottom: 10px;}
-    .tcmybg {
-        background: top center;
-        background-size: contain;
-        position: absolute;
-        left: 0;
-        bottom: 10px;
-        width: 160px;
-        height: 160px;
-        margin-left: auto;
-        margin-right: auto;
-        right: 0;
-        opacity: 0.10;
-    }
-    /*begin students id card*/
-    .studentmain{background: #efefef;width: 100%; margin-bottom: 30px;}
-    .studenttop img{width:30px;vertical-align: middle;}
-    .studenttop{background: #453278;padding:2px;color: #fff;overflow: hidden;position: relative;z-index: 1;}
-    .sttext1{font-size: 16px;font-weight: bold;line-height: normal;}
-    .stgray{background: #efefef;padding-top: 5px; padding-bottom: 10px;}
-    .staddress{margin-bottom: 0; padding-top: 2px;}
-    .stdivider{border-bottom: 2px solid #000;margin-top: 5px; margin-bottom: 5px;}
-    .stlist{padding: 0; margin:0; list-style: none;}
-    .stlist li{text-align: left;display: inline-block;width: 100%;padding: 0px 5px;}
-    .stlist li span{width:65%;float: right;}
-    .stimg{width: 80px;height: 80px;}
-    .stimg img{width: 100%;height: 80px;border-radius: 2px;display: block;}
-    .img-circle {border-radius:16px;}
-    .center-block {display: block;margin-right: auto;margin-left: auto;}
-    .staround{padding:3px 10px 3px 0;position: relative;overflow: hidden;}
-    .staround2{position: relative; z-index: 9;}
-    .stbottom{background: #453278;height: 20px;width: 100%;clear: both;margin-bottom: 5px;}
-    .principal{margin-top: -40px;margin-right:10px; float:right;}
-    .stred{color: #000;}
-    .spanlr{padding-left: 5px; padding-right: 5px;}
-    .cardleft{width: 20%;float: left;}
-    .cardright{width: 77%;float: right; }
-    .width32{width: 32.55%; padding: 3px; float: left;}
-    .signature{border:1px solid #ddd; display:block; text-align: center; padding: 2px 2px; margin-top: 3px;}
-    .barcode{display:block; text-align: center;  margin-top: 1px;}
-    .vertlist{padding: 0; margin:0; list-style: none;}
-    .vertlist li{text-align: left;display: inline-block;width: 100%;color: #000;padding-bottom: 2px;}
-    .vertlist li span{width:55%;float: right;}
-    .barcodeimg{display: block;margin-top: 2px;text-align: center;}
-}
-</style>
-<?php $i = 0;?>
+?>
+<?php 
+if($id_card[0]->enable_vertical_card)
+{
+?>
 
-<?php if ($id_card[0]->enable_vertical_card) {
+<?php //$i = 0;?>
+
+<?php //if ($id_card[0]->enable_vertical_card) {
     ?>
 
 <table cellpadding="0" cellspacing="0" width="100%">
@@ -192,7 +154,7 @@ foreach ($staffs as $staff_key => $staff_value) {
                     </tr>
                     <tr>
                         <td valign="top">
-                            <div class="studenttop" style="background: <?php echo $id_card[0]->header_color ?>">
+                            <div class="studenttop" style="overflow: visible; background: <?php echo $id_card[0]->header_color ?>">
                                 <div class="sttext1"><img src="<?php echo base_url('uploads/staff_id_card/logo/' . $id_card[0]->logo); ?>" width="30" height="30" />
                                     <?php echo $id_card[0]->school_name ?></div>
                             </div>
@@ -204,11 +166,11 @@ foreach ($staffs as $staff_key => $staff_value) {
                         </td>
                     </tr>
                     <tr>
-                        <td valign="top" style="color: #fff;font-size: 16px; padding: 2px 0 0; position: relative; z-index: 1;background: <?php echo $id_card[0]->header_color ?>;text-transform: uppercase;"><?php echo $id_card[0]->title ?></td>
+                        <td valign="top" style="color: #fff;font-size: 16px; text-align:center; padding: 2px 0 0; position: relative; z-index: 1;background: <?php echo $id_card[0]->header_color ?>;text-transform: uppercase;"><?php echo $id_card[0]->title ?></td>
                     </tr>
                     <tr>
                         <td valign="top">
-                            <div class="staround">
+                            <div class="staround" style="overflow: visible;">
                                 <div class="cardleft">
                                     <div class="stimg">
 
@@ -265,8 +227,9 @@ echo $dob = "";
                             </div><!--./staround-->
                         </td>
                     </tr>
+                    <tr><td><p class="height-60"></p></td></tr>
                     <tr>
-                        <td valign="top" align="right" class="principal"><img src="<?php echo base_url('uploads/staff_id_card/signature/' . $id_card[0]->sign_image); ?>" width="66" height="40" /></td>
+                        <td valign="top" class="principal"><img src="<?php echo base_url('uploads/staff_id_card/signature/' . $id_card[0]->sign_image); ?>" width="66" height="40" /></td>
                     </tr>
                 </table>
             </td>

@@ -286,8 +286,9 @@ if (!empty($feeList)) {
                                     <thead>
                                         <tr>
                                             <th><?php echo $this->lang->line('date'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                            <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                            <th><?php echo $this->lang->line('fees'); ?></th>
+                                            <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                            <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                             <th><?php echo $this->lang->line('mode'); ?></th>
                                             <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
                                             <th class="text text-right"><?php echo $this->lang->line('discount'); ?></th>
@@ -305,7 +306,7 @@ $amount    = 0;
     if (empty($feeList)) {
         ?>
                                             <tr>
-                                                <td colspan="11" class="text-danger text-center">
+                                                <td colspan="10" class="text-danger text-center">
                                                     <?php echo $this->lang->line('no_transaction_found'); ?>
                                                 </td>
                                             </tr>
@@ -318,31 +319,37 @@ $amount    = 0;
                                                 <td>
                                                     <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($record->date)); ?>
                                                 </td>
-                                                <td>
+
+                                            <!-- <td>
                                                     <?php echo $this->lang->line("transport_fees"); ?>
                                                 </td>
                                                 <td>
                                                     <?php echo $this->lang->line(strtolower($feeList->month)); ?>
+                                                </td> -->
+
+                                                <td>
+                                                    <?php echo $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).""; ?>
                                                 </td>
+
                                                 <td>
                                                     <?php echo $this->lang->line(strtolower($record->payment_mode)); ?>
                                                 </td>
                                                 <td class="text text-right">
                                                     <?php
 $amount = amountFormat($record->amount, 2, '.', '');
-        echo $currency_symbol . (amountFormat($amount));
+        echo $currency_symbol . (($amount));
         ?>
                                                 </td>
                                                 <td class="text text-right">
                                                     <?php
 $amount_discount = amountFormat($record->amount_discount, 2, '.', '');
-        echo $currency_symbol . (amountFormat($amount_discount));
+        echo $currency_symbol . (($amount_discount));
         ?>
                                                 </td>
                                                 <td class="text text-right">
                                                     <?php
 $amount_fine = amountFormat($record->amount_fine, 2, '.', '');
-        echo $currency_symbol . (amountFormat($amount_fine));
+        echo $currency_symbol . (($amount_fine));
         ?>
                                                 </td>
 
@@ -461,8 +468,9 @@ if (!empty($feeList)) {
                                         <thead>
                                             <tr>
                                                 <th><?php echo $this->lang->line('date'); ?></th>
-                                                <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                                <th><?php echo $this->lang->line('fee_type'); ?></th>
+                                                <th><?php echo $this->lang->line('fees'); ?></th>
+                                                <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                                <!-- <th><?php //echo $this->lang->line('fee_type'); ?></th> -->
                                                 <th><?php echo $this->lang->line('mode'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('discount'); ?></th>
@@ -479,7 +487,7 @@ $amount    = 0;
         if (empty($feeList)) {
             ?>
                                                 <tr>
-                                                    <td colspan="11" class="text-danger text-center">
+                                                    <td colspan="10" class="text-danger text-center">
                                                         <?php echo $this->lang->line('no_transaction_found'); ?>
                                                     </td>
                                                 </tr>
@@ -493,33 +501,38 @@ $amount    = 0;
                                                 <tr>
                                                     <td>
                                                         <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($record->date)); ?>
-
                                                     </td>
-                                                   <td>
-                                                    <?php echo $this->lang->line("transport_fees"); ?>
+
+                                            <!--<td>
+                                                    <?php //echo $this->lang->line("transport_fees"); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $this->lang->line(strtolower($feeList->month)); ?>
+                                                    <?php //echo $this->lang->line(strtolower($feeList->month)); ?>
+                                                </td> -->
+
+                                                <td>
+                                                    <?php echo $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")"; ?>
                                                 </td>
+
                                                 <td>
                                                     <?php echo $this->lang->line(strtolower($record->payment_mode)); ?>
                                                 </td>
                                                     <td class="text text-right">
                                                         <?php
 $amount = amountFormat($record->amount, 2, '.', '');
-            echo $currency_symbol . (amountFormat($amount));
+            echo $currency_symbol . (($amount));
             ?>
                                                     </td>
                                                     <td class="text text-right">
                                                         <?php
 $amount_discount = amountFormat($record->amount_discount, 2, '.', '');
-            echo $currency_symbol . (amountFormat($amount_discount));
+            echo $currency_symbol . (($amount_discount));
             ?>
                                                     </td>
                                                     <td class="text text-right">
                                                         <?php
 $amount_fine = amountFormat($record->amount_fine, 2, '.', '');
-            echo $currency_symbol . (amountFormat($amount_fine));
+            echo $currency_symbol . (($amount_fine));
             ?>
                                                     </td>
 
@@ -635,8 +648,9 @@ if (!empty($feeList)) {
                                         <thead>
                                             <tr>
                                                 <th><?php echo $this->lang->line('date'); ?></th>
-                                                <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                                <th><?php echo $this->lang->line('fee_type'); ?></th>
+                                                <th><?php echo $this->lang->line('fees'); ?></th>
+                                                <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                                <!-- <th><?php //echo $this->lang->line('fee_type'); ?></th> -->
                                                 <th><?php echo $this->lang->line('mode'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
                                                 <th class="text text-right"><?php echo $this->lang->line('discount'); ?></th>
@@ -669,31 +683,38 @@ $amount    = 0;
                                                         <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($record->date)); ?>
 
                                                     </td>
-                                                   <td>
-                                                    <?php echo $this->lang->line("transport_fees"); ?>
+                                            <!-- <td>
+                                                    <?php //echo $this->lang->line("transport_fees"); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $this->lang->line(strtolower($feeList->month)); ?>
+                                                    <?php //echo $this->lang->line(strtolower($feeList->month)); ?>
+                                                </td> -->
+
+                                                <td>
+                                                    <?php echo $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")" ?>
                                                 </td>
+
+
+
                                                 <td>
                                                     <?php echo $this->lang->line(strtolower($record->payment_mode)); ?>
                                                 </td>
                                                     <td class="text text-right">
                                                         <?php
 $amount = amountFormat($record->amount, 2, '.', '');
-            echo $currency_symbol . (amountFormat($amount));
+            echo $currency_symbol . (($amount));
             ?>
                                                     </td>
                                                     <td class="text text-right">
                                                         <?php
 $amount_discount = amountFormat($record->amount_discount, 2, '.', '');
-            echo $currency_symbol . (amountFormat($amount_discount));
+            echo $currency_symbol . (($amount_discount));
             ?>
                                                     </td>
                                                     <td class="text text-right">
                                                         <?php
 $amount_fine = amountFormat($record->amount_fine, 2, '.', '');
-            echo $currency_symbol . (amountFormat($amount_fine));
+            echo $currency_symbol . (($amount_fine));
             ?>
                                                     </td>
 

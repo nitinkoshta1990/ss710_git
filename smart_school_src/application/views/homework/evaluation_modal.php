@@ -27,6 +27,9 @@
                 <div class="scroll-area">
                     <div class="test">                         
                         <div class="">
+                            <input type="hidden" id="student_section_id" name="student_section_id" value="<?php echo $result['section_id']; ?>">
+                            <input type="hidden" id="student_class_id" name="student_class_id" value="<?php echo $result['class_id']; ?>">
+
                         <?php if(!empty($studentlist)){ ?>
                             <ul multiple="" class="list-group mb0" id="slist">
                               <div class="table-responsive">

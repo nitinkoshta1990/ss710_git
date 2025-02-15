@@ -122,9 +122,13 @@ if($exam_details->is_rank_generated)
     ?>
 
 <form method="POST" action="<?php echo site_url('admin/examresult/updaterank'); ?>" class="updaterank">
-    
-<input type="hidden" name="exam_group_class_batch_exam_id" value="<?php echo $exam_details->id; ?>">
- <button type="submit" class="btn btn-primary pull-right mb10" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please wait" data-exam-id="<?php echo $exam_details->id; ?>"><?php echo $this->lang->line('generate_rank'); ?></button>
+  <div class="row"> 
+    <div class="col-lg-12">
+    <input type="hidden" name="exam_group_class_batch_exam_id" value="<?php echo $exam_details->id; ?>">
+    <button type="submit" class="btn btn-primary pull-right mb10" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please wait" data-exam-id="<?php echo $exam_details->id; ?>"><?php echo $this->lang->line('generate_rank'); ?></button>
+    </div>
+</div>  
+ <div class="table-responsive">
       <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -204,6 +208,7 @@ if($exam_details->exam_group_type != "gpa"){
             
         </tbody>
 </table>
+</div>
 </form>
     <?php
 }else { ?>

@@ -256,11 +256,23 @@
                                         echo "<li>" . $this->lang->line('admission_no') . "<span> 123456789</span></li>";
                                     }
                                     ?>
+                                         <?php
+                                    if ($idcard->enable_student_rollno== 1) {
+                                        echo "<li class='stred'>" . $this->lang->line('roll_no') . "<span>1015</span></li>";
+                                    }
+                                    ?>
                                  <?php
                                     if ($idcard->enable_class == 1) {
                                         echo "<li>" . $this->lang->line('class') . "<span>Class 6 - A (2018-19)</span></li>";
                                     }
                                     ?>
+
+                                   <?php
+                                    if ($idcard->enable_student_house_name== 1) {
+                                        echo "<li class='stred'>" . $this->lang->line('house') . "<span>Red House</span></li>";
+                                    }
+                                    ?>
+
                                  <?php
                                     if ($idcard->enable_fathers_name == 1) {
                                         echo "<li>" . $this->lang->line('fathers_name') . "<span>S.Tudent Name</span></li>";
@@ -291,6 +303,11 @@
                                         echo "<li class='stred'>" . $this->lang->line('blood_group') . "<span>A+</span></li>";
                                     }
                                     ?>
+
+                               
+
+
+
                              </ul>
                              <div class="signature">
                                  <img src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/signature/' . $idcard->sign_image); ?>" width="200" height="24" />
@@ -416,11 +433,20 @@
                                                 echo "<li>" . $this->lang->line('admission_no') . "<span> 123456789</span></li>";
                                             }
                                             ?>
+                                            <?php
+                                            if ($idcard->enable_student_rollno == 1) {
+                                                echo "<li>" . $this->lang->line('roll_no') . "<span> 1015</span></li>";
+                                            }
+                                            ?>
                                          <?php
                                             if ($idcard->enable_class == 1) {
                                                 echo "<li>" . $this->lang->line('class') . "<span>Class 6 - A (2018-19)</span></li>";
                                             }
                                             ?>
+                                          <?php
+                                            if ($idcard->enable_student_house_name== 1) {
+                                                echo "<li class='stred'>" . $this->lang->line('house') . "<span>Red House</span></li>";
+                                            }  ?>
                                          <?php
                                             if ($idcard->enable_fathers_name == 1) {
                                                 echo "<li>" . $this->lang->line('fathers_name') . "<span>S.Tudent Name</span></li>";

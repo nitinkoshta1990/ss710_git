@@ -81,10 +81,12 @@ class Walkingm extends OnlineAdmission_Controller
                     
             $transaction_id = $payment_responce->transaction_id; 
             $gateway_response['online_admission_id']   = $reference; 
-            $gateway_response['paid_amount']    = $this->amount;
+            $gateway_response['paid_amount']    = $this->amount+$this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['transaction_id'] = $transaction_id;
             $gateway_response['payment_mode']   = 'billplz';
             $gateway_response['payment_type']   = 'online';
+            $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_walkingm_txn_id') . $transaction_id;
             $gateway_response['date']           = date("Y-m-d H:i:s");
             $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

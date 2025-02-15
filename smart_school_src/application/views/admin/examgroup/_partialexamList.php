@@ -59,10 +59,8 @@ foreach ($examList as $exam_key => $exam_value) {
             }
 
             if ($this->rbac->hasPrivilege('exam', 'can_delete')) {
-                ?>
-                <span data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>">
-                    <a href="#" class="btn btn-default btn-xs"  data-id="<?php echo $exam_value->id; ?>" data-exam="<?php echo $exam_value->exam; ?>" id="deleteItem" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-remove"></i></a>
-                </span>
+                ?>                 
+                    <a href="#" class="btn btn-default btn-xs"  data-original-title="<?php echo $this->lang->line('delete'); ?>" data-id="<?php echo $exam_value->id; ?>" data-exam="<?php echo $exam_value->exam; ?>" id="deleteItem" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-remove"></i></a>                 
                 <?php
             }
             ?>

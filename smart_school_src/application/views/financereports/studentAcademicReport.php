@@ -104,6 +104,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <th class="text text-left"><?php echo $this->lang->line('student_name'); ?></th>
                                                 <th class="text text-left"><?php echo $this->lang->line('class'); ?></th>
 
+                                                <th class="text text-left"><?php echo $this->lang->line('mobile_no'); ?></th>
                                                 <th class="text text-left"><?php echo $this->lang->line('admission_no'); ?></th>
                                                 <?php if ($sch_setting->roll_no) { ?>
                                                     <th class="text text-left"><?php echo $this->lang->line('roll_number'); ?></th>
@@ -139,6 +140,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                       <tr>
                                                             <td><?php echo $students->name;?></td>
                                                             <td><?php echo $students->class." (".$students->section.")";?></td>
+                                                            <td><?php echo $students->mobileno;?></td>
                                                             <td><?php echo $students->admission_no;?></td>
                                                             <?php if ($sch_setting->roll_no) { ?>
                                                             <td><?php echo $students->roll_no;?></td>
@@ -161,6 +163,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                             ?>
                                                                <tr class="box box-solid total-bg">
                                                                 
+                                                                <td></td>
                                                                 <td></td>
                                                                 <td></td>
 

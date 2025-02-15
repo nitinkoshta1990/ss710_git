@@ -10,7 +10,6 @@ class Sidebarmenu_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-
     }
 
     /**
@@ -177,6 +176,7 @@ class Sidebarmenu_model extends MY_Model
             $this->db->order_by('menu', 'asc');
         }
 
+		$this->db->where('sidebar_menus.is_active',1);											  
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             $result = $query->result();

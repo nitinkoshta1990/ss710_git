@@ -266,8 +266,9 @@ if(in_array('0', $print_copy)){
 
                                 <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                     <thead>
-                                    <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                    <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                    <th><?php echo $this->lang->line('fees'); ?></th>
+                                    <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                    <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                     <th  class=""><?php echo $this->lang->line('due_date'); ?></th>
                                     <th class=""><?php echo $this->lang->line('status'); ?></th>
                                     <th  class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -316,10 +317,13 @@ if(in_array('0', $print_copy)){
                                             ?>
                                             <tr  class="dark-gray">
 
-                                                <td><?php
-                                                    echo $this->lang->line("transport_fees");
-                                                    ?></td>
-                                                <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td>
+                                                <td><?php echo $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")"; ?></td>
+
+                                                <!--<td><?php //echo $this->lang->line("transport_fees"); ?></td>
+                                                <td><?php //echo $this->lang->line(strtolower($feeList->month)); ?></td> -->
+
+
+
                                                 <td class="">
 
                                                     <?php
@@ -391,7 +395,7 @@ if(in_array('0', $print_copy)){
                                                 foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                     ?>
                                                     <tr class="white-td">
-                                                        <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                        <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                         <td class="text text-center">
 
                                                             <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
@@ -498,8 +502,9 @@ if(in_array('0', $print_copy)){
 
                                     <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                         <thead>
-                                        <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                        <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                        <th><?php echo $this->lang->line('fees'); ?></th>
+                                        <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                        <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                         <th  class=""><?php echo $this->lang->line('due_date'); ?></th>
                                         <th class=""><?php echo $this->lang->line('status'); ?></th>
                                         <th  class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -547,11 +552,14 @@ if(in_array('0', $print_copy)){
                                                 $feetype_balance = $feeList->fees - ($fee_paid + $fee_discount);
                                                 ?>
                                                 <tr  class="dark-gray">
+                                                     <td><?php echo $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")"; ?></td>
 
-                                                    <td><?php
+                                                  <!--   <td><?php
                                                         echo $this->lang->line("transport_fees");
                                                         ?></td>
-                                                    <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td>
+                                                    <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td> -->
+
+
                                                     <td class="">
 
                                                         <?php
@@ -626,7 +634,7 @@ if(in_array('0', $print_copy)){
                                                     foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                         ?>
                                                         <tr class="white-td">
-                                                            <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                            <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                             <td class="text text-center">
 
                                                                 <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>
@@ -731,8 +739,9 @@ if(in_array('0', $print_copy)){
 
                                     <table class="table table-striped table-responsive" style="font-size: 8pt;">
                                         <thead>
-                                        <th><?php echo $this->lang->line('fees_group'); ?></th>
-                                        <th><?php echo $this->lang->line('fees_code'); ?></th>
+                                        <th><?php echo $this->lang->line('fees'); ?></th>
+                                        <!-- <th><?php //echo $this->lang->line('fees_group'); ?></th> -->
+                                        <!-- <th><?php //echo $this->lang->line('fees_code'); ?></th> -->
                                         <th  class=""><?php echo $this->lang->line('due_date'); ?></th>
                                         <th class=""><?php echo $this->lang->line('status'); ?></th>
                                         <th  class="text text-right"><?php echo $this->lang->line('amount'); ?></th>
@@ -781,10 +790,13 @@ if(in_array('0', $print_copy)){
                                                 ?>
                                                 <tr  class="dark-gray">
 
-                                                    <td><?php
+                                                    <td><?php echo $this->lang->line("transport_fees")." (".$this->lang->line(strtolower($feeList->month)).")"; ?></td>
+
+                                                    <!-- <td><?php
                                                         echo $this->lang->line("transport_fees");
                                                         ?></td>
-                                                    <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td>
+                                                    <td><?php echo $this->lang->line(strtolower($feeList->month)); ?></td> -->
+
                                                     <td class="">
 
                                                         <?php
@@ -859,7 +871,7 @@ if(in_array('0', $print_copy)){
                                                     foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
                                                         ?>
                                                         <tr class="white-td">
-                                                            <td colspan="5" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
+                                                            <td colspan="4" class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png');?>" alt="" /></td>
                                                             <td class="text text-center">
 
                                                                 <?php echo $feeList->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?>

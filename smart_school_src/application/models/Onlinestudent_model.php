@@ -116,7 +116,7 @@ class Onlinestudent_model extends MY_Model
         return $result;
     }
 
-    public function update($data, $fee_session_group_id,$transport_feemaster_id,$action = "save")
+    public function update($data,$fee_session_group_id,$transport_feemaster_id,$discount_id,$action = "save")
     {
         $record_update_status = true;
         $student_id           = "";
@@ -175,6 +175,13 @@ class Onlinestudent_model extends MY_Model
                     unset($data['id']);
                     $this->db->insert('students', $data);
                     $student_id = $this->db->insert_id();
+
+                    //save created by staff/user id on student enroll
+                    $created_by_data['id'] = $student_id;
+                    $created_by_data['created_by'] = $this->session->userdata['admin']['id'];
+                    $this->student_model->add($created_by_data);
+                    //save created by staff/user id on student enroll
+
                     $data_new   = array(
                         'student_id' => $student_id,
                         'class_id'   => $classs_section_result->class_id,
@@ -186,10 +193,21 @@ class Onlinestudent_model extends MY_Model
                     $this->db->insert('student_session', $data_new);
                     $student_session_id = $this->db->insert_id();
 
+                    if ($fee_session_group_id) {
+                        $this->studentfeemaster_model->assign_bulk_fees($fee_session_group_id, $student_session_id, array());
+                    }
 
-                if ($fee_session_group_id) {
-                $this->studentfeemaster_model->assign_bulk_fees($fee_session_group_id, $student_session_id, array());
-                }
+                    //*** Assign Fees Discount ***//
+                    if (!empty($discount_id)){
+                        foreach($discount_id as $key => $value){
+                            $insert_array = array(
+                                'student_session_id' => $student_session_id,
+                                'fees_discount_id'   => $value,
+                            );
+                        $this->feediscount_model->allotdiscount($insert_array);
+                        }
+                    }
+                    //*** Assign Fees Discount ***//
 
                 if (!empty($transport_feemaster_id)) {
                     $trns_data_insert = array();
@@ -310,7 +328,6 @@ class Onlinestudent_model extends MY_Model
         } else {
             return 0;
         }
-
     }
 
     public function getformfields()

@@ -83,13 +83,12 @@ margin: 5px;
     </head>
     <body>
         <div class="container">
-              <div class="row header ">
-                            <div class="col-sm-12">
+              <div class="row header">
+                    <div class="col-sm-12">
+                        <img  src="<?php echo $this->media_storage->getImageURL('/uploads/print_headerfooter/online_exam/'. $onlineexamfooter['header_image']); ?>" style="height: 100px;width: 100%;">
 
-                                <img  src="<?php echo $this->media_storage->getImageURL('/uploads/print_headerfooter/online_exam/'. $onlineexamfooter['header_image']); ?>" style="height: 100px;width: 100%;">
-
-                            </div>
-                        </div>
+                    </div>
+                  </div>
              <div class="text-center">
                   <h3 class="titlefix"> <?php echo $this->lang->line('exam'); ?>: <?php echo $exam->exam; ?></h3>
                </div>

@@ -107,4 +107,25 @@ INNER JOIN attendence_type ON attendence_type.id=student_attendences.attendence_
         return $query->result();
     }
 
+
+    //****setting page start for staff****//
+    public function getScheduleTypeStaffAttendance(){
+        $this->db->select()->from('staff_attendance_type');
+        $this->db->where('for_schedule', 1);
+        $this->db->order_by('id');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    //****setting page start for student****//
+    public function getScheduleTypeAttendance(){
+        $this->db->select()->from('attendence_type');
+        $this->db->where('for_schedule', 1);
+        $this->db->order_by('id');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+
+
 }

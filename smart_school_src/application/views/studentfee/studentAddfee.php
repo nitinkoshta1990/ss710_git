@@ -9,21 +9,15 @@ $language_name   = $language["short_code"];
 ?>
 <div class="content-wrapper">
     <div class="row">
-        <div class="col-md-12">
-            <section class="content-header">
-
-            </section>
-        </div>
         <div>
             <a id="sidebarCollapse" class="studentsideopen"><i class="fa fa-navicon"></i></a>
             <aside class="studentsidebar">
                 <div class="stutop" id="">
                     <!-- Create the tabs -->
                     <div class="studentsidetopfixed">
-                        <p class="classtap"><?php echo $student["class"]; ?> <a href="#" data-toggle="control-sidebar" class="studentsideclose"><i class="fa fa-times"></i></a></p>
+                        <p class="classtap"><?php echo $student["class"]; ?><a href="#" data-toggle="control-sidebar" class="studentsideclose"><i class="fa fa-times"></i></a></p>
                         <ul class="nav nav-justified studenttaps">
-                            <?php foreach ($class_section as $skey => $svalue) {
-    ?>
+                            <?php foreach ($class_section as $skey => $svalue) { ?>
                                 <li <?php
 if ($student["section_id"] == $svalue["section_id"]) {
         echo "class='active'";
@@ -43,8 +37,7 @@ if ($student["section_id"] == $snvalue["section_id"]) {
     ?>" id="section<?php echo $snvalue["section_id"]; ?>">
                                  <?php
 foreach ($studentlistbysection as $stkey => $stvalue) {
-        if ($stvalue['section_id'] == $snvalue["section_id"]) {
-            ?>
+        if ($stvalue['section_id'] == $snvalue["section_id"]) { ?>
                                         <div class="studentname">
                                             <a class="" href="<?php echo base_url() . "studentfee/addfee/" . $stvalue["student_session_id"] ?>">
                                                 <div class="icon"><img src="<?php echo base_url() . $stvalue["image"] . img_time(); ?>" alt="User Image"></div>
@@ -65,7 +58,6 @@ foreach ($studentlistbysection as $stkey => $stvalue) {
                         <div class="tab-pane" id="sectionD">
                             <h3 class="control-sidebar-heading">Recent Activity 3</h3>
                         </div>
-                        <!-- /.tab-pane -->
                     </div>
                 </div>
             </aside>
@@ -161,16 +153,11 @@ foreach ($categorylist as $value) {
                             <div class="col-md-12 mDMb10">
                                 <div class="float-rtl-right float-left">
                                 <button type="button" class="btn btn-sm btn-info printSelected" id="load" data-loading-text="<i class='fa fa-spinner fa-spin '></i> <?php echo $this->lang->line('please_wait') ?>"><i class="fa fa-print"></i> <?php echo $this->lang->line('print_selected'); ?></button>
-                                
                                 <?php if ($this->rbac->hasPrivilege('collect_fees', 'can_add')) { ?>
                                 <button type="button" class="btn btn-sm btn-warning collectSelected" id="load" data-loading-text="<i class='fa fa-spinner fa-spin '></i> <?php echo $this->lang->line('please_wait') ?>"><i class="fa fa-money"></i> <?php echo $this->lang->line('collect_selected'); ?></button><?php } ?>
-                                
-                                <?php
-if ($student_processing_fee) {?>
+                                <?php if ($student_processing_fee) {?>
                                     <a  href="javascript:void(0)" class="btn btn-sm btn-info getProcessingfees" data-loading-text="<i class='fa fa-spinner fa-spin '></i> <?php echo $this->lang->line('please_wait') ?>"><i class="fa fa-money"></i> <?php echo $this->lang->line('processing_fees') ?></a>
-                                <?php
-}
-?>                              </div>
+                                <?php } ?>                              </div>
                                 <span class="pull-right pt5"><?php echo $this->lang->line('date'); ?>: <?php echo date($this->customlib->getSchoolDateFormat()); ?></span>
                             </div>
                         </div>
@@ -180,21 +167,20 @@ if ($student['admission_no'] != '') {
     $student_admission_no = ' (' . $student['admission_no'] . ')';
 }
 ?>
-                        <div class="table-responsive">
-                            <div class="download_label "><?php echo $this->lang->line('student_fees') . ": " . $student['firstname'] . " " . $student['lastname'] . $student_admission_no; ?> </div>
+                        <div class="table-responsive overflow-y-hidden">
+                            <div class="download_label"><?php echo $this->lang->line('student_fees') . ": " . $student['firstname'] . " " . $student['lastname'] . $student_admission_no; ?> </div>
                             <table class="table table-striped table-bordered table-hover example table-fixed-header">
                                 <thead class="header">
                                     <tr>
                                         <th style="width: 10px"><input type="checkbox" id="select_all"/></th>
-                                        <th align="left"><?php echo $this->lang->line('fees_group'); ?></th>
-                                        <th align="left"><?php echo $this->lang->line('fees_code'); ?></th>
+                                        <th align="left"><?php echo $this->lang->line('fees'); ?></th>
                                         <th align="left" class="text text-left"><?php echo $this->lang->line('due_date'); ?></th>
                                         <th align="left" class="text text-left"><?php echo $this->lang->line('status'); ?></th>
                                         <th class="text text-right"><?php echo $this->lang->line('amount') ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
                                         <th class="text text-left"><?php echo $this->lang->line('payment_id'); ?></th>
                                         <th class="text text-left"><?php echo $this->lang->line('mode'); ?></th>
                                         <th  class="text text-left"><?php echo $this->lang->line('date'); ?></th>
-                                        <th class="text text-right" ><?php echo $this->lang->line('discount'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
+                                        <th class="text text-right" ><?php echo $this->lang->line('discount'); ?> <span><?php echo "(".$currency_symbol . ")"; ?></span></th>
                                         <th class="text text-right"><?php echo $this->lang->line('fine'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
                                         <th class="text text-right"><?php echo $this->lang->line('paid'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
                                         <th class="text text-right"><?php echo $this->lang->line('balance'); ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>
@@ -208,7 +194,6 @@ $total_amount           = 0;
 $total_deposite_amount  = 0;
 $total_fine_amount      = 0;
 $total_fees_fine_amount = 0;
-
 $total_discount_amount = 0;
 $total_balance_amount  = 0;
 $alot_fee_discount     = 0;
@@ -231,8 +216,26 @@ foreach ($student_due_fee as $key => $fee) {
             }
         }
         if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
-            $fees_fine_amount       = $fee_value->fine_amount;
-            $total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
+		  // get cumulative fine amount as delay days 
+            if($fee_value->fine_type=='cumulative'){
+                $date1=date_create("$fee_value->due_date");
+                $date2=date_create(date('Y-m-d'));
+                $diff=date_diff($date1,$date2);
+                $due_days= $diff->format("%a");;
+                
+                if($this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days)){
+                    $due_fine_amount=$this->customlib->get_cumulative_fine_amount($fee_value->fee_groups_feetype_id,$due_days);
+                }else{
+                    $due_fine_amount=0;
+                }
+                $fees_fine_amount       = $due_fine_amount;
+                $total_fees_fine_amount = $total_fees_fine_amount + $due_fine_amount;
+
+            }else if($fee_value->fine_type=='fix' || $fee_value->fine_type=='percentage'){
+                $fees_fine_amount       = $fee_value->fine_amount;
+                $total_fees_fine_amount = $total_fees_fine_amount + $fee_value->fine_amount;
+            }
+            // get cumulative fine amount as delay days
         }
 
         $total_amount += $fee_value->amount;
@@ -242,112 +245,86 @@ foreach ($student_due_fee as $key => $fee) {
         $feetype_balance = $fee_value->amount - ($fee_paid + $fee_discount);
         $total_balance_amount += $feetype_balance;
         ?>
-                                            <?php
-if (!empty($fee_value->due_date) && $feetype_balance > 0 && strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) {
-            ?>
-                                                <tr class="danger font12">
-                                                    <?php
-} else {
-            ?>
-                                                <tr class="dark-gray">
-                                                    <?php
-}
-        ?>
-                                                <td>
-          <input class="checkbox" type="checkbox" name="fee_checkbox" data-fee_master_id="<?php echo $fee_value->id ?>" data-fee_session_group_id="<?php echo $fee_value->fee_session_group_id ?>" data-fee_groups_feetype_id="<?php echo $fee_value->fee_groups_feetype_id ?>" data-fee_category="fees"  data-trans_fee_id="0">
-                                                </td>
-                                                <td align="left" class="text-rtl-right">
-                                                    <?php
-if ($fee_value->is_system) {
-    echo $fee_value->name;
-            echo $this->lang->line($fee_value->name) . " (" . $this->lang->line($fee_value->type) . ")";
-        } else {
-            echo $fee_value->name . " (" . $fee_value->type . ")";
-        }
-        ?></td>
-                                                <td align="left" class="text-rtl-right">
-                                                    <?php
-if ($fee_value->is_system) {
-            echo $this->lang->line($fee_value->code);
-        } else {
-            echo $fee_value->code;
-        }
-
-        ?></td>
-                                                <td align="left" class="text text-left">
-                                                    <?php
-if ($fee_value->due_date == "0000-00-00") {
-
-        } else {
-
-            if ($fee_value->due_date) {
-                echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_value->due_date));
-            }
-        }
-        ?>
-                                                </td>
-                                                <td align="left" class="text text-left width85">
-                                                    <?php
-if ($feetype_balance == 0) {
-            ?><span class="label label-success"><?php echo $this->lang->line('paid'); ?></span><?php
-} else if (!empty($fee_value->amount_detail)) {
-            ?><span class="label label-warning"><?php echo $this->lang->line('partial'); ?></span><?php
-} else {
-            ?><span class="label label-danger"><?php echo $this->lang->line('unpaid'); ?></span><?php
-}
-        ?>
-                                                </td>
-                                                <td class="text text-right">
-<?php echo amountFormat($fee_value->amount);
-        if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
-            ?>
-<span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . amountFormat($fee_value->fine_amount); ?></span>
-
-<div class="fee_detail_popover" style="display: none">
-    <?php
-if ($fee_value->fine_amount != "") {
-                ?>
-        <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
         <?php
-}
-            ?>
-</div>
-    <?php
-}
-        ?>
-                                                    </td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_discount);
-        ?></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_fine);
-        ?></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_paid);
-        ?></td>
-                                                <td class="text text-right"><?php
-$display_none = "ss-none";
-        if ($feetype_balance > 0) {
-            $display_none = "";
+        if (!empty($fee_value->due_date) && $feetype_balance > 0 && strtotime($fee_value->due_date) < strtotime(date('Y-m-d'))) { ?>
+            <tr class="danger font12"><?php
+            } else {    ?>
+            <tr class="dark-gray">
+            <?php }   ?>
+            <td>
+            <input class="checkbox" type="checkbox" name="fee_checkbox" data-fee_master_id="<?php echo $fee_value->id ?>" data-fee_session_group_id="<?php echo $fee_value->fee_session_group_id ?>" data-fee_groups_feetype_id="<?php echo $fee_value->fee_groups_feetype_id ?>" data-fee_category="fees"  data-trans_fee_id="0">
+            </td>
 
-            echo amountFormat($feetype_balance);
-        }
-        ?>
-                                                </td>
-                                                <td width="100">
-                                                    <div class="btn-group">
-                                                      <div class="pull-right">
-                                                      
-                                                      <?php if ($this->rbac->hasPrivilege('collect_fees', 'can_add')) { ?>
+            <td><?php
+            if ($fee_value->is_system) {
+                echo $this->lang->line($fee_value->type)." (".$this->lang->line($fee_value->code) . ")";
+            } else {
+                echo $fee_value->type." (".$fee_value->code . ")";
+            }   ?></td>
+
+            <td align="left" class="text text-left"><?php
+                if ($fee_value->due_date == "0000-00-00") {
+
+                } else {
+
+                if ($fee_value->due_date) {
+                echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_value->due_date));
+                }
+                }
+                ?>
+            </td>
+            <td align="left" class="">
+            <?php
+            if ($feetype_balance == 0) {
+            ?><span class="label label-success"><?php echo $this->lang->line('paid'); ?></span><?php
+            } else if (!empty($fee_value->amount_detail)) {
+            ?><span class="label label-warning"><?php echo $this->lang->line('partial'); ?></span><?php
+            } else {
+            ?><span class="label label-danger"><?php echo $this->lang->line('unpaid'); ?></span><?php
+            }
+            ?></td>
+            
+            <td class="text text-right">
+            <?php echo amountFormat($fee_value->amount);
+            if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != null) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
+            ?>
+            <span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . amountFormat($fees_fine_amount); ?></span>
+
+            <div class="fee_detail_popover" style="display: none">
+            <?php
+            if ($fees_fine_amount != "") {
+                ?>
+            <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
+            <?php
+            }
+            ?>
+            </div>
+            <?php } ?>
+            </td>
+            
+            <td class="text text-left"></td>
+            <td class="text text-left"></td>
+            <td class="text text-left"></td>
+            <td class="text text-right"><?php echo amountFormat($fee_discount); ?> </td>
+            <td class="text text-right"><?php echo amountFormat($fee_fine);  ?></td>
+            <td class="text text-right"><?php echo amountFormat($fee_paid); ?></td>
+            <td class="text text-right"><?php 
+            $display_none = "ss-none";
+            if ($feetype_balance > 0) {
+                $display_none = "";
+                echo amountFormat($feetype_balance);
+            }
+            ?>
+            </td>
+            <td width="100" class="white-space-nowrap">
+            <div class="btn-group">
+                <div class="pull-right"><?php if ($this->rbac->hasPrivilege('collect_fees', 'can_add')) { ?>
                                                         <button type="button" data-student_session_id="<?php echo $fee->student_session_id; ?>" data-student_fees_master_id="<?php echo $fee->id; ?>" data-fee_groups_feetype_id="<?php echo $fee_value->fee_groups_feetype_id; ?>" data-group="<?php echo ($fee_value->is_system) ? $this->lang->line($fee_value->name). " (" . $this->lang->line($fee_value->type) . ")" : $fee_value->name. " (" . $fee_value->type . ")"; ?>"  data-type="<?php echo ($fee_value->is_system) ? $this->lang->line($fee_value->type) : $fee_value->code; ?>"
                                                                 class="btn btn-xs btn-default myCollectFeeBtn <?php echo $display_none; ?>"
                                                                 title="<?php echo $this->lang->line('add_fees'); ?>" data-toggle="modal" data-target="#myFeesModal" data-fee-category="fees"  data-trans_fee_id="0"
                                                       ><i class="fa fa-plus"></i></button><?php } ?>
 
-<button  class="btn btn-xs btn-default printInv" data-student_session_id="<?php echo $fee->student_session_id; ?>" data-fee_master_id="<?php echo $fee_value->id ?>" data-fee_session_group_id="<?php echo $fee_value->fee_session_group_id ?>" data-fee_groups_feetype_id="<?php echo $fee_value->fee_groups_feetype_id ?>" data-fee-category="fees"  data-trans_fee_id="0" title="<?php echo $this->lang->line('print'); ?>" data-loading-text="<i class='fa fa-spinner fa-spin '></i>"><i class="fa fa-print"></i> </button>
+<button  class="btn btn-xs btn-default printInv" data-student_session_id="<?php echo $fee->student_session_id; ?>" data-fee_master_id="<?php echo $fee_value->id ?>" data-fee_session_group_id="<?php echo $fee_value->fee_session_group_id ?>" data-fee_groups_feetype_id="<?php echo $fee_value->fee_groups_feetype_id ?>" data-fee-category="fees"  data-trans_fee_id="0" title="<?php echo $this->lang->line('print'); ?>" data-loading-text="<i class='fa fa-spinner fa-spin '></i>"><i class="fa fa-print"></i></button>
                                                     </div>
                                                   </div>
                                                 </td>
@@ -363,9 +340,8 @@ if (!empty($fee_value->amount_detail)) {
                                                         <td align="left"></td>
                                                         <td align="left"></td>
                                                         <td align="left"></td>
-                                                        <td align="left"></td>
                                                         <td class="text-right"><img src="<?php echo $this->media_storage->getImageURL('backend/images/table-arrow.png'); ?>" alt="" /></td>
-                                                        <td class="text text-left">                                                            <a href="#" data-toggle="popover" class="detail_popover" > <?php echo $fee_value->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?></a>
+                                                        <td class="text text-left"><a href="#" data-toggle="popover" class="detail_popover" > <?php echo $fee_value->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?></a>
                                                             <div class="fee_detail_popover" style="display: none">
                                                                 <?php
 if ($fee_deposits_value->description == "") {
@@ -384,11 +360,12 @@ if ($fee_deposits_value->description == "") {
                                                         <td class="text text-left">
                                                             <?php if ($fee_deposits_value->date) {echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date));}?>
                                                         </td>
-                                                        <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></td>
+                                                        <td class="text text-right"><a href="#" class="text text-right display-inline" title="<?php echo $this->lang->line('discount'); ?>" data-fee-deposite-id="<?php echo $fee_value->student_fees_deposite_id;?>" data-toggle="modal" data-target="#myfeeDiscountModal"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></a>
+                                                    </td>
                                                         <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_fine); ?></td>
                                                         <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount); ?></td>
                                                         <td></td>
-                                                        <td class="text text-right">
+                                                        <td class="text text-right white-space-nowrap">
                                                             <div class="btn-group">
                                                                <div class="pull-right">
                                                                 <?php if ($this->rbac->hasPrivilege('collect_fees', 'can_delete')) {?>
@@ -396,7 +373,7 @@ if ($fee_deposits_value->description == "") {
                                                                         <i class="fa fa-undo"> </i>
                                                                     </button>
                                                                 <?php }?>
-                                                                <button  class="btn btn-xs btn-default printDoc" data-main_invoice="<?php echo $fee_value->student_fees_deposite_id ?>" data-sub_invoice="<?php echo $fee_deposits_value->inv_no ?>"  title="<?php echo $this->lang->line('print'); ?>"><i class="fa fa-print"></i> </button>
+                                                                <button  class="btn btn-xs btn-default printDoc" data-main_invoice="<?php echo $fee_value->student_fees_deposite_id ?>" data-sub_invoice="<?php echo $fee_deposits_value->inv_no ?>"  title="<?php echo $this->lang->line('print'); ?>"><i class="fa fa-print"></i></button>
                                                             </div>
                                                           </div>
                                                         </td>
@@ -453,14 +430,12 @@ if (!empty($transport_fees)) {
                                                     <?php
 }
         ?>
-                 <td>
-                      <input class="checkbox" type="checkbox" name="fee_checkbox" data-fee_master_id="0" data-fee_session_group_id="0" data-fee_groups_feetype_id="0" data-fee_category="transport"  data-trans_fee_id="<?php echo $transport_fee_value->id; ?>">
-
-                 </td>
-                                                <td align="left" class="text-rtl-right"><?php echo $this->lang->line('transport_fees'); ?></td>
-                                                <td align="left" class="text-rtl-right"><?php echo $transport_fee_value->month; ?></td>
-                                                <td align="left" class="text text-left">
-<?php echo $this->customlib->dateformat($transport_fee_value->due_date); ?>                                             </td>
+                <td>
+                    <input class="checkbox" type="checkbox" name="fee_checkbox" data-fee_master_id="0" data-fee_session_group_id="0" data-fee_groups_feetype_id="0" data-fee_category="transport"  data-trans_fee_id="<?php echo $transport_fee_value->id; ?>">
+                </td>
+                    <td align="left" class="text-rtl-right"><?php echo $this->lang->line('transport_fees')." (".$transport_fee_value->month.")"; ?></td>
+                    <td align="left" class="text text-left">
+<?php echo $this->customlib->dateformat($transport_fee_value->due_date); ?> </td>
                                                      <td align="left" class="text text-left width85">
                                                     <?php
 if ($feetype_balance == 0) {
@@ -472,15 +447,12 @@ if ($feetype_balance == 0) {
 }
         ?>
                                                 </td>
-            <td class="text text-right">
-                <?php
-
-        echo amountFormat($transport_fee_value->fees);
+            <td class="text text-right"><?php
+                echo amountFormat($transport_fee_value->fees);
 
         if (($transport_fee_value->due_date != "0000-00-00" && $transport_fee_value->due_date != null) && (strtotime($transport_fee_value->due_date) < strtotime(date('Y-m-d')))) {
             $tr_fine_amount = $transport_fee_value->fine_amount;
             if ($transport_fee_value->fine_type != "" && $transport_fee_value->fine_type == "percentage") {
-
                 $tr_fine_amount = percentageAmount($transport_fee_value->fees, $transport_fee_value->fine_percentage);
             }
             ?>
@@ -498,74 +470,51 @@ if ($tr_fine_amount != "") {
     <?php
 }
         ?>   </td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_discount);
-        ?></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_fine);
-        ?></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_paid);
-        ?></td>
-                                                  <td class="text text-right"><?php
-$display_none = "ss-none";
-        if ($feetype_balance > 0) {
-            $display_none = "";
+                <td class="text text-left"></td>
+                <td class="text text-left"></td>
+                <td class="text text-left"></td>
+                <td class="text text-right"><?php echo amountFormat($fee_discount); ?></td>
+                <td class="text text-right"><?php echo amountFormat($fee_fine);  ?></td>
+                <td class="text text-right"><?php echo amountFormat($fee_paid); ?></td>
+                <td class="text text-right"><?php 
+                    $display_none = "ss-none";
+                        if ($feetype_balance > 0) {
+                            $display_none = "";
+                            echo amountFormat($feetype_balance);
+                        }  ?>
+                </td>
+                <td class="white-space-nowrap"><?php if ($this->rbac->hasPrivilege('collect_fees', 'can_add')) { ?>
+                    <button type="button" data-student_session_id="<?php echo $transport_fee_value->student_session_id; ?>" data-student_fees_master_id="0" data-fee_groups_feetype_id="0"  data-group="<?php echo $this->lang->line('transport_fees'); ?>"  data-type="<?php echo $transport_fee_value->month; ?>" class="btn btn-xs btn-default myCollectFeeBtn <?php echo $display_none; ?>"  title="<?php echo $this->lang->line('add_fees'); ?>" data-toggle="modal" data-target="#myFeesModal" data-fee-category="transport" data-trans_fee_id="<?php echo $transport_fee_value->id; ?>"><i class="fa fa-plus"></i></button><?php } ?>
 
-            echo amountFormat($feetype_balance);
-        }
-        ?>
-                                                </td>
-                                                <td width="100">
-                                                
-                                                <?php if ($this->rbac->hasPrivilege('collect_fees', 'can_add')) { ?>
-            <button type="button" data-student_session_id="<?php echo $transport_fee_value->student_session_id; ?>" data-student_fees_master_id="0" data-fee_groups_feetype_id="0"
-                                                data-group="<?php echo $this->lang->line('transport_fees'); ?>"  data-type="<?php echo $transport_fee_value->month; ?>" class="btn btn-xs btn-default myCollectFeeBtn <?php echo $display_none; ?>"  title="<?php echo $this->lang->line('add_fees'); ?>" data-toggle="modal" data-target="#myFeesModal" data-fee-category="transport" data-trans_fee_id="<?php echo $transport_fee_value->id; ?>"><i class="fa fa-plus"></i></button><?php } ?>
+                    <button  class="btn btn-xs btn-default printInv"  data-student_session_id="<?php echo $transport_fee_value->student_session_id; ?>" data-fee_master_id="0" data-fee_session_group_id="0" data-fee_groups_feetype_id="0" data-fee-category="transport"  data-trans_fee_id="<?php echo $transport_fee_value->id; ?>" title="<?php echo $this->lang->line('print'); ?>" data-loading-text="<i class='fa fa-spinner fa-spin '></i>"><i class="fa fa-print"></i></button>
+                </td>
+                </tr>
 
-                 <button  class="btn btn-xs btn-default printInv"  data-student_session_id="<?php echo $transport_fee_value->student_session_id; ?>" data-fee_master_id="0" data-fee_session_group_id="0" data-fee_groups_feetype_id="0" data-fee-category="transport"  data-trans_fee_id="<?php echo $transport_fee_value->id; ?>" title="<?php echo $this->lang->line('print'); ?>" data-loading-text="<i class='fa fa-spinner fa-spin '></i>"><i class="fa fa-print"></i> </button>
-
-                                                </td>
-                                            </tr>
-
-                                             <?php
+<?php
 if (!empty($transport_fee_value->amount_detail)) {
-
             $fee_deposits = json_decode(($transport_fee_value->amount_detail));
-
-            foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
-                ?>
+            foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) { ?>
                                                     <tr class="white-td">
-                                                        <td align="left"></td>
                                                         <td align="left"></td>
                                                         <td align="left"></td>
                                                         <td align="left"></td>
                                                         <td align="left"></td>
                                                         <td class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
                                                         <td class="text text-left">
-
                                                             <a href="#" data-toggle="popover" class="detail_popover" > <?php echo $transport_fee_value->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?></a>
                                                             <div class="fee_detail_popover" style="display: none">
-                                                                <?php
-if ($fee_deposits_value->description == "") {
-                    ?>
+                                                                <?php if ($fee_deposits_value->description == "") {   ?>
                                                                     <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
-                                                                    <?php
-} else {
-                    ?>
+                                                                    <?php } else {  ?>
                                                                     <p class="text text-info"><?php echo $fee_deposits_value->description; ?></p>
-                                                                    <?php
-}
-                ?>
+                                                                    <?php }  ?>
                                                             </div>
                                                         </td>
                                                         <td class="text text-left"><?php echo $this->lang->line(strtolower($fee_deposits_value->payment_mode)); ?></td>
                                                         <td class="text text-left">
                                                             <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); ?>
                                                         </td>
-                                                        <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></td>
+														<td class="text text-right"><a href="#" class="text text-right display-inline" title="<?php echo $this->lang->line('discount'); ?>" data-fee-deposite-id="<?php echo $transport_fee_value->student_fees_deposite_id;?>" data-toggle="modal" data-target="#myfeeDiscountModal"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></a></td>
                                                         <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_fine); ?></td>
                                                         <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount); ?></td>
                                                         <td></td>
@@ -577,7 +526,7 @@ if ($fee_deposits_value->description == "") {
                                                                         <i class="fa fa-undo"> </i>
                                                                     </button>
                                                                 <?php }?>
-                                                                <button  class="btn btn-xs btn-default printDoc" data-fee-category="transport" data-main_invoice="<?php echo $transport_fee_value->student_fees_deposite_id ?>" data-sub_invoice="<?php echo $fee_deposits_value->inv_no ?>"  title="<?php echo $this->lang->line('print'); ?>"><i class="fa fa-print"></i> </button>
+                                                                <button  class="btn btn-xs btn-default printDoc" data-fee-category="transport" data-main_invoice="<?php echo $transport_fee_value->student_fees_deposite_id ?>" data-sub_invoice="<?php echo $fee_deposits_value->inv_no ?>"  title="<?php echo $this->lang->line('print'); ?>"><i class="fa fa-print"></i></button>
                                                             </div>
                                                           </div>
                                                         </td>
@@ -591,101 +540,9 @@ if ($fee_deposits_value->description == "") {
 }
 }
 
-?>
-                                    <?php
-if (!empty($student_discount_fee)) {
+?>                                   
 
-    foreach ($student_discount_fee as $discount_key => $discount_value) {
-        ?>
-                                            <tr class="dark-light">
-                                                <td></td>
-                                                <td align="left" class="text-rtl-right"> <?php echo $this->lang->line('discount'); ?> </td>
-                                                <td align="left" class="text-rtl-right">
-                                                    <?php echo $discount_value['code']; ?>
-                                                </td>
-                                                <td align="left"></td>
-                                                <td align="left" class="text text-left">
-                                                    <?php
-
-        if ($discount_value['status'] == "applied") {
-            ?>
-                                                        <a href="#" data-toggle="popover" class="detail_popover" >
-
-                                                            <?php
-if ($discount_value['type'] == "percentage") {
-                echo "<p class='text text-success'>" . $this->lang->line('discount_of') . " " . $discount_value['percentage'] . "% " . $this->lang->line($discount_value['status']) . " : " . $discount_value['payment_id'] . "</p>";
-            } else {
-                echo "<p class='text text-success'>" . $this->lang->line('discount_of') . " " . $currency_symbol . amountFormat($discount_value['amount']) . " " . $this->lang->line($discount_value['status']) . " : " . $discount_value['payment_id'] . "</p>";
-            }
-            ?>
-                                                        </a>
-                                                        <div class="fee_detail_popover" style="display: none">
-                                                            <?php
-if ($discount_value['student_fees_discount_description'] == "") {
-                ?>
-                                                                <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
-                                                                <?php
-} else {
-                ?>
-                                                                <p class="text text-danger"><?php echo $discount_value['student_fees_discount_description'] ?></p>
-                                                                <?php
-}
-            ?>
-
-                                                        </div>
-                                                        <?php
-} else {
-            if ($discount_value['type'] == "" || $discount_value['type'] == "fix") {
-                echo '<p class="text text-danger">' . $this->lang->line('discount_of') . " " . $currency_symbol . amountFormat($discount_value['amount']) . " " . $this->lang->line($discount_value['status']);
-            } else {
-                echo '<p class="text text-danger">' . $this->lang->line('discount_of') . " " . $discount_value['percentage'] . "% " . $this->lang->line($discount_value['status']);
-            }
-
-        }
-        ?>
-                                                </td>
-                                                <td></td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-left"></td>
-                                                <td  class="text text-right">
-                                                    <?php
-$alot_fee_discount = $alot_fee_discount;
-        ?>
-                                                </td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <div class="btn-group ">
-                                                        <div class="pull-right">
-                                                        <?php
-if ($discount_value['status'] == "applied") {
-            ?>
-                                                            <?php if ($this->rbac->hasPrivilege('collect_fees', 'can_delete')) {?>
-                                                                <button class="btn btn-default btn-xs" data-discounttitle="<?php echo $discount_value['code']; ?>" data-discountid="<?php echo $discount_value['id']; ?>" data-toggle="modal" data-target="#confirm-discountdelete" title="<?php echo $this->lang->line('revert'); ?>">
-                                                                    <i class="fa fa-undo"> </i>
-                                                                </button>
-                                                                <?php
-}
-        }
-        ?>
-                                                        <button type="button" data-modal_title="<?php echo $this->lang->line('discount') . " : " . $discount_value['code']; ?>" data-student_fees_discount_id="<?php echo $discount_value['id']; ?>"
-                                                                class="btn btn-xs btn-default applydiscount"
-                                                                title="<?php echo $this->lang->line('apply_discount'); ?>"
-                                                                ><i class="fa fa-check"></i>
-                                                        </button>
-
-                                                    </div>
-                                                   </div>
-                                                </td>
-                                            </tr>
-                                            <?php
-}
-}
-?>
-                                    <tr class="box box-solid total-bg">
-                                        <td align="left" ></td>
+                                    <tr class="box box-solid total-bg">                                       
                                         <td align="left" ></td>
                                         <td align="left" ></td>
                                         <td align="left" ></td>
@@ -732,108 +589,38 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
     </section>
 </div>
 
-<div class="modal fade" id="myFeesModal" role="dialog">
+<div class="modal fade" id="myfeeDiscountModal" role="dialog">
     <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title title text-center fees_discount_title"></h4>
+            </div>
+            <div class="modal-body minheight260"> 
+                <div class="modal_loader_div" style="display: none;"></div>
+                <div class="modal-body-inner">
+                </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myFeesModal" role="dialog">
+    <div class="modal-dialog modal-lg" style="width:50%">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title title text-center fees_title"></h4>
             </div>
-            <div class="modal-body pb0">
-                <div class="form-horizontal balanceformpopup">
-                    <div class="box-body">
+            <div class="modal-body minheight260"> 
 
-                        <input  type="hidden" class="form-control" id="std_id" value="<?php echo $student["student_session_id"]; ?>" readonly="readonly"/>
-                        <input  type="hidden" class="form-control" id="parent_app_key" value="<?php echo $student['parent_app_key'] ?>" readonly="readonly"/>
-                        <input  type="hidden" class="form-control" id="guardian_phone" value="<?php echo $student['guardian_phone'] ?>" readonly="readonly"/>
-                        <input  type="hidden" class="form-control" id="guardian_email" value="<?php echo $student['guardian_email'] ?>" readonly="readonly"/>
-                        <input  type="hidden" class="form-control" id="student_fees_master_id" value="0" readonly="readonly"/>
-                        <input  type="hidden" class="form-control" id="fee_groups_feetype_id" value="0" readonly="readonly"/>
-                        <input  type="hidden" class="form-control" id="transport_fees_id" value="0" readonly="readonly"/>
-                        <input  type="hidden" class="form-control" id="fee_category" value="" readonly="readonly"/>
-                        <div class="form-group">
-                            <label for="inputEmail3" class="col-sm-3 control-label"><?php echo $this->lang->line('date'); ?><small class="req"> *</small></label>
-                            <div class="col-sm-9">
-                                <input  id="date" name="admission_date" placeholder="" type="text" class="form-control date_fee"  value="<?php echo date($this->customlib->getSchoolDateFormat()); ?>" readonly="readonly"/>
-                                <span class="text-danger" id="date_error"></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label"><?php echo $this->lang->line('amount'); ?> (<?php echo $currency_symbol; ?>)<small class="req"> *</small></label>
-                            <div class="col-sm-9">
-                                <input type="text" autofocus="" class="form-control modal_amount" id="amount" value="0"  >
-                                <span class="text-danger" id="amount_error"></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label"> <?php echo $this->lang->line('discount_group'); ?></label>
-                            <div class="col-sm-9">
-                                <select class="form-control modal_discount_group" id="discount_group">
-                                    <option value=""><?php echo $this->lang->line('select'); ?></option>
-                                </select>
-                                <span class="text-danger" id="amount_error"></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label"><?php echo $this->lang->line('discount'); ?> (<?php echo $currency_symbol; ?>)<small class="req"> *</small></label>
-                            <div class="col-sm-9">
-                                <div class="row">
-                                    <div class="col-md-5 col-sm-5">
-                                        <div class="">
-                                            <input type="text" class="form-control" id="amount_discount"  value="0">
+                <div class="modal_loader_div" style="display: none;"></div>
 
-                                            <span class="text-danger" id="amount_discount_error"></span></div>
-                                    </div>
-                                    <div class="col-md-2 col-sm-2 ltextright">
-                                        <label for="inputPassword3" class="control-label"><?php echo $this->lang->line('fine'); ?> (<?php echo $currency_symbol; ?>)<small class="req">*</small></label>
-                                    </div>
-                                    <div class="col-md-5 col-sm-5">
-                                        <div class="">
-                                            <input type="text" class="form-control" id="amount_fine" value="0">
-                                            <span class="text-danger" id="amount_fine_error"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!--./col-sm-9-->
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label"><?php echo $this->lang->line('payment_mode'); ?></label>
-                            <div class="col-sm-9">
-                                <label class="radio-inline">
-                                    <input type="radio" name="payment_mode_fee" value="Cash" checked="checked"><?php echo $this->lang->line('cash'); ?>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="payment_mode_fee" value="Cheque"><?php echo $this->lang->line('cheque'); ?>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="payment_mode_fee" value="DD"><?php echo $this->lang->line('dd'); ?>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="payment_mode_fee" value="bank_transfer"><?php echo $this->lang->line('bank_transfer'); ?>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="payment_mode_fee" value="upi"><?php echo $this->lang->line('upi'); ?>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="payment_mode_fee" value="card"><?php echo $this->lang->line('card'); ?>
-                                </label>
-                                <span class="text-danger" id="payment_mode_error"></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label"><?php echo $this->lang->line('note'); ?></label>
-                            <div class="col-sm-9">
-                                <textarea class="form-control" rows="3" id="description" placeholder=""></textarea>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-body-inner">
+                    
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?php echo $this->lang->line('cancel'); ?></button>
-                <button type="button" class="btn cfees save_button" id="load" data-action="collect" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> <?php echo $this->lang->line('processing'); ?>"> <?php echo $currency_symbol; ?> <?php echo $this->lang->line('collect_fees'); ?> </button>
-                <button type="button" class="btn cfees save_button" id="load" data-action="print" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> <?php echo $this->lang->line('processing'); ?>"> <?php echo $currency_symbol; ?> <?php echo $this->lang->line('collect_print'); ?></button>
-            </div>
+
+                </div>
         </div>
     </div>
 </div>
@@ -1078,11 +865,16 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
         var transport_fees_id = $('#transport_fees_id').val();
         var fee_category = $('#fee_category').val();
         var payment_mode = $('input[name="payment_mode_fee"]:checked').val();
+        var selectedDiscounts = [];
+        $('input[name="fee_discount_group[]"]:checked').each(function() {
+            selectedDiscounts.push($(this).val());
+        });
         var student_fees_discount_id = $('#discount_group').val();
+
         $.ajax({
             url: '<?php echo site_url("studentfee/addstudentfee") ?>',
             type: 'post',
-            data: {action: action, student_session_id: student_session_id, date: date, type: feetype, amount: amount, amount_discount: amount_discount, amount_fine: amount_fine, description: description, student_fees_master_id: student_fees_master_id, fee_groups_feetype_id: fee_groups_feetype_id,fee_category:fee_category, transport_fees_id:transport_fees_id, payment_mode: payment_mode, guardian_phone: guardian_phone, guardian_email: guardian_email, student_fees_discount_id: student_fees_discount_id, parent_app_key: parent_app_key},
+            data: {action: action, student_session_id: student_session_id, date: date, type: feetype, amount: amount, amount_discount: amount_discount, amount_fine: amount_fine, description: description, student_fees_master_id: student_fees_master_id, fee_groups_feetype_id: fee_groups_feetype_id,fee_category:fee_category, transport_fees_id:transport_fees_id, payment_mode: payment_mode, guardian_phone: guardian_phone, guardian_email: guardian_email, student_fees_discount_id: student_fees_discount_id, parent_app_key: parent_app_key,discounts: selectedDiscounts},
             dataType: 'json',
             success: function (response) {
                 $this.button('reset');
@@ -1237,7 +1029,56 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
 </script>
 
 <script type="text/javascript">
-    $("#myFeesModal").on('shown.bs.modal', function (e) {
+
+$("#myfeeDiscountModal").on('hidden.bs.modal', function (e) {
+   
+    $('#myfeeDiscountModal .modal-body .modal-body-inner').html("");  
+});
+
+
+
+$("#myFeesModal").on('hidden.bs.modal', function (e) {
+    $('#myFeesModal .modal-body .modal-body-inner').html(""); 
+});
+
+
+$("#myfeeDiscountModal").on('shown.bs.modal', function (e) {
+        e.stopPropagation();
+        $('.fees_discount_title').html("<?php echo $this->lang->line('discount'); ?>");
+        var student_fees_deposite = $(e.relatedTarget).data('feeDepositeId');
+       
+        var modal_discount = $(this);
+        $.ajax({
+            type: "post",
+            url: base_url+"studentfee/getAppliedDiscounts",
+            dataType: 'JSON',
+            data: {'student_fees_deposite': student_fees_deposite
+            },
+            beforeSend: function () {
+                fee_type_amount=0;
+                        $('#myfeeDiscountModal .modal-body .modal-body-inner').html(""); 
+                        $('#myfeeDiscountModal .modal-body .modal_loader_div').css("display", "block"); 
+            },
+            success: function (response) {
+                if(response.status){
+             
+                    $('#myfeeDiscountModal .modal-body .modal-body-inner').html(response.page); 
+                    $('#myfeeDiscountModal .modal-body .modal_loader_div').fadeOut(400);
+                }
+
+            },
+            error: function (xhr) { // if error occured
+                alert("<?php echo $this->lang->line('error_occurred_please_try_again'); ?>");
+
+            },
+            complete: function () { 
+            }
+        });
+    });
+
+
+
+$("#myFeesModal").on('shown.bs.modal', function (e) {
         e.stopPropagation();
         var discount_group_dropdown = '<option value=""><?php echo $this->lang->line('select'); ?></option>';
         var data = $(e.relatedTarget).data();
@@ -1262,7 +1103,7 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
 
         $.ajax({
             type: "post",
-            url: '<?php echo site_url("studentfee/geBalanceFee") ?>',
+            url: '<?php echo site_url("studentfee/getBalanceFee") ?>',
             dataType: 'JSON',
             data: {'fee_groups_feetype_id': fee_groups_feetype_id,
                 'student_fees_master_id': student_fees_master_id,
@@ -1271,26 +1112,17 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
                 'trans_fee_id' : trans_fee_id
             },
             beforeSend: function () {
-                $('#discount_group').html("");
-                $("span[id$='_error']").html("");
-                $('#amount').val("");
-                $('#amount_discount').val("0");
-                $('#amount_fine').val("0"); 
+                fee_type_amount=0;
+                        $('#myFeesModal .modal-body .modal-body-inner').html(""); 
+                        $('#myFeesModal .modal-body .modal_loader_div').css("display", "block"); 
             },
-            success: function (data) {
-
-                if (data.status === "success") {
-                    fee_amount = data.balance;
-                    fee_type_amount = data.student_fees;
-                    $('#amount').val(data.balance);
-                    $('#amount_fine').val(data.remain_amount_fine);
-                    $.each(data.discount_not_applied, function (i, obj)
-                    {
-                     discount_group_dropdown += "<option value=" + obj.student_fees_discount_id + " data-disamount=" + obj.amount + " data-type=" + obj.type + " data-percentage=" + obj.percentage + ">" + obj.code + "</option>";
-                    });
-                    $('#discount_group').append(discount_group_dropdown);
-
+            success: function (response) {
+                if(response.status){
+                    fee_type_amount=response.balance;
+                    $('#myFeesModal .modal-body .modal-body-inner').html(response.page); 
+                    $('#myFeesModal .modal-body .modal_loader_div').fadeOut(400);
                 }
+
             },
             error: function (xhr) { // if error occured
                 alert("<?php echo $this->lang->line('error_occurred_please_try_again'); ?>");
@@ -1304,6 +1136,8 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
 
 <script type="text/javascript">
     $(document).ready(function () {
+        modal_click_disabled('myfeeDiscountModal,myFeesModal');
+
         $.extend($.fn.dataTable.defaults, {
             searching: false,
             ordering: false,
@@ -1322,15 +1156,12 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
         $.fn.fixedHeader = function (options) {
             var config = {
                 topOffset: 50
-                        //bgColor: 'white'
             };
             if (options) {
                 $.extend(config, options);
             }
-
             return this.each(function () {
                 var o = $(this);
-
                 var $win = $(window);
                 var $head = $('thead.header', o);
                 var isFixed = 0;
@@ -1482,7 +1313,6 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
             var $this = $(this);
             var array_to_collect_fees = [];
             $.each($("input[name='fee_checkbox']:checked"), function () {
-
                 var trans_fee_id = $(this).data('trans_fee_id');
                 var fee_category = $(this).data('fee_category');
                 var fee_session_group_id = $(this).data('fee_session_group_id');
@@ -1494,7 +1324,6 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
                 item ["fee_session_group_id"] = fee_session_group_id;
                 item ["fee_master_id"] = fee_master_id;
                 item ["fee_groups_feetype_id"] = fee_groups_feetype_id;
-
                 array_to_collect_fees.push(item);
             });
 
@@ -1507,14 +1336,12 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
                     $this.button('loading');
                 },
                 success: function (data) {
-
                     $("#listCollectionModal .modal-body").html(data.view);
                     $("#listCollectionModal").modal('show');
                     $this.button('reset');
                 },
                 error: function (xhr) { // if error occured
                     alert("<?php echo $this->lang->line('error_occurred_please_try_again'); ?>");
-
                 },
                 complete: function () {
                     $this.button('reset');
@@ -1524,28 +1351,36 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
     });
 
     $(function () {
-        $(document).on('change', "#discount_group", function () {
-            var amount = $('option:selected', this).data('disamount');
-            var type = $('option:selected', this).data('type');
-            var percentage = $('option:selected', this).data('percentage');
-            let balance_amount=0;
-            if (type == null || type == "fix") {
+        $(document).on('change', '.grp_discount', function () {
+            let selectedDiscounts = [];
+            let final_discount_amount=0;
+            let balance_amount=fee_type_amount;
+          
+      // Iterate through all checked checkboxes
+      $('.grp_discount:checked').each(function () {
+        let _this=$(this);
+          var amount = _this.data('disamount');
+          var type = _this.data('type');
+          var percentage = _this.data('percentage');
+          if (type == "fix") {
+                final_discount_amount += parseFloat((parseFloat(amount)).toFixed(2));
+          }else if (type == "percentage") {
+                var per_amount=((parseFloat(fee_type_amount) * parseFloat(percentage))/100).toFixed(2);
+                final_discount_amount += parseFloat(per_amount);
+          }
 
-             balance_amount = (parseFloat(fee_amount) - parseFloat(amount)).toFixed(2);
-            }else if (type == "percentage") {
-             var per_amount=((parseFloat(fee_type_amount) * parseFloat(percentage))/100).toFixed(2);
-             balance_amount = (parseFloat(fee_amount)-per_amount).toFixed(2);
-            }
-
-            if (typeof amount !== typeof undefined && amount !== false) {
-                $('div#myFeesModal').find('input#amount_discount').prop('readonly', true).val((type == "percentage") ? per_amount : amount);
+         balance_amount= (parseFloat(fee_type_amount)-final_discount_amount).toFixed(2);
+        });
+            
+            if (typeof final_discount_amount !== typeof undefined && final_discount_amount !== false) {
+                $('div#myFeesModal').find('input#amount_discount').prop('readonly', true).val(final_discount_amount);
                 $('div#myFeesModal').find('input#amount').val(balance_amount);
-
             } else {
-                $('div#myFeesModal').find('input#amount').val(fee_amount);
+                $('div#myFeesModal').find('input#amount').val(fee_type_amount);
                 $('div#myFeesModal').find('input#amount_discount').prop('readonly', false).val(0);
             }
-        });
+            selectedDiscounts.push($(this).val());
+    });
     });
 
     $("#collect_fee_group").submit(function (e) {
@@ -1562,7 +1397,6 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
             },
             success: function (response) {
                 if (response.status === 1) {
-
                     location.reload(true);
                 } else if (response.status === 0) {
                     $.each(response.error, function (index, value) {
@@ -1572,21 +1406,16 @@ echo $currency_symbol . amountFormat(($total_balance_amount - $alot_fee_discount
                 }
             },
             error: function (xhr) { // if error occured
-
                 alert("<?php echo $this->lang->line('error_occurred_please_try_again'); ?>");
-
             },
             complete: function () {
                 smt_btn.button('reset');
             }
         });
-
         e.preventDefault(); // avoid to execute the actual submit of the form.
     });
 
-
 $(document).on('change','#select_all',function(){
-  console.log("sdfsfs");
-        $('input:checkbox').not(this).prop('checked', this.checked);
+    $('input:checkbox').not(this).prop('checked', this.checked);
 });
 </script>

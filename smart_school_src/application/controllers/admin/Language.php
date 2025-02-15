@@ -126,7 +126,6 @@ class Language extends Admin_Controller
                     $files = glob($directory_app_files . '*', GLOB_MARK);
 
                     foreach ($files as $file) {
-
                         unlink($file);
                     }
 
@@ -137,7 +136,6 @@ class Language extends Admin_Controller
                     $files = glob($directory_language . '*', GLOB_MARK);
 
                     foreach ($files as $file) {
-
                         unlink($file);
                     }
 
@@ -416,11 +414,9 @@ class Language extends Admin_Controller
                 $lang_data                                  = $this->language_model->get($id);
                 $this->session->userdata['admin']['is_rtl'] = $is_rtl;
             }
-
             echo json_encode(array('status' => '1'));
 
         } else {
-
             echo json_encode(array('status' => '0'));
         }
     }
@@ -463,7 +459,6 @@ class Language extends Admin_Controller
             $lang_arr  = array();
             $i         = 0;
             foreach ($result as $key => $value) {
-
                 $id                      = $value["id"];
                 $key                     = $value["key"];
                 $pharses_query           = $this->db->select("*")->where("key_id", $id)->where("lang_id", $lang_id)->get("lang_pharses");
@@ -479,7 +474,7 @@ class Language extends Admin_Controller
 
     public function update_520()
     {
-        $language_result = $this->db->select('*')->from('languages')->where_in('id', array(""))->get()->result_array();
+        $language_result = $this->db->select('*')->from('languages')->where_in('id', array(""))->get()->result_array();  
         foreach ($language_result as $value11) {
             $data             = array();
             $final_data       = array();
@@ -491,7 +486,7 @@ class Language extends Admin_Controller
                 $file_content = file(FCPATH . "application/language/English/app_files/system_lang.php");
                 $newdata      = $file_content;
 
-                for ($i = 1722; $i < 1724; $i++) {
+                for ($i = 2369; $i < 2469; $i++) {
                     $exp     = explode("=", $newdata[$i]);
                     $key     = $exp[0];
                     $pharses = '';
@@ -499,7 +494,6 @@ class Language extends Admin_Controller
                         $pharses = $exp[1];
                     }
                     $lang_pharses[$key] = $pharses;
-
                 }
             }
 

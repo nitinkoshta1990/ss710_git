@@ -83,7 +83,6 @@
                 <h4 class="modal-title" id="modal-title"></h4>
             </div>
             <div class="modal-body pb0">
-
                 <div class="row">
                     <form role="form"  id="addtodo_form" method="post" enctype="multipart/form-data" action="">
                         <div class="form-group col-md-12">
@@ -99,15 +98,12 @@
                         <div class="row">
                             <div class="box-footer clearboth" id="permission">
                                 <?php if ($this->rbac->hasPrivilege('calendar_to_do_list', 'can_add')) { ?>
-
                                     <input type="submit" class="btn btn-primary submit_addtask pull-right" value="<?php echo $this->lang->line('save'); ?>">
                                 <?php } ?>
                             </div>
                         </div>
-
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
@@ -121,21 +117,17 @@
                 <h4 class="modal-title"><?php echo $this->lang->line('add_new_event'); ?></h4>
             </div>
             <div class="modal-body pb0"> 
-
                 <div class="row"> 
                     <form role="form" id="addevent_form" method="post" enctype="multipart/form-data" action="">
                         <div class="form-group col-md-12">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event_title'); ?><small class="req"> *</small></label>
                             <input class="form-control" name="title" id="input-field"> 
                             <span class="text-danger"><?php echo form_error('title'); ?></span>
-
                         </div>
-
                         <div class="form-group col-md-12">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event_description'); ?></label>
                             <textarea name="description" class="form-control" id="desc-field"></textarea></div>
                             <div class="row">
-                                
                         <div class="form-group col-md-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event_from'); ?><small class="req"> *</small></label>
                             <div class="input-group">
@@ -145,7 +137,6 @@
                                 <input type="text" autocomplete="off" name="event_from" class="form-control pull-right event_from">
                             </div>
                         </div>
-
                         <div class="form-group col-md-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event_to'); ?><small class="req"> *</small></label>
                             <div class="input-group">
@@ -155,8 +146,7 @@
                                 <input type="text" autocomplete="off" name="event_to" class="form-control pull-right event_to">
                             </div>
                         </div>
-                            </div>
-
+                        </div>
                         <div class="form-group col-md-12">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event_color'); ?></label>
                             <input type="hidden" name="eventcolor" autocomplete="off" id="eventcolor" class="form-control">
@@ -184,19 +174,15 @@
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event_type'); ?></label>
                             <br/>
                             <label class="radio-inline">
-
                                 <input type="radio" name="event_type" value="public" id="public"><?php echo $this->lang->line('public'); ?>
                             </label>
                             <label class="radio-inline">
-
                                 <input type="radio" name="event_type" value="private" checked id="private"><?php echo $this->lang->line('private'); ?>
                             </label>
                             <label class="radio-inline">
-
                                 <input type="radio" name="event_type" value="sameforall" id="public"><?php echo $this->lang->line('all'); ?> <?php echo $role; ?>
                             </label>
                             <label class="radio-inline">
-
                                 <input type="radio" name="event_type" value="protected" id="public"><?php echo $this->lang->line('protected'); ?>
                             </label> </div>
                         <?php if ($this->rbac->hasPrivilege('calendar_to_do_list', 'can_add')) { ?>

@@ -39,8 +39,8 @@ if (!empty($memberList->image)) {
             
                 <li class="list-group-item listnoback">
                     <b><?php echo $this->lang->line('barcode'); ?></b>                     
-                    <?php if (file_exists("./uploads/student_id_card/barcodes/" . $memberList->admission_no . ".png")) {?>    
-                    <a class="pull-right text-aqua"><img src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/barcodes/' . $memberList->admission_no . '.png'); ?>" width="auto" height="auto"/></a>
+                    <?php if (file_exists("./uploads/student_id_card/barcodes/" . $memberList->id . ".png")) {?>    
+                    <a class="pull-right text-aqua"><img src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/barcodes/' . $memberList->id . '.png'); ?>" width="auto" height="auto"/></a>
                     <?php } ?>
                 </li>
                 
@@ -49,8 +49,8 @@ if (!empty($memberList->image)) {
             
             <li class="list-group-item listnoback">
                 <b><?php echo $this->lang->line('qrcode'); ?></b>                     
-                <?php if (file_exists("./uploads/student_id_card/qrcode/" . $memberList->admission_no . ".png")) {?>    
-                    <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' .  $memberList->admission_no . '.png'); ?>" target="_blank"><img src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $memberList->admission_no . '.png'); ?>" width="auto" height="auto"  class="h-50"/></a>
+                <?php if (file_exists("./uploads/student_id_card/qrcode/" . $memberList->id . ".png")) {?>    
+                    <a class="pull-right text-aqua" href="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' .  $memberList->id . '.png'); ?>" target="_blank"><img src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/qrcode/' . $memberList->id . '.png'); ?>" width="auto" height="auto"  class="h-50"/></a>
                 <?php } ?>
             </li>
             

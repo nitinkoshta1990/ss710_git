@@ -101,12 +101,10 @@ class Paymentsetting_model extends MY_Model {
             return TRUE;
         } else {
             return FALSE;
-        }
-        
+        }        
     }
 
     public function active($data, $other = false) {
-
 
         if (!$other) {
             $this->db->where('payment_type', $data['payment_type']);
@@ -122,6 +120,22 @@ class Paymentsetting_model extends MY_Model {
         }
     }
 
+    public function payment_gateway_config($data, $other = false) {
 
+        if (!$other) {
+            $this->db->where('payment_type', $data['payment_type']);
+            $this->db->update('payment_settings', $data);
+            $data['charge_type'] = NULL;
+            $data['charge_value'] = NULL;
+                
+            $payment_type = $data['payment_type'];
+            unset($data['payment_type']);
+            $this->db->where('payment_type !=', $payment_type);
+            $this->db->update('payment_settings', $data);
+        } else {
+
+            $this->db->update('payment_settings', $data);
+        }
+    }
 
 }

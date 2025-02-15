@@ -74,6 +74,15 @@ if ($page_form) {
                                             <div class="blur"></div>
                                             <div class="event20">
                                                 <h3><?php echo $value['title']; ?></h3>
+												<p>
+													<?php if($value['event_venue']){ echo $this->lang->line('venue') .': '. $value['event_venue']; } ?>
+                                                </p>    
+													<p>
+													<?php 
+														if($value['event_start']){ echo $this->lang->line('date') .': '. date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value['event_start'])); } 
+														if($value['event_end']){ echo ' - '. date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value['event_end'])); } 
+													?>
+												</p>
                                                 <p><?php echo substr($value['description'], 0, 85) . ".."; ?></p>
                                             </div><!--./around20-->
                                         </div>    

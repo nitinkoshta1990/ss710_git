@@ -241,6 +241,7 @@ $language_name1 = $language1["short_code"];
                                     ?>
                                     <form action="<?php echo site_url('admin/subjectattendence/index') ?>" method="post" class="form_attendence">
                                         <?php echo $this->customlib->getCSRF(); ?>
+                                         <input type="hidden" name="is_first_time_attendance" value="<?php echo $is_first_time_attendance;?>"/>
                                         <div class="mailbox-controls">
                                         <div class="row">
                                                 <div class="col-md-6">                            

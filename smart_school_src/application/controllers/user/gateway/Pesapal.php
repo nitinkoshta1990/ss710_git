@@ -11,8 +11,7 @@ public $api_config = "";
 		$this->setting[0]['currency_symbol'] = $this->customlib->getSchoolCurrencyFormat();
 		$this->load->library('pesapal_lib');
 		$this->load->library('mailsmsconf');
-	}
- 
+	} 
  
 	public function index()
 	{  
@@ -48,7 +47,7 @@ public $api_config = "";
 		$params = $this->session->userdata('params');
 		$data = array();
 		$student_id = $params['student_id'];
-		$amount=number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'])), 2, '.', '');
+		$amount=number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge'])), 2, '.', '');
 		$data['total'] = $amount;
 		$data['symbol'] = $params['invoice']->symbol;
 		$data['currency_name'] = $params['invoice']->currency_name;
@@ -108,8 +107,6 @@ public $api_config = "";
 			$pesapalTrackingId=$_GET['pesapal_transaction_tracking_id'];
 			$pesapal_merchant_reference=$_GET['pesapal_merchant_reference'];
 
-
-
 			if($pesapalTrackingId!='')
 
 			{
@@ -127,9 +124,7 @@ public $api_config = "";
 
 			   $request_status->set_parameter("pesapal_transaction_tracking_id",$pesapalTrackingId);
 
-			   $request_status->sign_request($signature_method, $consumer, $token);
-
-			 
+			   $request_status->sign_request($signature_method, $consumer, $token);			 
 
 			   $ch = curl_init();
 
@@ -166,14 +161,16 @@ public $api_config = "";
 				    $params = $this->session->userdata('params');
 	                
 	                $bulk_fees=array();
-                    $params     = $this->session->userdata('params');
+                    // $params     = $this->session->userdata('params');
                  
                     foreach ($params['student_fees_master_array'] as $fee_key => $fee_value) {
                    
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+                        'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_pesapal_txn_id') . $reference.', Tracking_id' .$pesapalTrackingId,
                         'received_by'     => '',
@@ -191,7 +188,7 @@ public $api_config = "";
                     //========
                     }
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                      //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();
@@ -219,7 +216,6 @@ public $api_config = "";
                             'fee_category' => $fee_category,
                         );
 
-
                         if ($response_value['student_transport_fee_id'] != 0 && $response_value['fee_category'] == "transport") {
 
                             $data['student_fees_master_id']   = null;
@@ -235,8 +231,6 @@ public $api_config = "";
                             $fine_percentage[] = $mailsms_array->fine_percentage;
                             $fine_amount[]     = $mailsms_array->fine_amount;
                             $amount[]          = $mailsms_array->amount;
-
-
 
                         } else {
 
@@ -278,7 +272,6 @@ public $api_config = "";
                     $obj_mail['fee_category']    = $fee_category;
                     $obj_mail['send_type']    = 'group';
 
-
                     $this->mailsmsconf->mailsms('fee_submission', $obj_mail);
 
                 }
@@ -293,8 +286,7 @@ public $api_config = "";
 			    }else{
 			       redirect(base_url("user/gateway/payment/paymentfailed"));
 			    }
-			}
-			 
+			}			 
  
 			   curl_close ($ch);
 

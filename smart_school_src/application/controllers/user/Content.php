@@ -82,12 +82,20 @@ class Content extends Student_Controller
         $data['content']    = $this->sharecontent_model->getShareContentWithDocuments($id);
         $superadmin_visible =    $this->Setting_model->get();        
         $data['superadmin_restriction'] =   $superadmin_visible[0]['superadmin_restriction'];
+
+        $data['branch_url']=$this->customlib->getBaseUrl();
         
         $this->load->view('layout/student/header');
         $this->load->view('user/content/view', $data);
         $this->load->view('layout/student/footer');
     }
 
+ public function download_content($id)
+    {
+        $this->load->helper('file'); // Load file helper
+        $content = $this->uploadcontent_model->get($id);
+        $this->media_storage->filedownload($content->img_name, $content->dir_path);
+    }
     public function index()
     {
         $data['title']      = 'Upload Content';

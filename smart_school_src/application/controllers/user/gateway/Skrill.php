@@ -59,7 +59,7 @@ class Skrill extends Studentgateway_Controller
             $params = $this->session->userdata('params');
             $data['params']=$params;            
             $student_id = $params['student_id'];
-            $data['total'] =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'])), 2, '.', '');;
+            $data['total'] =number_format((float)(convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge'])), 2, '.', '');;
             $data['symbol'] = $params['invoice']->symbol;
             $data['currency_name'] = $params['invoice']->currency_name;
             $data['name'] = $params['name'];
@@ -113,7 +113,9 @@ class Skrill extends Studentgateway_Controller
              $json_array = array(
                 'amount'          =>  $fee_value['amount_balance'],
                 'date'            => date('Y-m-d'),
-                'amount_discount' => 0,
+                'amount_discount' => $fee_value['applied_fee_discount'],
+				'processing_charge_type'=>$params['processing_charge_type'],
+                'gateway_processing_charge'=>$params['gateway_processing_charge'],
                 'amount_fine'     => $fee_value['fine_balance'],
                 'description'     => $this->lang->line('online_fees_deposit_through_skrill_txn_id') . $payment_data['transaction_id'],
                 'received_by'     => '',

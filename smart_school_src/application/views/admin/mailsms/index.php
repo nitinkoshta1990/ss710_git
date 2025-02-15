@@ -25,7 +25,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </div>
                     </div>
                     <div class="box-body">
-                        <div class="table-responsive mailbox-messages overflow-visible">
+                        <div class="table-responsive mailbox-messages">
                             <div class="download_label"><?php echo $this->lang->line('email_sms_log'); ?></div>
                             <table class="table table-striped table-bordered table-hover example">
                                 <thead>

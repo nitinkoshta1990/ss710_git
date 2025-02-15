@@ -59,7 +59,7 @@ if (!empty($page['category_content'][$page_content_key])) {
                 foreach ($page['category_content'][$page_content_key] as $key => $value) {
                     ?>
                             <div class="col-md-<?php echo $bootstrapColWidth; ?> col-sm-<?php echo $bootstrapColWidth; ?>">
-                                <div class="cuadro_intro_hover" style="background-color:#cccccc;">
+                                <div class="cuadro_intro_hover">
                                     <a href="<?php echo site_url($value['url']); ?>">
                                         <?php
 if ($value['feature_image'] == "") {
@@ -72,7 +72,16 @@ if ($value['feature_image'] == "") {
                                         <div class="eventcaption">
                                             <div class="blur"></div>
                                             <div class="event20">
-                                                <h3 style="margin-top: 10px;"><?php echo $value['title']; ?></h3>
+                                                <h3><?php echo $value['title']; ?></h3>
+												<p>
+													<?php if($value['event_venue']){ echo $this->lang->line('venue') .': '. $value['event_venue']; } ?>
+                                                </p>    
+													<p>
+													<?php 
+														if($value['event_start']){ echo $this->lang->line('date') .': '. date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value['event_start'])); } 
+														if($value['event_end']){ echo ' - '. date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value['event_end'])); } 
+													?>
+												</p>
                                                 <p><?php echo substr($value['description'], 0, 85) . ".."; ?></p>
                                             </div><!--./around20-->
                                         </div>
@@ -124,6 +133,7 @@ if ($value['feature_image'] == "") {
                                     <img src="<?php echo $feature_image; ?>" alt="" title="">
                                     <div class="around20">
                                         <h3><?php echo $value['title']; ?></h3>
+										
                                         <?php
 echo substr(strip_tags(html_entity_decode($value['description'])), 0, 50);
                 ?>

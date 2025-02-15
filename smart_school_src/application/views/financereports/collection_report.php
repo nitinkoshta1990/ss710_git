@@ -204,15 +204,17 @@ if (empty($results)) {
         $fineLabel     = array();
         $TotalLabel    = array();
         $admission_no  = array();
-        foreach ($value as $collect) {                
+        foreach ($value as $collect) {     
+            
+         
             
             $pay_mode[]      = $collect['payment_mode'];            
 
-            $amountLabel[]   = number_format($collect['amount'], 2, '.', '');
-            $discountLabel[] = number_format($collect['amount_discount'], 2, '.', '');
-            $fineLabel[]     = number_format($collect['amount_fine'], 2, '.', '');
+            $amountLabel[]   = two_digit_float($collect['amount']);
+            $discountLabel[] = two_digit_float($collect['amount_discount']);
+            $fineLabel[]     = two_digit_float($collect['amount_fine']);
             $t               = $collect['amount'] + $collect['amount_fine'];
-            $TotalLabel[]    = number_format($t, 2, '.', '');
+            $TotalLabel[]    = two_digit_float($t);
         }
         ?>
             
@@ -246,16 +248,16 @@ if (empty($results)) {
                                 <?php echo $this->lang->line(strtolower($collect['payment_mode'])); ?>
                             </td>
                             <td class="text text-right">
-                                <?php echo number_format($collect['amount'], 2, '.', ''); ?>
+                                <?php echo two_digit_float($collect['amount']); ?>
                             </td>
                             <td class="text text-right">
-                                <?php echo number_format($collect['amount_discount'], 2, '.', ''); ?>
+                                <?php echo two_digit_float($collect['amount_discount']); ?>
                             </td>
                             <td class="text text-right">
-                                <?php echo number_format($collect['amount_fine'], 2, '.', ''); ?>
+                                <?php echo two_digit_float($collect['amount_fine']); ?>
                             </td> 
                             <td class="text text-right">
-                                <?php echo number_format($t1, 2, '.', ''); ?>
+                                <?php echo two_digit_float($t1); ?>
                             </td>                              
                                             
                                             

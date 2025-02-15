@@ -27,7 +27,10 @@ class Certificate extends Admin_Controller
         $this->form_validation->set_rules('certificate_name', $this->lang->line('certificate_name'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('certificate_text', $this->lang->line('certificate_text'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('background_image', $this->lang->line('image'), 'callback_handle_upload');
-
+		
+		$custom_fields               = $this->customfield_model->get_custom_fields('students');
+        $this->data['custom_fields'] = $custom_fields;
+		
         if ($this->form_validation->run() == false) {
 
             $this->data['certificateList'] = $this->certificate_model->certificateList();

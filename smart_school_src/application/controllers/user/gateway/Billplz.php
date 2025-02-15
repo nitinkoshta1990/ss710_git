@@ -24,7 +24,7 @@ class Billplz extends Studentgateway_Controller {
         $data['setting'] = $this->setting;
         $data['api_error'] = array();
         $student_id = $params['student_id'];
-        $total = number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');;
+        $total = number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', '');;
         $data['name'] = $params['name'];
         $data['title'] = 'Student Fee';
         $data['total'] = $total * 100;
@@ -73,7 +73,7 @@ class Billplz extends Studentgateway_Controller {
     public function callback() {
     	
         $params = $this->session->userdata('params');
-        $amount =number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');
+        $amount =number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', '');
         $data = array();
         if($_GET['billplz']['paid']=='true'){
         	$payment_id =$_GET['billplz']['id'];
@@ -85,7 +85,9 @@ class Billplz extends Studentgateway_Controller {
              $json_array = array(
                 'amount'          =>  $fee_value['amount_balance'],
                 'date'            => date('Y-m-d'),
-                'amount_discount' => 0,
+                'amount_discount' => $fee_value['applied_fee_discount'],
+				'processing_charge_type'=>$params['processing_charge_type'],
+				'gateway_processing_charge'=>$params['gateway_processing_charge'],
                 'amount_fine'     => $fee_value['fine_balance'],
                 'description'     => $this->lang->line('online_fees_deposit_through_billplz_wave_txn_id') . $payment_id,
                 'received_by'     => '',

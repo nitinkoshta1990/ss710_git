@@ -92,4 +92,23 @@ class Admitcard_model extends MY_model
         }
     }
 
+    public function save_active_status($value){
+        $this->db->set('is_active',0); 
+        $this->db->update('template_admitcards');
+
+        $this->db->set('is_active',1); 
+        $this->db->where('id',$value);
+        $this->db->update('template_admitcards');
+    }
+
+    public function get_active_admitcard()
+    {
+        $this->db->select('*');
+        $this->db->from('template_admitcards');
+        $this->db->where('is_active', 1);
+        $query = $this->db->get();
+         return $query->row();
+    }
+
+
 }

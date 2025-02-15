@@ -55,7 +55,11 @@
                                     <tr> 
                                         <th><?php echo $this->lang->line('class_section'); ?></th>
                                         <th><?php echo $this->lang->line('total_present'); ?></th>
+                                        <th><?php echo $this->lang->line('male'); ?> Present</th>
+                                        <th><?php echo $this->lang->line('female'); ?> Present</th>
                                         <th><?php echo $this->lang->line('total_absent'); ?></th>
+										<th><?php echo $this->lang->line('male'); ?> Absent</th>
+                                        <th><?php echo $this->lang->line('female'); ?> Absent</th>										
                                         <th><?php echo $this->lang->line('present') . " %"; ?></th>
                                         <th><?php echo $this->lang->line('absent') . " %"; ?></th>
                                     </tr>
@@ -63,12 +67,24 @@
                                 <tbody>
                                     <?php
                                     if (!empty($result)) {
+										$male_present = 0;
+										$female_present = 0;
+										$male_absent = 0;
+										$female_absent = 0;
                                         foreach ($resultlist as $key => $value) {
+											$male_present += $value['total_male_present'];
+											$female_present += $value['total_female_present'];
+											$male_absent += $value['total_male_absent'];
+											$female_absent += $value['total_female_absent'];
                                             ?>
                                             <tr>
                                                 <td><?php echo $value['class_section'] ?></td>
                                                 <td><?php echo $value['total_present'] ?></td>
+                                                <td><?php echo $value['total_male_present'] ?></td>
+                                                <td><?php echo $value['total_female_present'] ?></td>
                                                 <td><?php echo $value['total_absent'] ?></td>
+                                                <td><?php echo $value['total_male_absent'] ?></td>
+                                                <td><?php echo $value['total_female_absent'] ?></td>
                                                 <td><?php echo $value['present_percent'] ?></td>
                                                 <td><?php echo $value['absent_persent'] ?></td>
                                             </tr>
@@ -78,8 +94,12 @@
                                          <tr style="font-weight: bold;">
                                             <td></td>
                                             <td><?php echo $all_present ?></td>
-                                            <td><?php echo $all_absent ?></td>
-                                            <td><?php echo $all_present_percent ?></td>
+                                            <td><?php echo $male_present ?></td>
+                                            <td><?php echo $female_present ?></td>										 
+                                            <td><?php echo $all_absent ?></td>	
+                                            <td><?php echo $male_absent ?></td>	
+                                            <td><?php echo $female_absent ?></td>											 											
+                                            <td><?php echo $all_present_percent ?></td>											
                                             <td><?php echo $all_absent_percent ?></td>
                                         </tr>                                      
                                 </tbody>                                 

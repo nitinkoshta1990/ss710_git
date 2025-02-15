@@ -29,10 +29,12 @@ class Feediscount extends Admin_Controller
         $feesdiscount_result     = $this->feediscount_model->get();
         $data['feediscountList'] = $feesdiscount_result;
         $this->form_validation->set_rules('code', $this->lang->line('discount_code'), 'trim|required|xss_clean');
+        
+        $this->form_validation->set_rules('discount_limit', $this->lang->line('number_of_use_count'), 'trim|required|xss_clean|callback_check_number');       
+        
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
         if ($this->input->post('account_type') == "percentage") {
             $this->form_validation->set_rules('percentage', $this->lang->line('percentage'), 'trim|required|xss_clean');
-
         } else {
             $this->form_validation->set_rules('amount', $this->lang->line('amount'), 'trim|required|xss_clean');
         }
@@ -48,7 +50,7 @@ class Feediscount extends Admin_Controller
             } else {
                 $amount =   convertCurrencyFormatToBaseAmount($this->input->post('amount'));
             }
-            
+			
             $data = array(
                 'name'        => $this->input->post('name'),
                 'code'        => $this->input->post('code'),
@@ -56,11 +58,26 @@ class Feediscount extends Admin_Controller
                 'amount'      => $amount,
                 'percentage'  => empty2null($this->input->post('percentage')),
                 'description' => $this->input->post('description'),
+                'discount_limit' => $this->input->post('discount_limit'),
+                'expire_date' => $this->customlib->dateFormatToYYYYMMDD($this->input->post('expire_date')),
             );
 
             $this->feediscount_model->add($data);
             $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('success_message') . '</div>');
             redirect('admin/feediscount');
+        }
+    }
+
+    public function check_number($userName) {
+        if($userName != "")
+        {
+            if (preg_match("/^[1-9][0-9]*$/", $userName ) ) 
+            {
+                return TRUE;
+            } else{
+                $this->form_validation->set_message('check_number', 'The {field} must be greater than 0');
+                return FALSE;    
+            }            
         }
     }
 
@@ -78,6 +95,8 @@ class Feediscount extends Admin_Controller
         $data['feediscount'] = $feediscount;
         $this->form_validation->set_rules('code', $this->lang->line('discount_code'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('discount_limit', $this->lang->line('number_of_use_count'), 'trim|required|xss_clean|callback_check_number');
+        
         if ($this->input->post('account_type') == "percentage") {
             $this->form_validation->set_rules('percentage', $this->lang->line('percentage'), 'trim|required|xss_clean');
         } else {
@@ -88,15 +107,24 @@ class Feediscount extends Admin_Controller
             $this->load->view('layout/header', $data);
             $this->load->view('admin/feediscount/feediscountEdit', $data);
             $this->load->view('layout/footer', $data);
-        } else {
+        } else {           
+           
+            if ($this->input->post('account_type') == "percentage") {
+                $amount =  '0.00' ;
+            } else {
+                $amount =   convertCurrencyFormatToBaseAmount($this->input->post('amount'));
+            }
+     
             $data = array(
                 'id'          => $id,
                 'name'        => $this->input->post('name'),
                 'code'        => $this->input->post('code'),
                 'type'        => $this->input->post('account_type'),
-                'amount'      => convertCurrencyFormatToBaseAmount($this->input->post('amount')),
+                'amount'      => $amount,
                 'percentage'  => empty2null($this->input->post('percentage')),
                 'description' => $this->input->post('description'),
+                'discount_limit' => $this->input->post('discount_limit'),
+                'expire_date' => $this->customlib->dateFormatToYYYYMMDD($this->input->post('expire_date')),
             );
 
             $this->feediscount_model->add($data);
@@ -118,7 +146,6 @@ class Feediscount extends Admin_Controller
         $data['classlist']       = $class;
         $feediscount_result      = $this->feediscount_model->get($id);
         $data['feediscountList'] = $feediscount_result;
-
         $genderList            = $this->customlib->getGender();
         $data['genderList']    = $genderList;
         $RTEstatusList         = $this->customlib->getRteStatus();

@@ -58,6 +58,7 @@ h1, h2, h3, h4, h5, h6{font-family:'Roboto-Bold', sans-serif}
 .pb10{padding-bottom: 10px;}
 .pt20{padding-top: 20px;}
 .pb20{padding-bottom: 20px;}
+.mt0 {margin-top: 0 !important;}
 .around10{padding: 10px;}
 .around40{padding: 40px;}
 .spaceb10{padding-bottom: 10px;}
@@ -65,7 +66,6 @@ h1, h2, h3, h4, h5, h6{font-family:'Roboto-Bold', sans-serif}
 .spacet40{padding-top: 40px;}
 .spaceb60{padding-bottom: 60px;}
 .spacet60{padding-top: 60px;}
-
 .fullwidthinner,
 .fullwidth{ width: 100vw;position: relative; left: 50%;margin-left: -50vw;}
 .toparea{background: #f48000;padding-bottom: 8px;}
@@ -743,7 +743,7 @@ header{
   color: #fff;
 }
 
-
+.bootom-whatsapp{position: fixed;right: 20px;z-index: 9; bottom: 20px;}
 
 .catetab{
     background: #f58001;
@@ -1080,7 +1080,8 @@ textarea#message{resize: none;padding: 10px;border-radius:0;}
 @keyframes a{0%,to{transform:scale(0);-webkit-transform:scale(0)}50%{transform:scale(1);-webkit-transform:scale(1)}}
 
 .cuadro_intro_hover{
-      padding:0px;
+    padding:0px;
+    background-color:#cccccc;
     position: relative;
     overflow: hidden;
     height: 230px;border-radius:4px;
@@ -1114,7 +1115,7 @@ textarea#message{resize: none;padding: 10px;border-radius:0;}
     width: 100%;
   }
   .cuadro_intro_hover .blur{
-    background:rgba(30, 160, 224, 0.86);
+    background:rgba(244, 128, 0, 0.86);
     height: 300px;
     z-index: 5;
     position: absolute;
@@ -1130,7 +1131,12 @@ textarea#message{resize: none;padding: 10px;border-radius:0;}
     width: 100%;
 }
 .event20{padding: 0px 10px;color: #fff;position: relative;z-index: 6;}
-
+.cuadro_intro_hover:hover .event20 h3{margin-top: 10px; white-space: inherit; overflow: visible}
+.event20 h3{    margin-top: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;}
 .svg {width: 50px; height: 50px;}
 .svg path {fill: #fff !important;}
 
@@ -1735,7 +1741,7 @@ ul.square li {
 
 .scrollToTop {
   border-radius: 100%;
-  bottom: 20px;
+  bottom: 70px;
   color: #fff;
   display: none;
   font-size: 24px;
@@ -1744,7 +1750,7 @@ ul.square li {
   height: 40px;
   background: #f48001;
   position: fixed;
-  right: 20px;
+  right: 24px;
   text-align: center;
   text-decoration: none;
   width: 40px;
@@ -2029,8 +2035,17 @@ border-radius: 30px;border:0;text-decoration: none; text-align: center;line-heig
 .d-flex{display: flex;}
 .align-items-center{align-items: center}
 .btnMD{float: right;}
+.item.list-group-item1{float: none;width: 100%;}
+/*.item.list-group-item:nth-of-type(odd):hover,.item.list-group-item1:hover{background: #428bca;}*/
+.item.list-group-item1:before, .item.list-group-item1:after{display: table;content: "";}
+.calender-wrap{ display: flex;align-items: stretch;height: 100%;flex-direction: column; width: 100%}
+.item{padding-bottom: 1.5rem}
+.w-100{width: 100%}
 @media(min-width:768px){
-    .width-auto{width: auto;}
+     .width-auto{width: auto;}
+    .text-md-right{text-align: right}
+    .thumbnail2 {display: flex;height: 100%;transition: fill .4s cubic-bezier(.215,.61,.355,1);}
+   .item.list-group-item1{margin-bottom: 0px;}
 }
 .mt-24{margin-top: 24px;}
 .cart-course-wrapper .image a img{
@@ -2122,3 +2137,7 @@ border-radius: 30px;border:0;text-decoration: none; text-align: center;line-heig
 textarea.form-control {
     height: 120px !important;
 }
+.calender-wrap{border: 1px solid #ddd;box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.07); margin-bottom: 1.5rem; border-radius:0.25rem}
+.calender-wrap h4{background: #f3f3f3;padding: 1rem 1.5rem;border-radius:0.15rem 0.15rem 0rem 0rem; margin-top: 0;color: #000;font-weight: normal;}
+.calender-inner{padding: 0rem 1.5rem}    
+.calender-inner p{padding-bottom: 0.5rem;}

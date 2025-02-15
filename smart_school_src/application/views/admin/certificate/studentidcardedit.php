@@ -170,8 +170,27 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <div class="form-group switch-inline">
                                     <label><?php echo $this->lang->line('barcode'); ?> / <?php echo $this->lang->line('qrcode'); ?></label>
                                     <div class="material-switch switchcheck">
-                                        <input id="enable_student_barcode" name="enable_student_barcode" type="checkbox" class="chk" value="1" <?php echo set_checkbox('enable_student_barcode', '1', (set_value('enable_student_barcode', $editidcard[0]->enable_student_barcode) == 1) ? TRUE : FALSE); ?>>
+                                        <input id="enable_student_barcode" name="enable_student_barcode" type="checkbox" class="chk" value="1" 
+                                        <?php echo set_checkbox('enable_student_barcode', '1', (set_value('enable_student_barcode', $editidcard[0]->enable_student_barcode) == 1) ? TRUE : FALSE); ?>>
                                         <label for="enable_student_barcode" class="label-success"></label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group switch-inline">
+                                    <label><?php echo $this->lang->line('roll_no'); ?></label>
+                                    <div class="material-switch switchcheck">
+                                        <input id="enable_student_rollno" name="enable_student_rollno" type="checkbox" class="chk" value="1" 
+                                        <?php echo set_checkbox('enable_student_rollno', '1', (set_value('enable_student_rollno', $editidcard[0]->enable_student_rollno) == 1) ? TRUE : FALSE); ?>>
+                                        <label for="enable_student_rollno" class="label-success"></label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group switch-inline">
+                                    <label><?php echo $this->lang->line('house'); ?></label>
+                                    <div class="material-switch switchcheck">
+                                        <input id="enable_student_house_name" name="enable_student_house_name" type="checkbox" class="chk" value="1" 
+                                        <?php echo set_checkbox('enable_student_house_name', '1', (set_value('enable_student_house_name', $editidcard[0]->enable_student_house_name) == 1) ? TRUE : FALSE); ?>>
+                                        <label for="enable_student_house_name" class="label-success"></label>
                                     </div>
                                 </div>
                             </div><!-- /.box-body -->

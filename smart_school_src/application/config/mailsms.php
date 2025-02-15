@@ -29,6 +29,11 @@ $config['mailsms'] = array(
     'fee_processing'                    => 'fee_processing',
     'student_apply_leave'               => 'student_apply_leave',
     'email_pdf_exam_marksheet'          => 'email_pdf_exam_marksheet',
+    'homework_evaluation'               => 'homework_evaluation',
+    'present_attendence'                => 'present_attendence',//added
+
+    'staff_present_attendence'          => 'staff_present_attendence',//added
+    'staff_absent_attendence'           => 'staff_absent_attendence',//added
 );
 $config['smtp_encryption'] = array(
     ''    => 'OFF',
@@ -48,6 +53,7 @@ $config['attendence'] = array(
     'absent'           => 4,
     'holiday'          => 5,
     'half_day'         => 6,
+    'half_day_second_shift'         => 8, //added
 );
 
 $config['attendence_exam'] = array(

@@ -80,6 +80,28 @@
     </div>
 </div>
 
+<!-- view modal for pdf and other document presentation new code -->
+<div id="viewModel" class="modal fade bg-transparent-alpha" role="dialog">
+  <div class="modal-dialog full-width mt0">
+    <div class="modal-content m-0 bg-transparent modal-body-scroll">
+        <div class="modal-gradient">
+          <div class="modal-header p0 border0">
+            <div class="d-flex pdficon">
+                <a href="#" data-dismiss="modal"><i class="fa fa-arrow-left"></i></a>
+                <span class="text-white text-nowrap2 model_file_name"></span>
+            </div>
+            <a href="#" class="pdfdownload-icon"><i class="fa fa-download"></i></a>
+            <button type="button" class="popupclose" data-dismiss="modal">&times;</button>
+          </div>
+        </div>
+        <div class="h-50"></div>
+            <div class="modal-body p0 w-75 mx-auto text-center w-sm-100 ">
+            </div>
+        </div>
+    </div>
+  </div>
+<!-- view modal for pdf and other document presentation new code -->
+
 <script>
     // Fill modal with content from link href
 $("#viewShareModal").on("show.bs.modal", function(e) {
@@ -152,26 +174,91 @@ $('#linkModal').on('show.bs.modal', function (event) {
 
                     }));
 
-
-
  
-var sss=$('<div/>').append(link_model).append(span);
-
-    
+    var sss=$('<div/>').append(link_model).append(span);
 
     $('.modal-body',this).html(sss);
-     
+ 
 });
 
 function copylink(){
-  
-
     var $temp = $("<input>");
-  $("body").append($temp);
-  $temp.val($('a.share_link').text()).select();
-  document.execCommand("copy");
-  $temp.remove();
-
+    $("body").append($temp);
+    $temp.val($('a.share_link').text()).select();
+    document.execCommand("copy");
+    $temp.remove();
 }
+
+</script>
+
+
+<script type="text/javascript">
+var branch_base_url="<?php echo $branch_url; ?>";
+
+$(document).on('click','.div_image',function(){
+    let fileType=$(this).data('filetype');
+    let real_name=$(this).data('realname');
+    let file_upload_name=$(this).data('name');
+    let filepath=$(this).data('path');
+    let recordId=$(this).data('recordid');
+
+    $('.pdfdownload-icon').attr('href', baseurl  + "admin/content/download_content/"+recordId);
+    $('.model_file_name').text(real_name);
+    let modal_view=false;
+      
+        if(fileType == "jpg" || fileType == "jpeg" ||  fileType == "png"    || fileType ==  "svg" || fileType == "webp" || fileType == "gif"){
+                    modal_view=true;;
+                var img = $('<img />', {
+                  id: 'image',
+                   width: 'auto',
+                    height: 'auto',
+                    class: 'img-fluid',
+                  src: branch_base_url+filepath+file_upload_name,
+                  alt: real_name
+                });
+        $('#viewModel .modal-body').html(img)
+        }else if(fileType == "pdf"){
+        modal_view=true;
+        var pdf = $('<embed />', {
+                  src: branch_base_url+filepath+file_upload_name+"#toolbar=0",
+                  width: '100%',
+                  height: '100vh',
+
+                });
+        $('#viewModel .modal-body').html(pdf)
+
+        }else if(fileType == "mp4" || fileType == "webm" || fileType == "3gp" || fileType == "m4a" ){
+        modal_view=true;
+       var video = $('<video />', {
+                  src: branch_base_url+filepath+file_upload_name,
+                   width: '100%',
+                  height: '80vh',
+                  controls: 'controls',
+
+                });
+        $('#viewModel .modal-body').html(video)
+
+        }else if(fileType == "video" ){
+        modal_view=true;
+        var youtubeID = YouTubeGetID(file_upload_name);
+
+          content_popup = '<object data="https://www.youtube.com/embed/' + youtubeID + '" width="100%" height="400"></object>';
+        $('#viewModel .modal-body').html(content_popup);
+
+        }else if(fileType == "mp4" || fileType == "webm" || fileType == "3gp" || fileType == "m4a" ){
+        modal_view=true;
+       var video = $('<video />', {
+                  src: branch_base_url+filepath+file_upload_name,
+                  controls: 'controls',
+
+                });
+        $('#viewModel .modal-body').html(video)
+
+        }
+        if(modal_view){
+        $('#viewModel').modal('show');
+        }
+});
+
 
 </script>

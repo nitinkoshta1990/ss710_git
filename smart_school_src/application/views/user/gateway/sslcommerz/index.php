@@ -83,9 +83,21 @@
                                         <?php 
                                     }
                                     ?>
-                                    <tr class="bordertoplightgray">
-                                        <td colspan="2" class="text-right"><?php echo $this->lang->line('total'); ?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float) ($params['fine_amount_balance'] + $params['total']), 2, '.', ''); ?></td>
-                                    </tr>
+                                    <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('discount'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['applied_fee_discount'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('processing_fees'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['gateway_processing_charge'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="bordertoplightgray">
+                                            <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)(($params['fine_amount_balance'] + $params['total']) - $params['applied_fee_discount']+$params['gateway_processing_charge']), 2, '.', ''); ?></td>
+                                        </tr>
                                         <tr class="bordertoplightgray">
                                             <td  bgcolor="#fff"><?php echo $this->lang->line('phone') ?>:</td>
                                             <td  bgcolor="#fff" class="text-right"> <input type="text" class="form-control"  name="phone" value="<?php echo set_value('phone', $params['guardian_phone']); ?>" /></td>

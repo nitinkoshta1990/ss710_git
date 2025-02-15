@@ -35,7 +35,7 @@ $language_name = $language["short_code"];
                     <div class="tab-pane active" id="tab_1">
                     <div class="box-body p0">
                         <div class="mailbox-messages">
-                            <div class="table-responsive overflow-visible-lg">
+                            <div class="table-responsive">
                                  <table class="table table-striped table-bordered table-hover exam-list" data-export-title="<?php echo $this->lang->line('online_exam_list'); ?>">
                                 <thead>
                                     <tr>
@@ -49,7 +49,7 @@ $language_name = $language["short_code"];
                                         <th><?php echo $this->lang->line('exam_published'); ?></th>
                                         <th><?php echo $this->lang->line('result_published'); ?></th>
                                         <th><?php echo $this->lang->line('description'); ?></th>
-                                        <th class="pull-right noExport"><?php echo $this->lang->line('action'); ?></th>
+                                        <th class="white-space-nowrap pull-right noExport"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
                                <tbody>
@@ -71,7 +71,7 @@ $language_name = $language["short_code"];
                                     <button type="submit" class="btn btn-primary btn-sm pull-right mb10" id="load" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  <?php echo $this->lang->line('please_wait'); ?>"> <?php echo $this->lang->line('delete') ?></button>
                                     <?php }?>
                                 </div>
-                            <div class="table-responsive overflow-visible-lg">
+                            <div class="table-responsive full-width">
                                  <table class="table table-striped table-bordered table-hover closed-exam-list" data-export-title="<?php echo $this->lang->line('online_exam_list'); ?>">
                                 <thead>
                                     <tr>
@@ -86,7 +86,7 @@ $language_name = $language["short_code"];
                                         <th><?php echo $this->lang->line('exam_published'); ?></th>
                                         <th><?php echo $this->lang->line('result_published'); ?></th>
                                         <th><?php echo $this->lang->line('description'); ?></th>
-                                        <th class="pull-right noExport"><?php echo $this->lang->line('action'); ?></th>
+                                        <th class="pull-right noExport white-space-nowrap"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
                                <tbody>
@@ -151,7 +151,7 @@ function findOption($questionOpt, $find)
                     <div class="form-group">
                         <label for="exam_from"><?php echo $this->lang->line('exam_from'); ?></label><small class="req"> *</small>
                             <div class="input-group">
-                            <input class="form-control tddm200 datetime_twelve_hour" name="exam_from" type="text" id="exam_from" >
+                            <input class="form-control datetime_twelve_hour" name="exam_from" type="text" id="exam_from" >
                             <span class="input-group-addon" id="basic-addon2">
                                 <i class="fa fa-calendar">
                                 </i>
@@ -164,7 +164,7 @@ function findOption($questionOpt, $find)
                     <div class="form-group">
                         <label for="exam_to"><?php echo $this->lang->line('exam_to'); ?></label><small class="req"> *</small>
                      <div class="input-group">
-                            <input class="form-control tddm200 datetime_twelve_hour" name="exam_to" type="text" id="exam_to" >
+                            <input class="form-control datetime_twelve_hour" name="exam_to" type="text" id="exam_to" >
                             <span class="input-group-addon" id="basic-addon2">
                                 <i class="fa fa-calendar">
                                 </i>
@@ -176,7 +176,7 @@ function findOption($questionOpt, $find)
                     <div class="form-group">
                         <label for="exam_to"> <?php echo $this->lang->line('auto_result_publish_date') ?></label>
                           <div class="input-group">
-                            <input class="form-control tddm200 datetime_twelve_hour" name="auto_publish_date" type="text" id="auto_publish_date" name="auto_publish_date">
+                            <input class="form-control datetime_twelve_hour" name="auto_publish_date" type="text" id="auto_publish_date" name="auto_publish_date">
                             <span class="input-group-addon" id="basic-addon2">
                                 <i class="fa fa-calendar">
                                 </i>
@@ -354,7 +354,7 @@ foreach ($classList as $class_key => $class_value) {
                         <label style="display: block; visibility:hidden;"><?php echo $this->lang->line('search'); ?></label>
                         <button type="button" class="btn btn-info btn-sm post_search_submit"><?php echo $this->lang->line('search'); ?></button>
                     </div>
-                 </form>
+                 
                 </div><!-- ./row -->
                 <div class="search_box_result quescroll">
                 </div>
@@ -366,6 +366,7 @@ foreach ($classList as $class_key => $class_value) {
 
                 </div>
                 </div>
+                </form>
             </div>
         </div>
     </div>

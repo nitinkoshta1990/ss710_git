@@ -37,15 +37,18 @@ class Feesessiongroup_model extends MY_Model
             return false;
         } else {
             //return $return_value;
+			 return $record_id;
         }
     }
 
     public function getFeesByGroupByStudent($student_session_id)
     {
-        $this->db->select('fee_session_groups.*,fee_groups.name as `group_name`,IFNULL(student_fees_master.id,0) as `student_fees_master_id`');
+        $this->db->select('fee_session_groups.*,fee_groups.name as `group_name`,IFNULL(student_fees_master.id,0) as `student_fees_master_id`,student_session.student_id,fee_groups.nature');
         $this->db->from('fee_session_groups');
         $this->db->join('fee_groups', 'fee_groups.id = fee_session_groups.fee_groups_id');
-        $this->db->join('student_fees_master', 'student_fees_master.student_session_id=' . $student_session_id . ' and student_fees_master.fee_session_group_id=fee_session_groups.id', 'LEFT');
+        $this->db->join('student_fees_master',
+        'student_fees_master.student_session_id=' . $student_session_id . ' and student_fees_master.fee_session_group_id=fee_session_groups.id', 'LEFT');
+        $this->db->join('student_session', 'student_session.id = student_fees_master.student_session_id', 'LEFT');
         $this->db->where('fee_session_groups.session_id', $this->current_session);
         $this->db->where('fee_groups.is_system', 0);
         $this->db->order_by('student_fees_master_id', 'desc');
@@ -57,8 +60,7 @@ class Feesessiongroup_model extends MY_Model
         return $result;
     }
 
-    public function getFeesByGroup($id = null,$display_system=NULL)
-    {
+    public function getFeesByGroup($id = null,$display_system=NULL){
         $this->db->select('fee_session_groups.*,fee_groups.name as `group_name`,fee_groups.is_system');
         $this->db->from('fee_session_groups');
         $this->db->join('fee_groups', 'fee_groups.id = fee_session_groups.fee_groups_id');
@@ -68,7 +70,7 @@ class Feesessiongroup_model extends MY_Model
                $this->db->where('fee_groups.is_system', $display_system);
         }
 
-     
+        $this->db->where('fee_groups.nature !=', 'custom');
         if ($id != null) {
             $this->db->where('fee_session_groups.id', $id);
         }
@@ -81,7 +83,8 @@ class Feesessiongroup_model extends MY_Model
         return $result;
     }
 
-    public function getfeeTypeByGroup($fee_session_group_id, $id = null)
+
+   /* public function getfeeTypeByGroup($fee_session_group_id, $id = null)
     {
         $this->db->select('fee_groups_feetype.*,feetype.type,feetype.code');
         $this->db->from('fee_groups_feetype');
@@ -92,6 +95,37 @@ class Feesessiongroup_model extends MY_Model
         $query = $this->db->get();
         return $query->result();
     }
+	*/
+	
+	public function getfeeTypeByGroup($fee_session_group_id, $id = null)
+    {
+        $this->db->select('fee_groups_feetype.*,feetype.type,feetype.code');
+        $this->db->from('fee_groups_feetype');
+        $this->db->join('feetype', 'feetype.id=fee_groups_feetype.feetype_id');
+        $this->db->where('fee_groups_feetype.fee_groups_id', $id);
+        $this->db->where('fee_groups_feetype.fee_session_group_id', $fee_session_group_id);
+        $this->db->order_by('fee_groups_feetype.id', 'asc');
+        $query = $this->db->get();
+        $result = $query->result();
+
+        foreach ($result as $key => $value) {
+             $value->cumulative_fine_data = $this->get_cumulative_fine($value->id);
+        }
+        return $result;
+        // return $query->result();
+    }
+	
+	
+    public function get_cumulative_fine($fee_groups_feetype_id)
+    {
+        $this->db->select('cumulative_fine.*');
+        $this->db->from('cumulative_fine');
+        $this->db->where('cumulative_fine.fee_groups_feetype_id', $fee_groups_feetype_id);
+        $this->db->order_by('cumulative_fine.id', 'asc');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
 
     public function group_exists($fee_groups_id)
     {
@@ -188,5 +222,145 @@ class Feesessiongroup_model extends MY_Model
             return false;
         }
     }
+
+    //**** fees master ****//
+    public function getStudentfeeTypeByGroup($student_session_id){
+        $this->db->select('fee_groups_feetype.*,feetype.type,feetype.code');
+        $this->db->from('fee_groups_feetype');
+        $this->db->join('feetype', 'feetype.id=fee_groups_feetype.feetype_id');
+        $this->db->where('feetype.student_session_id', $student_session_id);
+        $this->db->order_by('fee_groups_feetype.id', 'asc');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function searchstudentfeesmaster($fee_groups_id){
+        $this->db->select('fee_groups.*,fee_session_groups.id as fee_session_groups_id');
+        $this->db->from('fee_groups');          
+        $this->db->join('fee_session_groups', 'fee_groups.id = fee_session_groups.fee_groups_id');
+        $this->db->where('fee_groups.nature', 'custom');         
+        $this->db->where('fee_groups.id',$fee_groups_id);       
+        $query = $this->db->get();
+        $result = $query->row();        
+        return $result;
+    }
+	
+	
+//***fees master cumulative***//
+    public function remove_comulative_by_fee_groups_id($id)
+    {
+        $this->db->trans_start(); # Starting Transaction
+        $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
+        //=======================Code Start===========================
+       
+        $this->db->where('fee_session_group_id', $id);
+        $this->db->delete('cumulative_fine');
+
+        $message   = DELETE_RECORD_CONSTANT . " On Cumulative Fine id " . $id;
+        $action    = "Delete";
+        $record_id = $id;
+        $this->log($message, $record_id, $action);
+        //======================Code End==============================
+        $this->db->trans_complete(); # Completing transaction
+        /* Optional */
+        if ($this->db->trans_status() === false) {
+            # Something went wrong.
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            //return $return_value;
+        }
+    }
+
+    public function add_fine($data)
+    {
+        $this->db->trans_start(); # Starting Transaction
+        $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
+        
+        //=======================Code Start===========================
+        if (isset($data['id']) && $data['id']>0) {
+            $this->db->where('id', $data['id']);
+            $this->db->update('cumulative_fine', $data);
+            $message   = UPDATE_RECORD_CONSTANT . " On cumulative_fine id " . $data['id'];
+            $action    = "Update";
+            $record_id = $data['id'];
+            $this->log($message, $record_id, $action);
+        } else {
+            $this->db->insert('cumulative_fine', $data);
+            $id        = $this->db->insert_id();
+            $message   = INSERT_RECORD_CONSTANT . " On cumulative_fine id " . $id;
+            $action    = "Insert";
+            $record_id = $id;
+            $this->log($message, $record_id, $action);
+        }
+        //======================Code End==============================
+
+        $this->db->trans_complete(); # Completing transaction
+        if ($this->db->trans_status() === false) {
+            # Something went wrong.
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            return $record_id;
+        }
+
+    }
+    
+    public function remove_cumulative($id)
+    {
+        $this->db->trans_start(); # Starting Transaction
+        $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
+        //=======================Code Start===========================
+       
+        $this->db->where('id', $id);
+        $this->db->delete('cumulative_fine');
+
+        $message   = DELETE_RECORD_CONSTANT . " On Cumulative Fine id " . $id;
+        $action    = "Delete";
+        $record_id = $id;
+        $this->log($message, $record_id, $action);
+        //======================Code End==============================
+        $this->db->trans_complete(); # Completing transaction
+        /* Optional */
+        if ($this->db->trans_status() === false) {
+            # Something went wrong.
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            //return $return_value;
+        }
+    }
+
+
+  public function remove_cumulativeby_grouptypid($fee_groups_feetype_id)
+    {
+        $this->db->trans_start(); # Starting Transaction
+        $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
+        //=======================Code Start===========================
+       
+        $this->db->where('fee_groups_feetype_id', $fee_groups_feetype_id);
+        $this->db->delete('cumulative_fine');
+
+        $message   = DELETE_RECORD_CONSTANT . " On Cumulative Fine fee_groups_feetype_id id " . $fee_groups_feetype_id;
+        $action    = "Delete";
+        $record_id = $fee_groups_feetype_id;
+        $this->log($message, $record_id, $action);
+        //======================Code End==============================
+        $this->db->trans_complete(); # Completing transaction
+        /* Optional */
+        if ($this->db->trans_status() === false) {
+            # Something went wrong.
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            //return $return_value;
+        }
+    }
+
+
+
+
+
+     
 
 }

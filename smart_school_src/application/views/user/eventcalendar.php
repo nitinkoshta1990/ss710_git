@@ -155,68 +155,65 @@ if (isset($title)) {
 }
 ?>";
 
-    if (pagetitle == "Dashboard") {
+if (pagetitle == "Dashboard") {
+    viewtitle = 'agendaWeek';
+}
 
-        viewtitle = 'agendaWeek';
+$calendar.fullCalendar({
+    viewRender: function(view, element) {
+    },
+
+    header: {
+      center: 'title',
+      right: 'month,agendaWeek,agendaDay',
+      left: 'prev,next,today'
+    },
+    firstDay: start_week,
+    defaultDate: today,
+    defaultView: viewtitle,
+    selectable: true,
+    selectHelper: true,
+    views: {
+      month: { // name of view
+        titleFormat: 'MMMM YYYY'
+        // other view-specific options here
+      },
+      week: {
+        titleFormat: " MMMM D YYYY"
+      },
+      day: {
+        titleFormat: 'D MMM, YYYY'
+      }
+    },
+    timezone: "Asia/Kolkata",
+    draggable: false,
+    lang: '<?php echo $language_name ?>',
+    editable: false,
+    eventLimit: false, // allow "more" link when too many events                                               
+    events: {
+      url: base_url + 'user/calendar/getevents'
+    },
+
+    eventRender: function(event, element) {
+
+      element.attr('title', event.title);
+      element.attr('onclick', event.onclick);
+      element.attr('data-toggle', 'tooltip');
+      if ((!event.url) && (event.event_type != 'task')) {
+        element.attr('title', event.title + '-' + event.description);
+      }
+    },
+    dayClick: function(date, jsEvent, view) {
+
+      var d = date.format();
+      if (!$.fullCalendar.moment(d).hasTime()) {
+        d += ' 05:30';
+      }
+
+      return false;
     }
+  });
 
-    $calendar.fullCalendar({
-        viewRender: function (view, element) {
-
-        },
-
-        header: {
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay',
-            left: 'prev,next,today'
-        },
-        firstDay: start_week,
-        defaultDate: today,
-        defaultView: viewtitle,
-        selectable: true,
-        selectHelper: true,
-        views: {
-            month: {// name of view
-                titleFormat: 'MMMM YYYY'
-                        // other view-specific options here
-            },
-            week: {
-                titleFormat: " MMMM D YYYY"
-            },
-            day: {
-                titleFormat: 'D MMM, YYYY'
-            } 
-        },
-        timezone: "Asia/Kolkata",
-        draggable: false,
-         lang: '<?php echo $language_name ?>',
-        editable: false,
-        eventLimit: false, // allow "more" link when too many events
-
-
-        // color classes: [ event-blue | event-azure | event-green | event-orange | event-red ]
-        events: {
-            url: base_url + 'user/calendar/getevents'
-
-        },
-
-        eventRender: function (event, element) {
-            element.attr('title', event.title +'- ' +event.description);
-            element.attr('onclick', event.onclick);
-            element.attr('data-toggle', 'tooltip');
-            if ((!event.url) && (event.event_type != 'task')) {               
-                
-            }
-        },
-        dayClick: function (date, jsEvent, view) {
-            var d = date.format();
-            if (!$.fullCalendar.moment(d).hasTime()) {
-                d += ' 05:30';
-            }
-
-            return false;
-        }
-    });
 
     function edit_todo_task(eventid) {
         $.ajax({

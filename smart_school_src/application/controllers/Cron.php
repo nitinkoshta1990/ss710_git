@@ -221,9 +221,7 @@ class Cron extends MY_Controller
 
                                    $dt="2022-09-09";
                        $transport_fees= $this->studentfeemaster_model->getTransportFeesByDueDate($dt, $dt);
-                     
-
-
+					   
                            if (!empty($transport_fees)) {
 
                             foreach ($transport_fees as $reminder_key => $reminder_value) {
@@ -250,8 +248,6 @@ class Cron extends MY_Controller
                                
                             }
                         }
-
-
                     }
                 }
 
@@ -334,7 +330,6 @@ class Cron extends MY_Controller
                     }
                 }
             }
-
         }
     }
 
@@ -351,9 +346,7 @@ class Cron extends MY_Controller
             $user_list = json_decode($value['user_list'], true);
 
             if ($value['schedule_date_time'] <= $current_date) {
-                $attachments = $this->messages_model->get_message_attachment($value['id']);
-
-                
+                $attachments = $this->messages_model->get_message_attachment($value['id']);                
  
                 foreach ($user_list as $user_listkey => $user_listvalue) {
                     

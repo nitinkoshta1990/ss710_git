@@ -62,6 +62,8 @@ class studentidcard extends Admin_Controller
             $bloodgroup      = 0;
             $vertical_card   = 0;
             $student_barcode = 0;
+            $student_roll_no = 0;
+            $student_house   = 0;
 
             if ($this->input->post('is_active_admission_no') == 1) {
                 $admission_no = $this->input->post('is_active_admission_no');
@@ -93,6 +95,12 @@ class studentidcard extends Admin_Controller
             if ($this->input->post('enable_student_barcode') == 1) {
                 $student_barcode = $this->input->post('enable_student_barcode');
             }
+            if ($this->input->post('enable_student_rollno') == 1) {
+                $enable_student_rollno = $this->input->post('enable_student_rollno');
+            }
+            if ($this->input->post('enable_student_house_name') == 1) {
+                $enable_student_house_name = $this->input->post('enable_student_house_name');
+            }
 
             $enable_vertical_card = $this->input->post('enable_vertical_card');
             if (isset($enable_vertical_card)) {
@@ -100,22 +108,24 @@ class studentidcard extends Admin_Controller
             }
 
             $data = array(
-                'title'                  => $this->input->post('title'),
-                'school_name'            => $this->input->post('school_name'),
-                'school_address'         => $this->input->post('address'),
-                'header_color'           => $this->input->post('header_color'),
-                'enable_admission_no'    => $admission_no,
-                'enable_student_name'    => $studentname,
-                'enable_class'           => $class,
-                'enable_fathers_name'    => $fathername,
-                'enable_mothers_name'    => $mothername,
-                'enable_address'         => $address,
-                'enable_phone'           => $phone,
-                'enable_dob'             => $dob,
-                'enable_blood_group'     => $bloodgroup,
-                'enable_vertical_card'   => $vertical_card,
-                'enable_student_barcode' => $student_barcode,
-                'status'                 => 1,
+                'title'                     => $this->input->post('title'),
+                'school_name'               => $this->input->post('school_name'),
+                'school_address'            => $this->input->post('address'),
+                'header_color'              => $this->input->post('header_color'),
+                'enable_admission_no'       => $admission_no,
+                'enable_student_name'       => $studentname,
+                'enable_class'              => $class,
+                'enable_fathers_name'       => $fathername,
+                'enable_mothers_name'       => $mothername,
+                'enable_address'            => $address,
+                'enable_phone'              => $phone,
+                'enable_dob'                => $dob,
+                'enable_blood_group'        => $bloodgroup,
+                'enable_vertical_card'      => $vertical_card,
+                'enable_student_barcode'    => $student_barcode,
+                'enable_student_rollno'     => $enable_student_rollno,
+                'enable_student_house_name' => $enable_student_house_name,
+                'status'                    => 1,
             );
 
             if (!empty($_FILES['background_image']['name'])) {
@@ -208,17 +218,19 @@ class studentidcard extends Admin_Controller
             $this->load->view('admin/certificate/studentidcardedit', $this->data);
             $this->load->view('layout/footer');
         } else {
-            $admission_no    = 0;
-            $studentname     = 0;
-            $class           = 0;
-            $fathername      = 0;
-            $mothername      = 0;
-            $address         = 0;
-            $phone           = 0;
-            $dob             = 0;
-            $bloodgroup      = 0;
-            $vertical_card   = 0;
-            $student_barcode = 0;
+            $admission_no               =   0;
+            $studentname                =   0;
+            $class                      =   0;
+            $fathername                 =   0;
+            $mothername                 =   0;
+            $address                    =   0;
+            $phone                      =   0;
+            $dob                        =   0;
+            $bloodgroup                 =   0;
+            $vertical_card              =   0;
+            $student_barcode            =   0;
+            $enable_student_rollno      =   0;
+            $enable_student_house_name  =   0;
 
             if ($this->input->post('is_active_admission_no') == 1) {
                 $admission_no = $this->input->post('is_active_admission_no');
@@ -247,9 +259,14 @@ class studentidcard extends Admin_Controller
             if ($this->input->post('is_active_blood_group') == 1) {
                 $bloodgroup = $this->input->post('is_active_blood_group');
             }
-
             if ($this->input->post('enable_student_barcode') == 1) {
                 $student_barcode = $this->input->post('enable_student_barcode');
+            }
+            if ($this->input->post('enable_student_rollno') == 1) {
+                $enable_student_rollno = $this->input->post('enable_student_rollno');
+            }
+            if ($this->input->post('enable_student_house_name') == 1) {
+                $enable_student_house_name = $this->input->post('enable_student_house_name');
             }
 
             $enable_vertical_card = $this->input->post('enable_vertical_card');
@@ -258,23 +275,25 @@ class studentidcard extends Admin_Controller
             }
 
             $data = array(
-                'id'                     => $this->input->post('id'),
-                'title'                  => $this->input->post('title'),
-                'school_name'            => $this->input->post('school_name'),
-                'school_address'         => $this->input->post('address'),
-                'header_color'           => $this->input->post('header_color'),
-                'enable_admission_no'    => $admission_no,
-                'enable_student_name'    => $studentname,
-                'enable_class'           => $class,
-                'enable_fathers_name'    => $fathername,
-                'enable_mothers_name'    => $mothername,
-                'enable_address'         => $address,
-                'enable_phone'           => $phone,
-                'enable_dob'             => $dob,
-                'enable_blood_group'     => $bloodgroup,
-                'enable_vertical_card'   => $vertical_card,
-                'enable_student_barcode' => $student_barcode,
-                'status'                 => 1,
+                'id'                        => $this->input->post('id'),
+                'title'                     => $this->input->post('title'),
+                'school_name'               => $this->input->post('school_name'),
+                'school_address'            => $this->input->post('address'),
+                'header_color'              => $this->input->post('header_color'),
+                'enable_admission_no'       => $admission_no,
+                'enable_student_name'       => $studentname,
+                'enable_class'              => $class,
+                'enable_fathers_name'       => $fathername,
+                'enable_mothers_name'       => $mothername,
+                'enable_address'            => $address,
+                'enable_phone'              => $phone,
+                'enable_dob'                => $dob,
+                'enable_blood_group'        => $bloodgroup,
+                'enable_vertical_card'      => $vertical_card,
+                'enable_student_barcode'    => $student_barcode,
+                'enable_student_rollno'     => $enable_student_rollno,
+                'enable_student_house_name' => $enable_student_house_name,
+                'status'                    => 1,
             );
 
             $removebackground_image = $this->input->post('removebackground_image');

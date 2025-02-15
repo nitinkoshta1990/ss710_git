@@ -74,7 +74,7 @@ if ($this->rbac->hasPrivilege('exam_group', 'can_add')) {
                         </div><!-- /.box-tools -->
                     </div><!-- /.box-header -->
                     <div class="box-body">
-                        <div class="mailbox-messages table-responsive overflow-visible">
+                        <div class="mailbox-messages table-responsive">
                             <div class="download_label"> <?php echo $this->lang->line('exam_group_list'); ?></div>
                             <table class="table table-hover table-striped table-bordered example">
                                 <thead>

@@ -76,7 +76,7 @@ class Auth
             $active_status = $this->CI->db->select('is_active')->from('staff')->where('id', $admin['id'])->get()->row_array();
 
             if ($active_status['is_active'] == 1) {
-              
+
 
                 if ($default_redirect) {
                     redirect('admin/admin/dashboard');
@@ -89,11 +89,10 @@ class Auth
                 redirect('site/login');
                 return false;
             }
-
         }
     }
 
-        public function is_logged_in_user($role = false)
+    public function is_logged_in_user($role = false)
     {
 
         if ($this->CI->session->has_userdata('student')) {
@@ -101,23 +100,21 @@ class Auth
 
             $user = $this->CI->session->userdata('student');
 
-            if($user['role'] == "guest"){
+            if ($user['role'] == "guest") {
 
                 return true;
             }
 
             if (!$this->CI->session->has_userdata('current_class')) {
                 if ($this->CI->router->fetch_method() != "choose") {
-                 
+
                     redirect('user/user/choose');
                 }
-
             }
 
             if (!$role) {
                 redirect('site/userlogin');
             }
-
         } else {
             $_SESSION['redirect_to_user'] = current_url();
             redirect('site/userlogin');
@@ -290,10 +287,9 @@ class Auth
         }
     }
 
-
     public function multiupdate($branch_url, $purchase_code)
-    {     
-        $url =$this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_MBANCH);
+    {
+        $url = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_MBANCH);
         $ch  = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -316,7 +312,6 @@ class Auth
                 'status'   => $json_response->status,
                 'response' => $json_response->response,
             ));
-
         } else {
             return false;
         }
@@ -326,8 +321,8 @@ class Auth
     {
         $email                       = $this->CI->input->post('email');
         $envato_market_purchase_code = $this->CI->input->post('envato_market_purchase_code');
-        $url                         = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_UPDATE);
-       
+        // $url                         = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_UPDATE);
+        $url                         = 'https://dev1.webfeb.com/sstrace/postlic/verify';
         $ch                          = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -349,9 +344,9 @@ class Auth
                 ->set_content_type('application/json')
                 ->set_status_header($httpcode)
                 ->set_output(json_encode(array(
-                    'response' => $json_response->response, true,
+                    'response' => $json_response->response,
+                    true,
                 )));
-
         } else {
             $fname         = APPPATH . 'config/license.php';
             $update_handle = fopen($fname, "r");
@@ -359,7 +354,6 @@ class Auth
             $file_contents = str_replace('$config[\'SSLK\'] = \'\'', '$config[\'SSLK\'] = \'' . $json_response->response . '\'', $content);
             $update_handle = fopen($fname, 'w') or die("can't open file");
             if (fwrite($update_handle, $file_contents)) {
-
             }
             fclose($update_handle);
             $array = array('status' => 1, 'message' => 'Thank you for registering your product');
@@ -370,12 +364,62 @@ class Auth
         }
     }
 
+    public function addon_update_check()
+    {
+        $this->CI->load->model('addons_model');
+        $envato_market_purchase_code = $this->CI->input->post('addon_check_update_envato_market_purchase_code');
+        $addon_name = $this->CI->input->post('addon');
+        $sslk                        = $this->CI->config->item('SSLK');
+        $url                         = 'https://dev1.webfeb.com/sstrace/addon/update_verify';
+        $ch                          = curl_init();
+        $addon = $this->CI->addons_model->getByProductID($this->CI->input->post('product_id'));
+
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, true);
+        $data = array(
+            'sslk'          => $sslk,
+            'purchase_code' => $envato_market_purchase_code,
+            'base_url'      => base_url(),
+            'addon'      => $addon_name,
+            'addon_prod'      => $addon->addon_prod,
+            'addon_ver'      => $addon->addon_ver
+        );
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        $output   = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $json_response = json_decode($output);
+
+
+        if ($httpcode != 200) {
+            return $this->CI->output
+                ->set_content_type('application/json')
+                ->set_status_header($httpcode)
+                ->set_output(json_encode(array(
+                    'status' => 2,
+                    'message' => $json_response->response,
+                    true,
+                )));
+        } else {
+
+            $array = array('status' => 1, 'message' => 'Thank you for registering your product');
+            return $this->CI->output
+                ->set_content_type('application/json')
+                ->set_status_header($httpcode)
+                ->set_output(json_encode($array));
+        }
+    }
     public function andapp_update()
     {
         $email                       = $this->CI->input->post('app-email');
         $envato_market_purchase_code = $this->CI->input->post('app-envato_market_purchase_code');
         $sslk                        = $this->CI->config->item('SSLK');
-       $url                         = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_APP);
+        $url                         = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_APP);
         $ch                          = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -392,16 +436,16 @@ class Auth
         $output   = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-       
+
         $json_response = json_decode($output);
         if ($httpcode != 200) {
             return $this->CI->output
                 ->set_content_type('application/json')
                 ->set_status_header($httpcode)
                 ->set_output(json_encode(array(
-                    'response' => $json_response->response, true,
+                    'response' => $json_response->response,
+                    true,
                 )));
-
         } else {
             $fname         = APPPATH . 'config/license.php';
             $update_handle = fopen($fname, "r");
@@ -410,13 +454,11 @@ class Auth
                 $update_handle = fopen($fname, 'a') or die("can't open file");
                 $file_contents = '$config[\'app_ver\'] = 1;' . "\n";
                 if (fwrite($update_handle, $file_contents)) {
-
                 }
             } else {
                 $file_contents = str_replace('$config[\'app_ver\'] = 0', '$config[\'app_ver\'] = 1', $content);
                 $update_handle = fopen($fname, 'w') or die("can't open file");
                 if (fwrite($update_handle, $file_contents)) {
-
                 }
             }
             fclose($update_handle);
@@ -431,7 +473,7 @@ class Auth
     public function andapp_validate()
     {
         $sslk = $this->CI->config->item('SSLK');
-        $url  = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_APP_REG);      
+        $url  = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_APP_REG);
         $ch   = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -461,7 +503,8 @@ class Auth
         $addon_version               = $this->CI->input->post('addon_version');
         $envato_market_purchase_code = $this->CI->input->post('app-envato_market_purchase_code');
         $sslk                        = $this->CI->config->item('SSLK');
-        $url                         = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_ADDON);
+        // $url                         = $this->CI->enc_lib->dycrypt(DEBUG_SYSTEM_ADDON);
+        $url                         = 'https://dev1.webfeb.com/sstrace/addon/verify';
         $ch                          = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -480,61 +523,115 @@ class Auth
         $output   = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-      
+
+
+
         $json_response = json_decode($output);
+      
 
         if ($httpcode != 200) {
             return $this->CI->output
                 ->set_content_type('application/json')
                 ->set_status_header($httpcode)
                 ->set_output(json_encode(array(
-                    'response' => $json_response->response, true,
+                    'response' => $json_response->response,
+                    true,
                 )));
-
         } else {
 
             $fname         = APPPATH . 'config/license.php';
-            $update_handle = fopen($fname, "r");
-            $content       = fread($update_handle, filesize($fname));
-            if (strpos($content, '$config[\'addon_prod\']') == false) {
-                $update_handle = fopen($fname, 'a') or die("can't open file");
-                $file_contents = '$config[\'addon_prod\'] = array(' . $json_response->token . ');' . "\n";
-                if (fwrite($update_handle, $file_contents)) {
+          
+            $new_token = $json_response->token;
+            $new_license = $json_response->license;
+            $pattern_token             = preg_quote('$config[\'addon_prod\']', '/');
+            $pattern_token             = "/^.*$pattern_token.*\$/m";
 
-                }
+            $pattern_version             = preg_quote('$config[\'addon_ver\']', '/');
+            $pattern_version             = "/^.*$pattern_version.*\$/m";
+            $addon_prod= $this->CI->config->item('addon_prod'); 
+            $addon_ver= $this->CI->config->item('addon_ver'); 
 
-            }
-            if (strpos($content, '$config[\'addon_ver\']') == false) {
-                $update_handle = fopen($fname, 'a') or die("can't open file");
-                $file_contents = '$config[\'addon_ver\'] = array(' . $json_response->license . ');' . "\n";
-                if (fwrite($update_handle, $file_contents)) {
-
-                }
-
-            }
-            if (strpos($content, '$config[\'addon_prod\']') == true && strpos($content, '$config[\'addon_ver\']') == true) {
-                $contents            = file_get_contents($fname);
+            // Initialize the array of tokens, make sure to grab the existing ones if present
+            $array_production = isset($addon_prod) ? $addon_prod  : [];
+            $array_version = isset($addon_ver) ? $addon_ver  : [];
+            
+            if (empty($array_production) || !in_array($new_token, $array_production)) {
+                $contents = file_get_contents($fname);
                 $update_write_handle = fopen($fname, 'w') or die("can't open file");
-                $pattern             = preg_quote('$config[\'addon_prod\']', '/');
-                $pattern             = "/^.*$pattern.*\$/m";
-                if (preg_match_all($pattern, $contents, $matches)) {
-                    $file_contents = str_replace($matches[0], '$config[\'addon_prod\'] = array(' . $json_response->token . ');', $contents);
+                if (preg_match_all($pattern_token, $contents, $matches)) {
+                    // Token isn't present, so we add it to the array
+                    $array_production[] = $new_token;
 
-                    file_put_contents($fname, $file_contents);
+                    $quoted_array = array_map(function($value) {
+                        return "'" . $value . "'";
+                    }, $array_production);
+                    
+                    // Step 2: Use implode to join the array elements with a comma
+                    $imploded_string = implode(", ", $quoted_array);                  
+                    // Update the configuration line with the new array using var_export
+                    $file_contents = str_replace($matches[0], '$config[\'addon_prod\'] = array(' . $imploded_string . ');', $contents);
+                } else {
+                   // Ensure a newline at the end of the file content before appending
+                    if (substr($contents, -1) !== "\n") {
+                        $contents .= "\n";
+                    }
+                    // If the pattern is not found, append the new array
+                    $file_contents = $contents . '$config[\'addon_prod\'] = array(\'' . addslashes($new_token) . '\');';
                 }
-                //=============================================
-                $contents            = file_get_contents($fname);
-                $update_write_handle = fopen($fname, 'w') or die("can't open file");
-                $pattern             = preg_quote('$config[\'addon_ver\']', '/');
-                $pattern             = "/^.*$pattern.*\$/m";
-                if (preg_match_all($pattern, $contents, $matches)) {
-                    $file_contents = str_replace($matches[0], '$config[\'addon_ver\'] = array(' . $json_response->license . ');', $contents);
-
-                    file_put_contents($fname, $file_contents);
-                }
-
+            
+                // Save the updated contents to the file
+                file_put_contents($fname, $file_contents);
             }
-            fclose($update_handle);
+
+            if (empty($array_version) || !in_array($new_license, $array_version)) {
+                $contents = file_get_contents($fname);
+                $update_write_handle = fopen($fname, 'w') or die("can't open file");
+                if (preg_match_all($pattern_version, $contents, $matches)) {
+                    // Token isn't present, so we add it to the array
+                    $array_version[] = $new_license;
+
+                    $quoted_array = array_map(function($value) {
+                        return "'" . $value . "'";
+                    }, $array_version);
+                    
+                    // Step 2: Use implode to join the array elements with a comma
+                    $imploded_string = implode(", ", $quoted_array);                  
+                    // Update the configuration line with the new array using var_export
+                    $file_contents = str_replace($matches[0], '$config[\'addon_ver\'] = array(' . $imploded_string . ');', $contents);
+                } else {
+                   // Ensure a newline at the end of the file content before appending
+                    if (substr($contents, -1) !== "\n") {
+                        $contents .= "\n";
+                    }
+                    // If the pattern is not found, append the new array
+                    $file_contents = $contents . '$config[\'addon_ver\'] = array(\'' . addslashes($new_license) . '\');';
+                }
+            
+                // Save the updated contents to the file
+                file_put_contents($fname, $file_contents);
+            }
+            
+            // Close the file handle after use
+            fclose($update_write_handle);
+
+            if (!empty($json_response->products)) {
+                $updateArray = array();
+                $side_bar_Array = array();
+                // foreach ($json_response->products as $product_key => $product_value) {
+                $side_bar_Array[] = [
+                    'product_name' => $json_response->products,
+                    'is_active' => 1,
+                ];
+
+                $updateArray[] = [
+                    'short_name' => $json_response->products,
+                    'addon_ver' => $json_response->license,
+                    'addon_prod' => $json_response->token
+                ];
+                // }
+                $this->CI->db->update_batch('addons', $updateArray, 'short_name');
+                $this->CI->db->update_batch('sidebar_menus', $side_bar_Array, 'product_name');
+            }
             $back  = $_SERVER['HTTP_REFERER'];
             $array = array('status' => 1, 'back' => $back, 'message' => 'Thank you for registering your product');
             return $this->CI->output
@@ -583,7 +680,7 @@ class Auth
 
         if ($info['http_code'] == 200) {
             if ($info['content_type'] == "application/zip") {
-//=========
+                //=========
                 file_put_contents($file, $response);
                 if (filesize($file) > 0) {
                     $zip = new ZipArchive;
@@ -606,7 +703,6 @@ class Auth
                         $this->set_message('Update error! There is some issue occurred during update, please contact to support.');
                         return false;
                     }
-
                 }
                 //==================
             } else if (is_string($response) && is_array(json_decode($response, true))) {
@@ -614,14 +710,11 @@ class Auth
                 $this->set_message($result->response);
                 return false;
             } else {
-
             }
-
         } else {
             $result = json_decode($response);
             $this->set_error($result->response);
         }
-
     }
 
     public function import_dump($fd_name)
@@ -700,7 +793,6 @@ class Auth
     public function error()
     {
         return $this->errors;
-
     }
 
     public function recurse_copy($src, $dst)
@@ -772,7 +864,6 @@ class Auth
             $result = json_decode($output);
             $this->set_error($result->response);
             return false;
-
         }
         if ($httpcode['http_code'] == 200) {
             if (is_string($output) && is_array(json_decode($output, true))) {
@@ -810,8 +901,8 @@ class Auth
                     if ($decrypt_val !== "") {
                         $arr               = explode('!!', $decrypt_val);
                         $products[$arr[0]] = $arr[1];
-                  
-                        if (($arr[0] == $prod || $arr[0]=="ssabp") && $arr[1] == base_url()) {
+
+                        if (($arr[0] == $prod || $arr[0] == "ssabp") && $arr[1] == base_url()) {
                             return true;
                         }
                     }
@@ -824,12 +915,11 @@ class Auth
         }
         return false;
     }
-    
+
     public function userlogout()
     {
         if ($this->CI->session->has_userdata('student')) {
             $this->CI->session->unset_userdata('student');
         }
     }
-
 }

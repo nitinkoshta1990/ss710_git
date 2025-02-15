@@ -29,13 +29,13 @@ if ($this->rbac->hasPrivilege('link_exam', 'can_view')) {
                     <div class="box-body">
                         <input type="hidden" name="current_session" id="current_session" value="<?php echo $current_session; ?>">
                         <div class="row pb10">
-                            <div class="col-lg-2 col-md-3 col-sm-12 col-xs-6">
+                            <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12">
                                 <p class="examinfo"><span> <?php echo $this->lang->line('exam_group'); ?></span> <?php echo $examgroup->name; ?></p>
                             </div><!--./col-lg-4-->
-                            <div class="col-lg-2 col-md-3 col-sm-12 col-xs-6">
+                            <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12">
                                 <p class="examinfo"><span> <?php echo $this->lang->line('exam_type'); ?></span> <?php echo $examType[$examgroup->exam_type]; ?></p>
                             </div><!--./col-lg-4-->
-                            <div class="col-lg-8 col-md-6 col-sm-12 col-xs-12">
+                            <div class="col-lg-8 col-md-6 col-sm-4 col-xs-12">
                                 <p class="examinfo"><span> <?php echo $this->lang->line('description'); ?> </span> <?php echo $examgroup->description; ?></p>
                             </div><!--./col-lg-4-->
                         </div><!--./row-->
@@ -1075,8 +1075,19 @@ $('#studentRankModal').modal({
                             });
                             errorMsg(message);
                         }else{
+                   
                           $('.marksEntryForm').html(res.page);
-                $('.marksEntryForm').find('.dropify').dropify();
+                          $('.marksEntryForm').find('.dropify').dropify();
+                          $('.marksEntryForm').find('table').DataTable({
+                            paging: false,
+                            "lengthChange": false,
+                            "aoColumnDefs": [
+                                { 
+                                    "aTargets": [-1,6,7],     // Targets the last column
+                                    "bSortable": false    // Disables sorting on the last column
+                                }
+                            ]
+                        });
 
                         }
             },

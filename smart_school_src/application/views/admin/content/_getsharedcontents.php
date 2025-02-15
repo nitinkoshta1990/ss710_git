@@ -45,14 +45,22 @@ if(!IsNullOrEmptyString($shared_contents->valid_upto)){
         <div class="row">
             <div class="col-md-12 ptt10">
                 <h4 class="box-title bmedium mb0 font16"><?php echo $this->lang->line('attachments'); ?></h4>  
-                <ul class="list-group content-share-list">                            
+                <ul class="list-group content-share-list ">                            
                                  
                 <?php
                 if(!empty($shared_contents->upload_contents)){
                     foreach ($shared_contents->upload_contents as $shared_content_key => $shared_content_value) {
                 ?>
-                    <li class="list-group-item overflow-hidden mb5">
 
+                <li class="list-group-item overflow-hidden mb5">
+                    <span class="div_image" 
+                    data-recordid="<?php echo $shared_content_value->upload_content_id; ?>"  
+                    data-realname="<?php echo $shared_content_value->real_name; ?>"  
+                    data-shortname="<?php echo $this->media_storage->fileview($shared_content_value->img_name); ?>"  
+                    data-filetype="<?php echo $shared_content_value->file_type; ?>"   
+                    data-name="<?php echo ($shared_content_value->file_type == "video") ? $shared_content_value->vid_url: $shared_content_value->img_name; ?>"  
+                    data-path="<?php echo $shared_content_value->dir_path; ?>" >
+                    <a href="#">
                     <?php
                         if ($shared_content_value->file_type == 'xls' || $shared_content_value->file_type == 'xlsx') {
                     ?>
@@ -102,9 +110,12 @@ if(!IsNullOrEmptyString($shared_contents->valid_upto)){
                         </a>   
                 
                     <?php
-                        }else{
-                    ?>
-                        <a href="<?php echo site_url('site/download_content/'.$shared_content_value->upload_content_id."/".$this->enc_lib->encrypt($shared_content_value->share_content_id))?>"> <?php echo $shared_content_value->real_name; ?> <i class="fa fa-download"></i></a>                        
+                        }else{ ?>
+
+                        <?php echo $shared_content_value->real_name; ?></a></span>
+                        <a href="<?php echo site_url('site/download_content/'.$shared_content_value->upload_content_id."/".$this->enc_lib->encrypt($shared_content_value->share_content_id))?>" data-toggle="tooltip" 
+                            data-original-title="<?php echo $this->lang->line('download');?>">&nbsp; <i class="fa fa-download"></i></a>      
+                  
                     <?php
                         }
                     ?>    

@@ -23,7 +23,7 @@ class Jazzcash extends Studentgateway_Controller {
         $data['setting'] = $this->setting;
         $data['api_error'] = array();
         $student_id = $params['student_id'];
-        $total = number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');;
+        $total = number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', '');;
         $data['name'] = $params['name'];
         $data['title'] = 'Student Fee';
         $data['total'] = $total * 100;
@@ -91,14 +91,16 @@ class Jazzcash extends Studentgateway_Controller {
         if($_POST['pp_ResponseCode']=='000'){
         	$payment_id = $_POST['pp_TxnRefNo'];
             $bulk_fees=array();
-            $params     = $this->session->userdata('params');
+            // $params     = $this->session->userdata('params');
          
             foreach ($params['student_fees_master_array'] as $fee_key => $fee_value) {
            
              $json_array = array(
                 'amount'          =>  $fee_value['amount_balance'],
                 'date'            => date('Y-m-d'),
-                'amount_discount' => 0,
+                'amount_discount' => $fee_value['applied_fee_discount'],
+				'processing_charge_type'=>$params['processing_charge_type'],
+                'gateway_processing_charge'=>$params['gateway_processing_charge'],
                 'amount_fine'     => $fee_value['fine_balance'],
                 'description'     => $this->lang->line('online_fees_deposit_through_jazzcash_txn_id') . $payment_id,
                 'received_by'     => '',
@@ -116,7 +118,7 @@ class Jazzcash extends Studentgateway_Controller {
             //========
             }
             $send_to     = $params['guardian_phone'];
-            $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+            $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
              //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();
@@ -144,7 +146,6 @@ class Jazzcash extends Studentgateway_Controller {
                             'fee_category' => $fee_category,
                         );
 
-
                         if ($response_value['student_transport_fee_id'] != 0 && $response_value['fee_category'] == "transport") {
 
                             $data['student_fees_master_id']   = null;
@@ -160,8 +161,6 @@ class Jazzcash extends Studentgateway_Controller {
                             $fine_percentage[] = $mailsms_array->fine_percentage;
                             $fine_amount[]     = $mailsms_array->fine_amount;
                             $amount[]          = $mailsms_array->amount;
-
-
 
                         } else {
 
@@ -202,7 +201,6 @@ class Jazzcash extends Studentgateway_Controller {
                     $obj_mail['code']            = "(".implode(',', $code).")";
                     $obj_mail['fee_category']    = $fee_category;
                     $obj_mail['send_type']    = 'group';
-
 
                     $this->mailsmsconf->mailsms('fee_submission', $obj_mail);
 

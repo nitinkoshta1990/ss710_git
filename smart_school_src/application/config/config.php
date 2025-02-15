@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   | a PHP script and you can easily do that on your own.
   |
  */
-$config['base_url'] = '';
+$config['base_url'] = 'https://dev1.webfeb.com/ss730dev/';
 
 
 /*
@@ -516,4 +516,4 @@ $config['rewrite_short_tags'] = FALSE;
 $config['routine_session'] = 16;
 $config['routine_update'] = 1529539200;
 $config['proxy_ips'] = '';
-$config['installed'] = false;
+$config['installed'] = true;

@@ -734,4 +734,46 @@ if (!function_exists('display_custom_fields')) {
 
         return $fields_html;
     }
+
+    function get_resume_editable_fields(){
+         $fields = array(            
+            'middlename'                 => lang('middle_name'),
+            'lastname'                   => lang('last_name'),
+            'gender'                     => lang('gender'),
+            'dob'                        => lang('date_of_birth'),
+            'category'                   => lang('category'),
+            'religion'                   => lang('religion'),
+            'cast'                       => lang('caste'),
+            'mobile_no'                  => lang('mobile_number'),
+            'student_email'              => lang('email'),
+            'student_photo'              => lang('student_photo'),
+            'is_blood_group'             => lang('blood_group'),
+            'height'                     => lang('height'),
+            'weight'                     => lang('weight'),
+            'father_name'                => lang('father_name'),
+            'father_phone'               => lang('father_phone'),
+            'father_occupation'          => lang('father_occupation'),
+            'father_pic'                 => lang('father_photo'),
+            'mother_name'                => lang('mother_name'),
+            'mother_phone'               => lang('mother_phone'),
+            'mother_occupation'          => lang('mother_occupation'),
+            'mother_pic'                 => lang('mother_photo'),
+            'if_guardian_is'             => lang('if_guardian_is'),
+            'guardian_name'              => lang('guardian_name'),
+            'guardian_relation'          => lang('guardian_relation'),
+            'guardian_email'             => lang('guardian_email'),
+            'guardian_photo'             => lang('guardian_photo'),
+            'guardian_phone'             => lang('guardian_phone'),
+            'guardian_occupation'        => lang('guardian_occupation'),
+            'guardian_address'           => lang('guardian_address'),
+            'current_address'            => lang('if_guardian_address_is_current_address'),
+            'permanent_address'          => lang('if_permanent_address_is_current_address'),
+            'national_identification_no' => lang('national_identification_number'),
+            'local_identification_no'    => lang('local_identification_number'),
+            'personal_details'           => lang('personal_details'),
+            'parent_guardian_detail'     => lang('parent_guardian_detail'),           
+        );
+        return $fields;
+    }
+
 }

@@ -214,7 +214,7 @@ if (!empty($cartdata)) {
             <?php
 }
 ?>
-        <div class="container spacet50">
+        <div class="container spacet50 spaceb50">
             <div class="row">
                 <?php
 $page_colomn = "col-md-12";

@@ -16,7 +16,7 @@
                             <?php
                             if (!empty($timetable)) {
                             ?>
-                                <button type="submit" title="<?php echo $this->lang->line('print'); ?>" class="btn btn-primary btn-xs pull-right smallbtn28 print_timetable" data-class_id="<?php echo set_value('class_id'); ?>" data-section_id="<?php echo set_value('section_id'); ?>" id="load" data-loading-text="<i class='fa fa-spinner fa-spin'></i> <?php echo $this->lang->line('please_wait'); ?>"><i class="fa fa-print"></i></button>
+                                <button type="submit" title="<?php echo $this->lang->line('print'); ?>" class="btn btn-primary btn-xs pull-right  print_timetable" data-class_id="<?php echo set_value('class_id'); ?>" data-section_id="<?php echo set_value('section_id'); ?>" id="load" data-loading-text="<i class='fa fa-spinner fa-spin'></i> <?php echo $this->lang->line('please_wait'); ?>"><i class="fa fa-print"></i></button>
                                 <table class="table table-stripped">
                                     <thead>
                                         <tr>

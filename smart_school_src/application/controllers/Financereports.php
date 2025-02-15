@@ -143,7 +143,7 @@ class Financereports extends Admin_Controller
                         $amount_paid += ($fee_paid_value->amount + $fee_paid_value->amount_discount);
                     }
                 }
-                // if ($amount_paid < $fee_due_value->fee_amount) {
+               
                 if ($amount_paid < $fee_due_value->fee_amount || ($amount_paid < $fee_due_value->amount && $fee_due_value->is_system)) {
                     $students_list[$fee_due_value->student_session_id]['admission_no']             = $fee_due_value->admission_no;
                     $students_list[$fee_due_value->student_session_id]['class_id']             = $fee_due_value->class_id;
@@ -290,15 +290,16 @@ class Financereports extends Admin_Controller
                 $student_due_fee         = $this->studentfeemaster_model->getStudentFeesByClassSectionStudent($class_id, $section_id, $student_id);
                 foreach ($student_due_fee as $key => $value) {
                     $transport_fees = array();
-                    $student               = $this->student_model->getByStudentSession($value['student_id']);
+                    $student               = $this->student_model->getByStudentSession($value['student_session_id']);
                     
                     if($student){
-                    $route_pickup_point_id = $student['route_pickup_point_id'];
-                    $student_session_id    = $student['student_session_id'];
+						$route_pickup_point_id = $student['route_pickup_point_id'];
+						$student_session_id    = $student['student_session_id'];
                     }else{
                         $route_pickup_point_id = '';
                         $student_session_id    = '';
                     }
+					
                     $transport_fees = [];
                     $module = $this->module_model->getPermissionByModulename('transport');
 
@@ -307,8 +308,8 @@ class Financereports extends Admin_Controller
                         $transport_fees        = $this->studentfeemaster_model->getStudentTransportFees($student_session_id, $route_pickup_point_id);
                     }
                     $student_due_fee[$key]['transport_fees']         = $transport_fees;
-                }
-
+                }			 
+				 
                 $data['student_due_fee'] = $student_due_fee;
                 $data['class_id']        = $class_id;
                 $data['section_id']      = $section_id;
@@ -366,6 +367,7 @@ class Financereports extends Admin_Controller
                     $obj->admission_no  = $eachstudent['admission_no'];
                     $obj->roll_no       = $eachstudent['roll_no'];
                     $obj->father_name   = $eachstudent['father_name'];
+					$obj->mobileno   	= $eachstudent['mobileno'];
                     $student_session_id = $eachstudent['student_session_id'];
                     $student_total_fees = $this->studentfeemaster_model->getTransStudentFees($student_session_id);
 
@@ -430,7 +432,6 @@ class Financereports extends Admin_Controller
             $classlistdata[]         = array('result' => $student_Array);
             $data['student_due_fee'] = $student_Array;
             $data['resultarray']     = $classlistdata;
-      
         }
 
         $this->load->view('layout/header', $data);
@@ -667,7 +668,7 @@ class Financereports extends Admin_Controller
     }
 
     public function add_new_student($student)
-    {
+    {		 
         $new_student = array(
             'id'                 => $student['id'],
             'student_session_id' => $student['student_session_id'],
@@ -1279,4 +1280,39 @@ class Financereports extends Admin_Controller
         $this->load->view('financereports/onlineadmission', $data);
         $this->load->view('layout/footer', $data);
     }
+	
+	public function incomeexpensebalancereport()
+    {	
+		$this->session->set_userdata('top_menu', 'Reports');
+        $this->session->set_userdata('sub_menu', 'Reports/finance');
+        $this->session->set_userdata('subsub_menu', 'Reports/finance/incomeexpensebalancereport');
+		$data['searchlist']  = $this->customlib->get_searchtype();
+		
+		if (isset($_POST['search_type']) && $_POST['search_type'] != '') {
+
+            $dates               = $this->customlib->get_betweendate($_POST['search_type']);
+            $data['search_type'] = $_POST['search_type'];
+        } else {
+
+            $dates               = $this->customlib->get_betweendate('this_year');
+            $data['search_type'] = '';
+        }
+
+        $collection = array();
+        $start_date = date('Y-m-d', strtotime($dates['from_date']));
+        $end_date   = date('Y-m-d', strtotime($dates['to_date']));
+        $this->form_validation->set_rules('search_type', $this->lang->line('search_type'), 'trim|required|xss_clean');
+
+        if ($this->form_validation->run() == false) {
+            $data['incomeexpensebalancereport'] = '';
+        } else {
+            $data['incomeexpensebalancereport'] = $this->income_model->incomeexpensebalancereport($start_date, $end_date);
+        }	
+		
+        $this->load->view('layout/header', $data);
+        $this->load->view('financereports/incomeexpensebalancereport', $data);
+        $this->load->view('layout/footer', $data);
+    } 
+
+    
 }

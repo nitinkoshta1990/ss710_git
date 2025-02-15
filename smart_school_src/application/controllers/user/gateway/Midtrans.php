@@ -23,7 +23,7 @@ class Midtrans extends Studentgateway_Controller {
         $data['params'] = $this->session->userdata('params');
         $data['setting'] = $this->setting;
         $data['api_error'] = array();
-        $amount =number_format((float)(convertBaseAmountCurrencyFormat($data['params']['fine_amount_balance']+$data['params']['total'])), 2, '.', '');
+        $amount =number_format((float)(convertBaseAmountCurrencyFormat($data['params']['fine_amount_balance']+$data['params']['total'] - $data['params']['applied_fee_discount']+ $data['params']['gateway_processing_charge'])), 2, '.', '');
         
         $enable_payments = array('credit_card');
         $transaction = array(
@@ -48,14 +48,16 @@ class Midtrans extends Studentgateway_Controller {
         $params = $this->session->userdata('params');
         
                 $bulk_fees=array();
-                    $params     = $this->session->userdata('params');
+                    // $params     = $this->session->userdata('params');
                  
                     foreach ($params['student_fees_master_array'] as $fee_key => $fee_value) {
                    
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+                        'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_midtrans_txn_id') . $payment_id,
                         'received_by'     => '',
@@ -73,7 +75,7 @@ class Midtrans extends Studentgateway_Controller {
                     //========
                     }
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                      //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();
@@ -101,7 +103,6 @@ class Midtrans extends Studentgateway_Controller {
                             'fee_category' => $fee_category,
                         );
 
-
                         if ($response_value['student_transport_fee_id'] != 0 && $response_value['fee_category'] == "transport") {
 
                             $data['student_fees_master_id']   = null;
@@ -117,8 +118,6 @@ class Midtrans extends Studentgateway_Controller {
                             $fine_percentage[] = $mailsms_array->fine_percentage;
                             $fine_amount[]     = $mailsms_array->fine_amount;
                             $amount[]          = $mailsms_array->amount;
-
-
 
                         } else {
 
@@ -159,7 +158,6 @@ class Midtrans extends Studentgateway_Controller {
                     $obj_mail['code']            = "(".implode(',', $code).")";
                     $obj_mail['fee_category']    = $fee_category;
                     $obj_mail['send_type']    = 'group';
-
 
                     $this->mailsmsconf->mailsms('fee_submission', $obj_mail);
 

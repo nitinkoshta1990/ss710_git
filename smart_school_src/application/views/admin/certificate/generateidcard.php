@@ -272,6 +272,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 <script type="text/javascript">
 
     var base_url = '<?php echo base_url() ?>';
+   
+
     function Popup(data, winload = false)
     {
         var frameDoc=window.open('', 'Print-Window');
@@ -279,7 +281,16 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
         //Create a new HTML document.
         frameDoc.document.write('<html>');
         frameDoc.document.write('<head>');
-        frameDoc.document.write('<title></title>');
+        frameDoc.document.write('<title></title>');   
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/font-awesome.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/ionicons.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/AdminLTE.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/skins/_all-skins.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/iCheck/flat/blue.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/morris/morris.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/jvectormap/jquery-jvectormap-1.2.2.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/datepicker/datepicker3.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/daterangepicker/daterangepicker-bs3.css">');
         frameDoc.document.write('</head>');
         frameDoc.document.write('<body onload="window.print()">');
         frameDoc.document.write(data);
@@ -294,5 +305,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
         }, 5000);
 
         return true;
-    }
+    }    
+ 
 </script>

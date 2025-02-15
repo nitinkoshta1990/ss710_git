@@ -347,7 +347,6 @@ class Homework extends Admin_Controller
                 'create_date'              => date("Y-m-d"),
                 'created_by'               => $userdata["id"],
                 'subject_id'               => NULL,
-
             );
 
             if ($record_id > 0) {
@@ -567,17 +566,16 @@ class Homework extends Admin_Controller
             $evaluated_by = '';
 
             if ($result["evaluated_by"]) {
+				
                 $eval_data = $this->staff_model->get($result["evaluated_by"]);
 
-                if ($eval_data["employee_id"] != '') {
+                if ((!empty($eval_data)) && $eval_data["employee_id"] != '') {
                     $evaluated_by_staff_id = ' (' . $eval_data["employee_id"] . ')';
-                }
-
-                $evaluated_by = $eval_data["name"] . " " . $eval_data["surname"] . $evaluated_by_staff_id;
+					$evaluated_by = $eval_data["name"] . " " . $eval_data["surname"] . $evaluated_by_staff_id;
+                }                
             }
 
             $created_by   = '';
-
 
             if ($superadmin_visible == 'disabled') {
 
@@ -630,7 +628,6 @@ class Homework extends Admin_Controller
             foreach ($students as $std_key => $std_value) {
 
                 $marks1 = $marks[$std_key];
-
                 if ($homeworkresult['marks'] < $marks1) {
                     $this->form_validation->set_rules('marks', $this->lang->line('marks'), array('valid_marks', array('check_valid_marks', array($this->homework_model, 'check_valid_marks'))));
                 }
@@ -665,7 +662,6 @@ class Homework extends Admin_Controller
 
                 if ($std_value == 0) {
                     $insert_array[] = array(
-
                         'student_session_id' => $std_key,
                         'note'               => $note[$std_key],
                         'marks'              => $newmarks,
@@ -674,7 +670,6 @@ class Homework extends Admin_Controller
                     );
                 } else {
                     $insert_prev[] = $std_value;
-
                     $update_array[$std_value][] = array(
                         'note'               => $note[$std_key],
                         'marks'              => $newmarks,
@@ -683,9 +678,21 @@ class Homework extends Admin_Controller
                 }
             }
 
-            $evaluation_date = $this->customlib->dateFormatToYYYYMMDD($this->input->post('evaluation_date'));
-            $evaluated_by    = $this->customlib->getStaffID();
+            $evaluation_date    =   $this->customlib->dateFormatToYYYYMMDD($this->input->post('evaluation_date'));
+            $evaluated_by       =   $this->customlib->getStaffID();
             $this->homework_model->addEvaluation($insert_prev, $insert_array, $homework_id, $evaluation_date, $evaluated_by, $update_array);
+            //***send mail sms and notification to student and parents on insertion of evaluted mark***//
+                $homework_detail = $this->homework_model->get($homework_id);
+                $sender_details = array(
+                        'class_id'        => $this->input->post("student_class_id"),
+                        'section_id'      => $this->input->post("student_section_id"),
+                        'homework_date'   => date($this->customlib->getSchoolDateFormat(), $this->customlib->dateYYYYMMDDtoStrtotime($homework_detail['homework_date'])),
+                        'submit_date'     => date($this->customlib->getSchoolDateFormat(), $this->customlib->dateYYYYMMDDtoStrtotime($homework_detail['submit_date'])),
+                        'subject'         => $homework_detail['subject_name'],
+                        'homework_id'     => $homework_detail['id']                      
+                );
+                $this->mailsmsconf->mailsms('homework_evaluation', $sender_details);
+            //***send mail sms and notification to student and parents on insertion of evaluted mark***//
             $msg   = $this->lang->line('evaluation_completed_message');
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }

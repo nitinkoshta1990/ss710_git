@@ -14,7 +14,7 @@
                   <div class="box-tools pull-right">
                      <div class="dt-buttons btn-group btn-group2 pt5">
                     <?php if (!empty($exam_result)) {?>
-                        <a class="dt-button btn btn-default btn-xs no_print" data-toggle="tooltip"  title="<?php echo $this->lang->line('print'); ?>" id="print" onclick="printDiv()" ><i class="fa fa-print"></i></a>
+                        <a class="dt-button btn btn-default btn-xs no_print" data-toggle="tooltip" data-placement="bottom" title="<?php echo $this->lang->line('print'); ?>" id="print" onclick="printDiv()" ><i class="fa fa-print"></i></a>
                     <?php }?>
                      </div>
                   </div>

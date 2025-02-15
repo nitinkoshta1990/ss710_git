@@ -57,9 +57,9 @@ class Student_model extends MY_Model
         return $result;
     }
 
-    public function getStudents()
+    public function getStudents() 
     {
-        $this->db->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no,students.roll_no,students.admission_date,students.firstname,students.middlename,  students.lastname,students.image,students.mobileno, students.email ,students.state,students.city,students.pincode,students.religion,students.dob ,students.current_address,    students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name,students.ifsc_code,students.guardian_name, students.guardian_relation,students.guardian_email,students.guardian_phone,students.guardian_address,students.is_active,students.created_at ,students.updated_at,students.father_name,students.rte,students.gender,users.id as `user_tbl_id`,users.username,users.password as `user_tbl_password`,users.is_active as `user_tbl_active`')->from('students');
+        $this->db->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no,students.roll_no,students.admission_date,students.firstname,students.middlename,  students.lastname,students.image,students.mobileno, students.email ,students.state,students.city,students.pincode,students.religion,students.dob ,students.current_address,    students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name,students.ifsc_code,students.guardian_name, students.guardian_relation,students.guardian_email,students.guardian_phone,students.guardian_address,students.is_active,students.created_at ,students.updated_at,students.father_name,students.rte,students.gender,users.id as `user_tbl_id`,users.username,users.password as `user_tbl_password`,users.is_active as `user_tbl_active`,,students.app_key,students.parent_app_key')->from('students');
         $this->db->join('student_session', 'student_session.student_id = students.id');
         $this->db->join('classes', 'student_session.class_id = classes.id');
         $this->db->join('sections', 'sections.id = student_session.section_id');
@@ -196,7 +196,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -239,10 +239,11 @@ class Student_model extends MY_Model
 
     public function get($id = null)
     {
-        $this->db->select('pickup_point.name as pickup_point_name,student_session.route_pickup_point_id,student_session.transport_fees,students.app_key,students.parent_app_key,student_session.vehroute_id,vehicle_routes.route_id,vehicle_routes.vehicle_id,transport_route.route_title,vehicles.vehicle_no,hostel_rooms.room_no,vehicles.driver_name,vehicles.driver_contact,vehicles.vehicle_model,vehicles.manufacture_year,vehicles.driver_licence,vehicles.vehicle_photo,hostel.id as `hostel_id`,hostel.hostel_name,room_types.id as `room_type_id`,room_types.room_type ,students.hostel_room_id,student_session.id as `student_session_id`,student_session.fees_discount,classes.id AS `class_id`,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no,students.roll_no,students.admission_no,students.admission_date,students.firstname,students.middlename, students.lastname,students.image,students.mobileno, students.email ,students.state,students.city,students.pincode,students.note,students.religion,students.cast, school_houses.house_name,students.dob,students.current_address,students.previous_school,students.guardian_is,students.parent_id,  students.permanent_address,students.category_id,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name, students.ifsc_code,students.guardian_name,students.father_pic ,students.height,students.weight,students.measurement_date, students.mother_pic,students.guardian_pic,students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active ,students.created_at ,students.updated_at,students.father_name,students.father_phone,students.blood_group,students.school_house_id,students.father_occupation,students.mother_name,students.mother_phone,students.mother_occupation,students.guardian_occupation,students.gender,students.guardian_is,students.rte,students.guardian_email, users.username,users.password,users.id as user_id,students.dis_reason,students.dis_note,students.disable_at')->from('students');
+        $this->db->select('pickup_point.name as pickup_point_name,student_session.route_pickup_point_id,student_session.transport_fees,students.app_key,students.parent_app_key,student_session.vehroute_id,vehicle_routes.route_id,vehicle_routes.vehicle_id,transport_route.route_title,vehicles.vehicle_no,hostel_rooms.room_no,vehicles.driver_name,vehicles.driver_contact,vehicles.vehicle_model,vehicles.manufacture_year,vehicles.driver_licence,vehicles.vehicle_photo,hostel.id as `hostel_id`,hostel.hostel_name,room_types.id as `room_type_id`,room_types.room_type ,students.hostel_room_id,student_session.id as `student_session_id`,student_session.fees_discount,classes.id AS `class_id`,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no,students.roll_no,students.admission_no,students.admission_date,students.firstname,students.middlename, students.lastname,students.image,students.mobileno, students.email ,students.state,students.city,students.pincode,students.note,students.religion,students.cast, school_houses.house_name,students.dob,students.current_address,students.previous_school,students.guardian_is,students.parent_id,  students.permanent_address,students.category_id,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name, students.ifsc_code,students.guardian_name,students.father_pic ,students.height,students.weight,students.measurement_date, students.mother_pic,students.guardian_pic,students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active ,students.created_at ,students.updated_at,students.father_name,students.father_phone,students.blood_group,students.school_house_id,students.father_occupation,students.mother_name,students.mother_phone,students.mother_occupation,students.guardian_occupation,students.gender,students.guardian_is,students.rte,students.guardian_email, users.username,users.password,users.id as user_id,students.dis_reason,students.dis_note,students.disable_at,students.about,students.designation,class_sections.id as `class_section_id`')->from('students');
         $this->db->join('student_session', 'student_session.student_id = students.id');
         $this->db->join('classes', 'student_session.class_id = classes.id');
         $this->db->join('sections', 'sections.id = student_session.section_id');
+		$this->db->join('class_sections', 'class_sections.class_id = classes.id and class_sections.section_id = sections.id');
         $this->db->join('hostel_rooms', 'hostel_rooms.id = students.hostel_room_id', 'left');
         $this->db->join('hostel', 'hostel.id = hostel_rooms.hostel_id', 'left');
         $this->db->join('room_types', 'room_types.id = hostel_rooms.room_type_id', 'left');
@@ -306,7 +307,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -349,7 +350,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -466,7 +467,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -616,7 +617,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -624,7 +625,7 @@ class Student_model extends MY_Model
 
         $field_variable = implode(',', $field_var_array);
 
-        $this->db->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no , students.roll_no,students.admission_date,students.firstname,students.middlename,students.lastname,students.image,  students.mobileno,students.email,students.state,students.city,students.pincode,students.religion,students.dob ,students.current_address,students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name, students.ifsc_code, students.guardian_name, students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active ,students.created_at ,students.updated_at,students.father_name,students.app_key,students.parent_app_key,students.rte,students.gender,vehicles.vehicle_no,transport_route.route_title,route_pickup_point.id as `route_pickup_point_id`,pickup_point.name as `pickup_point`,' . $field_variable)->from('students');
+        $this->db->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no , students.roll_no,students.admission_date,students.firstname,students.middlename,students.lastname,students.image,  students.mobileno,students.email,students.state,students.city,students.pincode,students.religion,students.dob ,students.current_address,students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name, students.ifsc_code, students.guardian_name, students.guardian_relation,students.guardian_phone,students.guardian_email,students.guardian_address,students.is_active ,students.created_at ,students.updated_at,students.father_name,students.app_key,students.parent_app_key,students.rte,students.gender,vehicles.vehicle_no,transport_route.route_title,route_pickup_point.id as `route_pickup_point_id`,pickup_point.name as `pickup_point`,' . $field_variable)->from('students');
         $this->db->join('student_session', 'student_session.student_id = students.id');
         $this->db->join('classes', 'student_session.class_id = classes.id');
         $this->db->join('sections', 'sections.id = student_session.section_id');
@@ -706,7 +707,6 @@ class Student_model extends MY_Model
         }
 
         $this->datatables->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no , students.roll_no,students.admission_date,students.firstname,students.middlename,students.lastname,students.image,students.mobileno, students.email,students.state,students.city,students.pincode,students.religion,students.dob ,students.current_address,students.permanent_address,students.category_id, categories.category,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name, students.ifsc_code,students.guardian_name , students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active ,students.created_at ,students.updated_at,students.father_name,students.rte,students.gender')
-
             ->searchable('sections.section,students.admission_no,students.firstname,students.father_name,students.dob,students.gender,categories.category,students.mobileno,students.samagra_id,students.adhar_no,students.rte')
             ->orderable('sections.section,students.admission_no,students.firstname,students.father_name,students.dob,students.gender,categories.category,students.mobileno,students.samagra_id,students.adhar_no,students.rte')
             ->join('student_session', 'student_session.student_id = students.id')
@@ -733,7 +733,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -817,7 +817,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -866,7 +866,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -897,7 +897,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -937,7 +937,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -971,7 +971,7 @@ class Student_model extends MY_Model
     public function getStudentListBYStudentsessionID($array)
     {
         $array = implode(',', $array);
-        $sql   = ' SELECT students.* FROM students INNER join (SELECT * FROM `student_session` WHERE `student_session`.`id` IN (' . $array . ')) as student_session on students.id=student_session.student_id';
+        $sql   = ' SELECT students.*,student_session.id as student_session_id FROM students INNER join (SELECT * FROM `student_session` WHERE `student_session`.`id` IN (' . $array . ')) as student_session on students.id=student_session.student_id';
         $query = $this->db->query($sql);
         return $query->result();
     }
@@ -1600,7 +1600,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -1608,12 +1608,13 @@ class Student_model extends MY_Model
 
         $field_variable = implode(',', $field_var_array);
 
-        $this->db->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no,students.roll_no,students.admission_date,students.firstname, students.middlename,students.lastname,students.image,students.mobileno,students.email,students.state,students.city,students.pincode,students.religion,     students.dob ,students.current_address,students.blood_group,students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.cast,students.bank_name, students.ifsc_code,students.guardian_name, students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active ,students.created_at ,students.mother_name,students.updated_at,students.father_name,students.rte,students.gender,users.id as `user_tbl_id`,users.username,users.password as `user_tbl_password`,users.is_active as `user_tbl_active`,' . $field_variable)->from('students');
+        $this->db->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no,students.roll_no,students.admission_date,students.firstname, students.middlename,students.lastname,students.image,students.mobileno,students.email,students.state,students.city,students.pincode,students.religion,     students.dob ,students.current_address,students.blood_group,students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.cast,students.bank_name, students.ifsc_code,students.guardian_name, students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active ,students.created_at ,students.mother_name,students.updated_at,students.father_name,students.rte,students.gender,users.id as `user_tbl_id`,users.username,users.password as `user_tbl_password`,users.is_active as `user_tbl_active`,school_houses.house_name,' . $field_variable)->from('students');
         $this->db->join('student_session', 'student_session.student_id = students.id');
         $this->db->join('classes', 'student_session.class_id = classes.id');
         $this->db->join('sections', 'sections.id = student_session.section_id');
         $this->db->join('categories', 'students.category_id = categories.id', 'left');
         $this->db->join('users', 'users.user_id = students.id', 'left');
+        $this->db->join('school_houses', 'school_houses.id = students.school_house_id', 'left');
         $this->db->where('student_session.session_id', $this->current_session);
         $this->db->where('users.role', 'student');
         $this->db->where_in('students.id', $array);
@@ -1660,7 +1661,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->db->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -1875,8 +1876,7 @@ class Student_model extends MY_Model
         $query   = $this->db->query($sql);
         $parents = $query->result();
 
-        return $parents;
-        
+        return $parents;        
     }
 
     public function count_classteachers($class_id, $section_id)
@@ -1930,8 +1930,7 @@ class Student_model extends MY_Model
 
     public function searchdtByClassSection($class_id = null, $section_id = null)
     {
-        $userdata = $this->customlib->getUserData();
-        
+        $userdata = $this->customlib->getUserData();        
         
 		if (($userdata["role_id"] == 2) && ($userdata["class_teacher"] == "yes") && (empty($class_section_array))) {
             $class_section_array = $this->customlib->get_myClassSection();
@@ -1944,7 +1943,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->datatables->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 array_push($field_var_array_name, 'table_custom_' . $i . '.field_value');
                 $i++;
@@ -1961,7 +1960,7 @@ class Student_model extends MY_Model
             $this->datatables->where('student_session.section_id', $section_id);
         }
 
-        $this->datatables->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no, students.roll_no,students.admission_date,students.firstname,students.middlename,  students.lastname,students.image,students.mobileno,students.email ,students.state,students.city, students.pincode,students.religion,DATE(students.dob) as dob,students.current_address,students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name,students.ifsc_code , students.guardian_name, students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active,students.created_at ,students.updated_at,students.father_name,students.app_key,students.parent_app_key,students.rte,students.gender' . $field_variable);       
+        $this->datatables->select('classes.id AS `class_id`,student_session.id as student_session_id,students.id,classes.class,sections.id AS `section_id`,sections.section,students.id,students.admission_no, students.roll_no,students.admission_date,students.firstname,students.middlename,  students.lastname,students.image,students.mobileno,students.email ,students.state,students.city, students.pincode,students.religion,DATE(students.dob) as dob,students.current_address,students.permanent_address,IFNULL(students.category_id, 0) as `category_id`,IFNULL(categories.category, "") as `category`,students.adhar_no,students.samagra_id,students.bank_account_no,students.bank_name,students.ifsc_code , students.guardian_name, students.guardian_relation,students.guardian_phone,students.guardian_address,students.is_active,students.created_at ,students.updated_at,students.father_name,students.app_key,students.parent_app_key,students.rte,students.gender,' . $field_variable);       
         $this->datatables->searchable('students.admission_no,students.firstname,classes.class,students.father_name,students.dob,students.gender,categories.category,students.mobileno' . $field_variable);
         $this->datatables->join('student_session', 'student_session.student_id = students.id');
         $this->datatables->join('classes', 'student_session.class_id = classes.id');
@@ -1976,7 +1975,6 @@ class Student_model extends MY_Model
                     $this->datatables->where('student_session.class_id', $class_sectionkey);
                     $this->datatables->where('student_session.section_id', $class_sectionvaluevalue);
                     $this->datatables->group_end();
-
                 }
             }
             $this->datatables->group_end();
@@ -1984,7 +1982,7 @@ class Student_model extends MY_Model
             
         $this->datatables->where('student_session.session_id', $this->current_session);
         $this->datatables->where('students.is_active', "yes");
-        $this->datatables->orderable('students.admission_no,students.firstname,classes.class,students.father_name,students.dob,students.gender,categories.category,students.mobileno' . $field_name);
+        $this->datatables->orderable('students.admission_no,students.firstname,classes.class,students.father_name,students.dob,students.gender,categories.category,students.mobileno,' . $field_name);
         $this->datatables ->from('students');
         $this->datatables->sort('students.admission_no', 'asc');
         return $this->datatables->generate('json');
@@ -1999,15 +1997,14 @@ class Student_model extends MY_Model
         $custom_fields = $this->customfield_model->get_custom_fields('students', 1);
         if (($userdata["role_id"] == 2) && ($userdata["class_teacher"] == "yes") && (empty($class_section_array))) {
             $class_section_array = $this->customlib->get_myClassSection();
-        }
-      
+        }      
 
         $field_var_array      = array();
         $field_var_array_name = array();
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name. '`');
                 $this->datatables->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 array_push($field_var_array_name, 'table_custom_' . $i . '.field_value');
                 $i++;
@@ -2065,7 +2062,7 @@ class Student_model extends MY_Model
         if (!empty($custom_fields)) {
             foreach ($custom_fields as $custom_fields_key => $custom_fields_value) {
                 $tb_counter = "table_custom_" . $i;
-                array_push($field_var_array, 'table_custom_' . $i . '.field_value as ' . $custom_fields_value->name);
+                array_push($field_var_array, '`table_custom_' . $i . '`.`field_value` as `' . $custom_fields_value->name.'`');
                 $this->datatables->join('custom_field_values as ' . $tb_counter, 'students.id = ' . $tb_counter . '.belong_table_id AND ' . $tb_counter . '.custom_field_id = ' . $custom_fields_value->id, 'left');
                 $i++;
             }
@@ -2106,11 +2103,34 @@ class Student_model extends MY_Model
 
     public function biometric_attendance($admission_no = null)
     {
-        $sql    = "SELECT staff.id,staff.employee_id,staff.name,staff.surname,staff.contact_no,staff.email,'staff' as `table_type` FROM `staff` WHERE employee_id=" . $this->db->escape($admission_no) . " UNION SELECT student_session.id as `student_session_id`,students.id, students.admission_no,students.firstname,students.middlename,students.lastname,'student' as `table_type` FROM `students` JOIN `student_session` ON `student_session`.`student_id` = `students`.`id` JOIN `classes` ON `student_session`.`class_id` = `classes`.`id` JOIN `sections` ON `sections`.`id` = `student_session`.`section_id` LEFT JOIN `hostel_rooms` ON `hostel_rooms`.`id` = `students`.`hostel_room_id` LEFT JOIN `hostel` ON `hostel`.`id` = `hostel_rooms`.`hostel_id` LEFT JOIN `room_types` ON `room_types`.`id` = `hostel_rooms`.`room_type_id` LEFT JOIN `vehicle_routes` ON `vehicle_routes`.`id` = `student_session`.`vehroute_id` LEFT JOIN `route_pickup_point` ON `route_pickup_point`.`id` = `student_session`.`route_pickup_point_id` LEFT JOIN `pickup_point` ON `route_pickup_point`.`pickup_point_id` = `pickup_point`.`id` LEFT JOIN `transport_route` ON `vehicle_routes`.`route_id` = `transport_route`.`id` LEFT JOIN `vehicles` ON `vehicles`.`id` = `vehicle_routes`.`vehicle_id` LEFT JOIN `school_houses` ON `school_houses`.`id` = `students`.`school_house_id` LEFT JOIN `users` ON `users`.`user_id` = `students`.`id` WHERE `student_session`.`session_id` = '" . $this->current_session . "' AND `users`.`role` = 'student' AND `students`.`is_active` = 'yes' AND `students`.`admission_no` = " . $this->db->escape($admission_no);
+        $sql    = "SELECT staff.id,staff.employee_id,staff.name,staff.surname,staff.contact_no,staff.email,'staff' as `table_type`,null as class_section_id,roles.id as staff_role
+FROM `staff` inner join staff_roles on staff_roles.staff_id =staff.id INNER JOIN roles on roles.id=staff_roles.role_id
+WHERE employee_id=" . $this->db->escape($admission_no) . " 
+UNION 
+SELECT student_session.id as `student_session_id`,students.id, students.admission_no,students.firstname,students.middlename,students.lastname,'student' as `table_type` ,class_sections.id as `class_section_id`,null as staff_role
+FROM `students`
+ JOIN `student_session` ON `student_session`.`student_id` = `students`.`id` 
+ JOIN `classes` ON `student_session`.`class_id` = `classes`.`id` 
+ JOIN `sections` ON `sections`.`id` = `student_session`.`section_id` 
+ inner JOIN class_sections on class_sections.class_id=classes.id and class_sections.section_id=sections.id
+ LEFT JOIN `hostel_rooms` ON `hostel_rooms`.`id` = `students`.`hostel_room_id` 
+ LEFT JOIN `hostel` ON `hostel`.`id` = `hostel_rooms`.`hostel_id` 
+ LEFT JOIN `room_types` ON `room_types`.`id` = `hostel_rooms`.`room_type_id` 
+ LEFT JOIN `vehicle_routes` ON `vehicle_routes`.`id` = `student_session`.`vehroute_id` 
+ LEFT JOIN `route_pickup_point` ON `route_pickup_point`.`id` = `student_session`.`route_pickup_point_id` 
+ LEFT JOIN `pickup_point` ON `route_pickup_point`.`pickup_point_id` = `pickup_point`.`id` 
+ LEFT JOIN `transport_route` ON `vehicle_routes`.`route_id` = `transport_route`.`id` 
+ LEFT JOIN `vehicles` ON `vehicles`.`id` = `vehicle_routes`.`vehicle_id` 
+ LEFT JOIN `school_houses` ON `school_houses`.`id` = `students`.`school_house_id` 
+ LEFT JOIN `users` ON `users`.`user_id` = `students`.`id` 
+ WHERE `student_session`.`session_id` = '" . $this->current_session . "' 
+ AND `users`.`role` = 'student' 
+ AND `students`.`is_active` = 'yes' 
+ AND `students`.`admission_no` =" . $this->db->escape($admission_no);
+
         $query  = $this->db->query($sql);
         $result = $query->row();
         return $result;
-
     }
     //===========
 
@@ -2239,4 +2259,68 @@ class Student_model extends MY_Model
         $query = $this->db->get();
         return $query->row_array();
     }
+
+    //***student dashboard setting***//
+    public function save_student_dashboard_settings($record){
+
+        $this->db->trans_start(); # Starting Transaction
+        $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
+
+        $this->db->where('name', $record['name']);
+        $q = $this->db->get('student_dashboard_settings');
+
+        if ($q->num_rows() > 0) {
+            $results = $q->row();
+            $this->db->where('id', $results->id);
+            $this->db->update('student_dashboard_settings', $record);
+            $message   = UPDATE_RECORD_CONSTANT . " On  student_dashboard_settings id " . $results->id;
+            $action    = "Update";
+            $record_id = $insert_id = $results->id;
+            $this->log($message, $record_id, $action);
+        } else {
+            $this->db->insert('student_dashboard_settings', $record);
+            $insert_id = $this->db->insert_id();
+            $message   = INSERT_RECORD_CONSTANT . " On student_dashboard_settings id " . $insert_id;
+            $action    = "Insert";
+            $record_id = $insert_id;
+            $this->log($message, $record_id, $action);
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+        } else {
+            $this->db->trans_commit();
+        }
+    }
+
+    public function get_module_status(){
+        $this->db->select('student_dashboard_settings.*,permission_group.is_active,permission_group.id as groupid')->from('student_dashboard_settings');
+        $this->db->join('permission_student', 'permission_student.short_code = student_dashboard_settings.name','left');
+        $this->db->join('permission_group', 'permission_group.id = permission_student.group_id','left');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function get_student_dashboard_setting_status($fieldname){
+        $this->db->where('name', $fieldname);
+        $this->db->select('is_student');
+        $this->db->from('student_dashboard_settings');
+        $query  = $this->db->get();
+        $result = $query->row_array();
+        if(!empty($result)){
+        return $result['is_student'];
+        }        
+    }
+
+	public function get_parent_dashboard_setting_status($fieldname){
+        $this->db->where('name', $fieldname);
+        $this->db->select('is_parent');
+        $this->db->from('student_dashboard_settings');
+        $query  = $this->db->get();
+        $result = $query->row_array();
+        if(!empty($result)){
+        return $result['is_parent'];
+        }        
+    }
+
 }

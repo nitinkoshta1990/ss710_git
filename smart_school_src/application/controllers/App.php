@@ -45,7 +45,6 @@ class App extends MY_Controller
 
     public function zoom()
     {
-
         $curl = curl_init();
 
         curl_setopt_array($curl, array(

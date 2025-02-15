@@ -180,7 +180,7 @@ class Pickuppoint extends Admin_Controller
     public function create()
     {
         if ($_POST['action_type'] == 'add') {
-            $this->form_validation->set_rules('route_id', $this->lang->line('route'), 'trim|required|xss_clean|is_unique[route_pickup_point.transport_route_id]');
+            $this->form_validation->set_rules('route_id', $this->lang->line('route'), 'trim|required|xss_clean');
         } else {
             $this->form_validation->set_rules('route_id', $this->lang->line('route'), 'trim|required|xss_clean');
         }
@@ -200,8 +200,7 @@ class Pickuppoint extends Admin_Controller
                     $duplicate=1;
                     break;
                    
-                } else {
-                 
+                } else {                 
                     $pickup_array[$pickup_pointvalue] = 0;
                 }
             }
@@ -257,6 +256,9 @@ class Pickuppoint extends Admin_Controller
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
+
+            $this->current_session   = $this->setting_model->getCurrentSession(); 
+            
             if (!empty($_POST['delete_ides'])) {
                 foreach ($_POST['delete_ides'] as $delete_ideskey => $delete_idesvalue) {
                     $this->pickuppoint_model->remove_pickupfromroute($delete_idesvalue);
@@ -268,6 +270,7 @@ class Pickuppoint extends Admin_Controller
 
                     $data = array(
                         'id'                   => $this->input->post('pickup_point_id')[$pickup_pointkey],
+                        'session_id'           => $this->current_session,
                         'transport_route_id'   => $this->input->post('route_id'),
                         'pickup_point_id'      => $this->input->post('pickup_point')[$pickup_pointkey],
                         'destination_distance' => $this->input->post('destination_distance')[$pickup_pointkey],
@@ -344,9 +347,8 @@ class Pickuppoint extends Admin_Controller
         $route_pickup_point            = $this->routepickuppoint_model->get($route_pickup_point_id);
         $data['route_pickup_point']    = $route_pickup_point;
         foreach($month_list as $key=>$value){
-         $data['fees'][]                  = $this->studenttransportfee_model->getTransportFeeByMonthStudentSession($student_session_id, $route_pickup_point_id,$key);   
-        }
-        
+			$data['fees'][] = $this->studenttransportfee_model->getTransportFeeByMonthStudentSession($student_session_id, $route_pickup_point_id,$key);   
+        }        
 
         $page  = $this->load->view('admin/pickuppoint/student_transport_months', $data, true);
         $array = array('status' => '1', 'error' => '', 'page' => $page);

@@ -46,7 +46,7 @@ class Ipayafrica extends OnlineAdmission_Controller
             "live" => "1",
             "oid"  => uniqid(),
             "inv"  => time(),
-            "ttl"  => convertBaseAmountCurrencyFormat($amount),
+            "ttl"  => convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount),
             "tel"  => $customer_phone,
             "eml"  => $customer_email,
             "vid"  => ($this->pay_method->api_publishable_key),
@@ -70,7 +70,7 @@ class Ipayafrica extends OnlineAdmission_Controller
     }
  
     public function complete() {
-    	$amount = $this->amount;
+    	$amount = $this->customlib->getGatewayProcessingFees($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount);
         $reference  = $this->session->userdata('reference');
         $online_data = $this->onlinestudent_model->getAdmissionData($reference);
         $apply_date=date("Y-m-d H:i:s");
@@ -90,6 +90,8 @@ class Ipayafrica extends OnlineAdmission_Controller
             $gateway_response['transaction_id'] = $transactionid;
             $gateway_response['payment_mode']   = 'ipayafrica';
             $gateway_response['payment_type']   = 'online';
+            $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_ipayafrica_txn_id')  . $transactionid;
             $gateway_response['date']           = date("Y-m-d H:i:s");
             $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

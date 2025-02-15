@@ -32,7 +32,7 @@ class Cashfree extends OnlineAdmission_Controller
     
     public function pay()
     {
-        $this->session->set_userdata('payment_amount',$this->amount);
+        $this->session->set_userdata('payment_amount',$this->customlib->getGatewayProcessingFees($this->amount)+$this->amount);
         $insta_apikey    = $this->pay_method->api_secret_key;
         $insta_authtoken = $this->pay_method->api_publishable_key;
         $reference = $this->session->userdata('reference');
@@ -48,7 +48,7 @@ class Cashfree extends OnlineAdmission_Controller
             $data['buyer_data'] = $buyer_data;
             $this->load->view('onlineadmission/cashfree/index', $data);
         }else{
-        $amount =number_format((float)(convertBaseAmountCurrencyFormat($this->amount)), 2, '.', '');
+        $amount =convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount);
         $customer_id="Reference_id_".$reference;
         $order_id="order_".time().mt_rand(100,999);
         $currency=$this->customlib->get_currencyShortName();
@@ -75,7 +75,7 @@ class Cashfree extends OnlineAdmission_Controller
         $new_arrya=(object)$my_array;
             $ch = curl_init();
 
-            curl_setopt($ch, CURLOPT_URL, 'https://api.cashfree.com/pg/orders');
+            curl_setopt($ch, CURLOPT_URL, 'https://sandbox.cashfree.com/pg/orders');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($new_arrya));
@@ -124,7 +124,7 @@ class Cashfree extends OnlineAdmission_Controller
         $date         = date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat(date("Y-m-d", strtotime($apply_date)))); 
         
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://api.cashfree.com/pg/orders/'.$_GET['order_id']);
+        curl_setopt($ch, CURLOPT_URL, 'https://sandbox.cashfree.com/pg/orders/'.$_GET['order_id']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
         $headers = array();
@@ -154,6 +154,8 @@ class Cashfree extends OnlineAdmission_Controller
             $gateway_response['transaction_id'] = $transactionid;
             $gateway_response['payment_mode']   = 'cashfree';
             $gateway_response['payment_type']   = 'online';
+            $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
             $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_cashfree_txn_id')  . $transactionid;
             $gateway_response['date']           = date("Y-m-d H:i:s");
             $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

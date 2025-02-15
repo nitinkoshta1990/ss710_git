@@ -161,7 +161,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <?php
                                     } else {
                                         $count = 1;
-
+										$grossTotal = 0;
                                         foreach ($payrollList as $key => $value) {
                                             $basic += $value["basic"];
                                             $gross += $value["basic"] + $value["total_allowance"]-$value['total_deduction'];                                       
@@ -220,7 +220,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <td class="text text-right">
                                                     <?php 
                                                     $gross = $value['basic'] + $value['total_allowance'] - $total_deduction ;
-													$grossTotal = 0;
+													
                                                     if($gross > 0){
                                                     echo amountFormat($gross); 
 													

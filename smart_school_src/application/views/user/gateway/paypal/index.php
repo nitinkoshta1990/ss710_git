@@ -78,12 +78,25 @@
                                                 <span class="text-fine"><?php echo $this->lang->line('fine'); ?></span></td>
                                             <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $fees_value['fine_balance'], 2, '.', ''); ?></td>
                                         </tr>
+										<tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('discount'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['applied_fee_discount'], 2, '.', ''); ?></td>
+                                        </tr>
                                         <?php
                                     }
                                     ?>
-                                    <tr class="bordertoplightgray">
-                                        <td colspan="2" class="text-right"><?php echo $this->lang->line('total')?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)($params['fine_amount_balance']+$params['total']), 2, '.', ''); ?></td>
-                                    </tr>
+                                    
+                                        <tr class="border_bottom">
+                                            <td>
+                                                <span class="text-text-success"><?php echo $this->lang->line('processing_fees'); ?></span>
+                                            </td>
+                                            <td class="text-right"><?php echo $setting[0]['currency_symbol'] . amountFormat((float) $params['gateway_processing_charge'], 2, '.', ''); ?></td>
+                                        </tr>
+                                        <tr class="bordertoplightgray">
+                                            <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $setting[0]['currency_symbol'] . amountFormat((float)(($params['fine_amount_balance'] + $params['total']) - $params['applied_fee_discount']+$params['gateway_processing_charge']), 2, '.', ''); ?></td>
+                                        </tr>
                                 </table>
                                 <script src="<?php echo base_url(); ?>backend/custom/jquery.min.js"></script>
                                 <div class="divider"></div>

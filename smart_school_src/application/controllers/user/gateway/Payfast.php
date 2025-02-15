@@ -58,7 +58,7 @@ class Payfast extends Studentgateway_Controller
             $data['currency_name'] = $params['invoice']->currency_name;
             $data['name'] = $params['name'];
             $data['guardian_phone'] = $params['guardian_phone'];
-            $cartTotal = convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total']);// This amount needs to be sourced from your application
+            $cartTotal = convertBaseAmountCurrencyFormat($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']);// This amount needs to be sourced from your application
             $data = array(
             'merchant_id' => $this->pay_method->api_publishable_key,
             'merchant_key' => $this->pay_method->api_secret_key,
@@ -93,7 +93,9 @@ class Payfast extends Studentgateway_Controller
              $json_array = array(
                 'amount'          =>  $fee_value['amount_balance'],
                 'date'            => date('Y-m-d'),
-                'amount_discount' => 0,
+                'amount_discount' => $fee_value['applied_fee_discount'],
+				'processing_charge_type'=>$params['processing_charge_type'],
+                'gateway_processing_charge'=>$params['gateway_processing_charge'],
                 'amount_fine'     => $fee_value['fine_balance'],
                 'description'     => $this->lang->line('online_fees_deposit_through_payfast_txn_id') . $data['m_payment_id'],
                 'received_by'     => '',

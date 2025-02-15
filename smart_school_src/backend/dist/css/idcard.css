@@ -1,3 +1,7 @@
+@media print {
+      .page-break { display: block; page-break-before: always; }
+     
+    }
 *{ margin:0; padding: 0;}
 table{ font-family: 'arial'; margin:0; padding: 0;font-size: 12px; color: #000;}
 .tc-container{width: 100%;position: relative; text-align: center;margin-bottom:60px;padding-bottom: 10px;}
@@ -43,3 +47,8 @@ table{ font-family: 'arial'; margin:0; padding: 0;font-size: 12px; color: #000;}
 .cardleft{width: 20%;float: left;}
 .cardright{width: 77%;float: right;}
 .width32{width: 32.75%; padding: 3px; float: left;}
+.signature{border:1px solid #ddd;display:block; text-align: center; padding: 5px 20px; margin-top: 2px;}
+.vertlist{padding: 0; margin:0; list-style: none;height: 129px;}
+.vertlist li{text-align: left;display: inline-block;width: 100%; padding-bottom: 0px;color: #000;}
+.vertlist li span{width:55%;float: right;}
+.barcodeimg{display: block;margin-top: 2px;text-align: center;}

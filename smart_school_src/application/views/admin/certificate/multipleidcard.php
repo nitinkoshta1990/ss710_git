@@ -6,7 +6,11 @@
         <meta http-equiv="X-UA-Compatible" content="" />
         <title>Smart School : School Management System by QDOCS</title>
         <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-        <meta name="theme-color" content="#424242" />       
+        <meta name="theme-color" content="#424242" />  
+        <link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/idcard.css">  
+		<?php if ($this->customlib->getRTL() != "") { ?>
+		<link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/idcard-rtl.css" />
+		<?php } ?>
     </head>
     <body>
         <table cellpadding="0" cellspacing="0" width="100%">
@@ -102,7 +106,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" align="right" class="principal"><img src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/signature.png') ?>" width="66" height="40" /></td>
+                                    <td valign="top" class="principal"><img src="<?php echo $this->media_storage->getImageURL('uploads/student_id_card/signature.png') ?>" width="66" height="40" /></td>
                                 </tr>
                             </table>
                         </td>

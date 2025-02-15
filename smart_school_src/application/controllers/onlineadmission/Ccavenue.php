@@ -36,7 +36,7 @@ class Ccavenue extends OnlineAdmission_Controller
             $details['tid']          = abs(crc32(uniqid()));
             $details['merchant_id']  = $this->pay_method->api_secret_key;
             $details['order_id']     = abs(crc32(uniqid()));
-            $details['amount']       = number_format(convertBaseAmountCurrencyFormat($this->amount));
+            $details['amount']       = number_format(convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount));
             $details['currency']     = $this->customlib->get_currencyShortName();
             $details['redirect_url'] = base_url('onlineadmission/ccavenue/success');
             $details['cancel_url']   = base_url('onlineadmission/ccavenue/cancel');
@@ -59,7 +59,7 @@ class Ccavenue extends OnlineAdmission_Controller
         
         $status     = array();
         $rcvdString = "";
-        $total_amount   = $this->amount;
+        $total_amount   = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $reference  = $this->session->userdata('reference');
         $online_data = $this->onlinestudent_model->getAdmissionData($reference);
  
@@ -97,6 +97,8 @@ class Ccavenue extends OnlineAdmission_Controller
                     $gateway_response['transaction_id'] = $tracking_id;
                     $gateway_response['payment_mode']   = 'ccavenue';
                     $gateway_response['payment_type']   = 'online';
+                    $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
                     $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_ccavenue_txn_id')  . $tracking_id . " Bank Ref. No.: " . $bank_ref_no;
                     $gateway_response['date']           = date("Y-m-d H:i:s");
                     $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

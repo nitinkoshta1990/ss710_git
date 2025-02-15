@@ -61,7 +61,6 @@ class Smsconfig extends Admin_Controller
 
     public function twilio()
     {
-
         $this->form_validation->set_error_delimiters('', '');
 
         $this->form_validation->set_rules('twilio_account_sid', $this->lang->line('twilio_account_sid'), 'required');
@@ -216,7 +215,6 @@ class Smsconfig extends Admin_Controller
                 'text_localpassword' => form_error('text_localpassword'),
                 'text_localsenderid' => form_error('text_localsenderid'),
                 'text_local_status'  => form_error('text_local_status'),
-
             );
 
             echo json_encode(array('st' => 1, 'msg' => $data));
@@ -247,7 +245,6 @@ class Smsconfig extends Admin_Controller
                 'bulk_sms_user_name'     => form_error('bulk_sms_user_name'),
                 'bulk_sms_user_password' => form_error('bulk_sms_user_password'),
                 'bulk_sms_status'        => form_error('bulk_sms_status'),
-
             );
 
             echo json_encode(array('st' => 1, 'msg' => $data));
@@ -282,7 +279,6 @@ class Smsconfig extends Admin_Controller
                 'mobireach_sender_id' => form_error('mobireach_sender_id'),
                 'mobireach_route_id'  => form_error('mobireach_route_id'),
                 'mobireach_status'    => form_error('mobireach_status'),
-
             );
 
             echo json_encode(array('st' => 1, 'msg' => $data));
@@ -317,7 +313,6 @@ class Smsconfig extends Admin_Controller
                 'nexmo_registered_phone_number' => form_error('nexmo_registered_phone_number'),
                 'nexmo_api_key'  => form_error('nexmo_api_key'),
                 'nexmo_status'    => form_error('nexmo_status'),
-
             );
 
             echo json_encode(array('st' => 1, 'msg' => $data));
@@ -350,7 +345,6 @@ class Smsconfig extends Admin_Controller
                 'africastalking_username'  => form_error('africastalking_username'),
                 'africastalking_apikey' => form_error('africastalking_apikey'),
                 'africastalking_status'    => form_error('africastalking_status'),
-
             );
 
             echo json_encode(array('st' => 1, 'msg' => $data));
@@ -390,7 +384,6 @@ class Smsconfig extends Admin_Controller
                 'smseg_sender_id'    => form_error('smseg_sender_id'),
                 'smseg_status'    => form_error('smseg_status'),
                 'smseg_type'    => form_error('smseg_type'),
-
             );
 
             echo json_encode(array('st' => 1, 'msg' => $data));

@@ -16,7 +16,7 @@
                         <form role="form" action="<?php echo site_url('admin/examresult') ?>" method="post" >
                             <?php echo $this->customlib->getCSRF(); ?>
                             <div class="row">
-                                <div class="col-sm-6 col-lg-3 col-md-3 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('exam_group'); ?></label><small class="req"> *</small>
                                         <select autofocus="" id="exam_group_id" name="exam_group_id" class="form-control select2" >
@@ -37,7 +37,7 @@ if (set_value('exam_group_id') == $ex_group_value->id) {
                                     </div>
                                 </div>
                                 <!--./col-md-3-->
-                                <div class="col-sm-6 col-lg-3 col-md-3 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('exam') ?></label><small class="req"> *</small>
                                         <select  id="exam_id" name="exam_id" class="form-control select2" >
@@ -47,7 +47,7 @@ if (set_value('exam_group_id') == $ex_group_value->id) {
                                     </div>
                                 </div>
                                 <!--./col-md-3-->
-                                <div class="col-sm-6 col-lg-3 col-md-3 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-4 col20">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('session'); ?></label><small class="req"> *</small>
                                         <select  id="session_id" name="session_id" class="form-control" >
@@ -68,7 +68,7 @@ if (set_value('session_id') == $session['id']) {
                                     </div>
                                 </div>
                                 <!--./col-md-3-->
-                                <div class="col-sm-6 col-lg-3 col-md-12 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-6 col20">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('class'); ?></label><small class="req"> *</small>
                                         <select id="class_id" name="class_id" class="form-control" >
@@ -88,7 +88,7 @@ if (set_value('class_id') == $class['id']) {
                                         <span class="text-danger"><?php echo form_error('class_id'); ?></span>
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-lg-3 col-md-12 col20">
+                                <div class="col-sm-6 col-lg-3 col-md-6 col20">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('section'); ?></label><small class="req"> *</small>
                                         <select  id="section_id" name="section_id" class="form-control" >

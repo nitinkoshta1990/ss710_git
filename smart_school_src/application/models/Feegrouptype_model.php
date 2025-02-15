@@ -187,7 +187,8 @@ class Feegrouptype_model extends MY_Model
             $this->db->trans_rollback();
             return false;
         } else {
-            return $id;
+           // return $id;
+		     return $record_id;
         }
 
     }
@@ -206,6 +207,31 @@ class Feegrouptype_model extends MY_Model
         $query                = $this->db->query($query);
         $fee_group_type_array = $query->result();
         return $fee_group_type_array;
+    }
+	
+	 public function remove_comulative_by_fee_groups_feetype_id($id)
+    {
+        $this->db->trans_start(); # Starting Transaction
+        $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
+        //=======================Code Start===========================
+
+        $this->db->where('fee_groups_feetype_id', $id);
+        $this->db->delete('cumulative_fine');
+
+        $message   = DELETE_RECORD_CONSTANT . " On Cumulative Fine id " . $id;
+        $action    = "Delete";
+        $record_id = $id;
+        $this->log($message, $record_id, $action);
+        //======================Code End==============================
+        $this->db->trans_complete(); # Completing transaction
+        /* Optional */
+        if ($this->db->trans_status() === false) {
+            # Something went wrong.
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            //return $return_value;
+        }
     }
 
 }

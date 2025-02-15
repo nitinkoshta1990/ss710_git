@@ -85,7 +85,7 @@ $count++;
                             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="fa fa-newspaper-o"></i> <?php echo $this->lang->line('details_view'); ?></a></li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane active table-responsive no-padding overflow-visible-lg" id="tab_1">
+                            <div class="tab-pane active table-responsive no-padding overflow-scroll-lg" id="tab_1">
                                 <table class="table table-striped table-bordered table-hover student-list" data-export-title="<?php echo $this->lang->line('student_list'); ?>">
                                     <thead>
                                         <tr>
@@ -98,26 +98,19 @@ $count++;
                                             <?php }?>
                                             <th><?php echo $this->lang->line('date_of_birth'); ?></th>
                                             <th><?php echo $this->lang->line('gender'); ?></th>
-                                            <?php if ($sch_setting->category) {
-    ?>
+                                            <?php if ($sch_setting->category) {  ?>
                                               <?php if ($sch_setting->category) {?>
                                             <th><?php echo $this->lang->line('category'); ?></th>
                                             <?php }
-}if ($sch_setting->mobile_no) {
-    ?>
+                                            }if ($sch_setting->mobile_no) {  ?>
                                             <th><?php echo $this->lang->line('mobile_number'); ?></th>
-                                            <?php
-}
-if (!empty($fields)) {
-
-    foreach ($fields as $fields_key => $fields_value) {
-        ?>
+                                            <?php }
+                                             if (!empty($fields)) {
+                                               foreach ($fields as $fields_key => $fields_value) {    ?>
                                                     <th><?php echo $fields_value->name; ?></th>
-                                                    <?php
-}
-}
-?>
-                                            <th class="text-right noExport"><?php echo $this->lang->line('action'); ?></th>
+                                            <?php }
+                                            } ?>
+                                            <th class="text-right noExport white-space-nowrap"><?php echo $this->lang->line('action'); ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>

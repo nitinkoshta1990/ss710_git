@@ -120,8 +120,8 @@
         }
         ?>
 
-        <div class="container spacet60">
-            <div class="row">
+        <div class="container spacet60 spaceb60">
+            <div class="row spacet60">
                 <?php
                 $page_colomn = "col-md-12 spacet60 pt-0-mobile";
                 if ($page_side_bar) {

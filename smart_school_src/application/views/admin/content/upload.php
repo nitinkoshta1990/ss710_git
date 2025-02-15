@@ -1,5 +1,4 @@
 <div class="content-wrapper">
-    <!-- Main content -->
     <section class="content">
         <div class="row">
             <div class="col-md-12">
@@ -49,11 +48,11 @@
         <img id="loader" src="<?php //echo base_url('backend/images/chatloading.gif'); ?>">
     </div> -->
     <div class="row">
-       <div class="col-md-9">
-                                <div class= "pagination-container"></div>
-        <div class= "pagination-nav"></div>
-                           </div>
-                            <div class="col-md-3">
+        <div class="col-sm-8 col-lg-9 col-md-9">
+            <div class= "pagination-container"></div>
+            <div class= "pagination-nav"></div>
+        </div>
+<div class="col-sm-4 col-lg-3 col-md-3">
     <div class="documents_sidebar">
         <div class="d-preview text-center p-2">
             <div class="d-preview-position">
@@ -88,15 +87,15 @@
             <form class="pt20" action="<?php echo site_url('admin/content/ajaxupdate'); ?>" method="POST" id="side_form">
                 <input type="hidden" name="id" value="">
               <div class="form-group row">
-                <label class="control-label col-sm-4 col-xs-4"><?php echo $this->lang->line('file_name'); ?> <small class="req"> *</small></label>
-                <div class="col-sm-8 col-xs-8">
+                <label class="control-label col-sm-12 col-xs-12 col-lg-12 col-md-12"><?php echo $this->lang->line('file_name'); ?> <small class="req">*</small></label>
+                <div class="col-sm-12 col-xs-12 col-lg-12 col-md-12">
                   <input type="text" class="form-control" value="" name="name">
                 </div>
               </div><!--./form-group-->
                <div class="form-group row">
-                <label class="control-label col-sm-4 col-xs-4"><?php echo $this->lang->line('content_type'); ?> <small class="req"> *</small></label>
-                <div class="col-sm-8 col-xs-8">
-                <select  id="content_type" name="content_type" class="form-control" >
+                <label class="control-label col-sm-12 col-xs-12 col-lg-12 col-md-12"><?php echo $this->lang->line('content_type'); ?> <small class="req">*</small></label>
+                <div class="col-sm-12 col-xs-12 col-lg-12 col-md-12">
+                <select  id="content_type" name="content_type" class="form-control">
                  <option value=""><?php echo $this->lang->line('select'); ?></option>
                   <?php
 foreach ($content_types as $content_type_key => $content_type_value) {

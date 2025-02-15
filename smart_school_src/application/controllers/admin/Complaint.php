@@ -46,9 +46,7 @@ class Complaint extends Admin_Controller
                 'note'           => $this->input->post('note'),
                 'image'          => $img_name,
             );
-
             $complaint_id = $this->complaint_Model->add($complaint);        
-
             $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('success_message') . '</div>');
             redirect('admin/complaint');
         }
@@ -87,7 +85,6 @@ class Complaint extends Admin_Controller
             );
            
             if (isset($_FILES["file"]) && $_FILES['file']['name'] != '' && (!empty($_FILES['file']['name']))) {
-
                 $img_name = $this->media_storage->fileupload("file", "./uploads/front_office/complaints/");
             } else {
                 $img_name = $data['complaint_data']['image'];
@@ -96,7 +93,6 @@ class Complaint extends Admin_Controller
             $complaint['image'] = $img_name;
 
             if (isset($_FILES["file"]) && $_FILES['file']['name'] != '' && (!empty($_FILES['file']['name']))) {
-
                 $this->media_storage->filedelete($data['complaint_data']['image'], "uploads/front_office/complaints/");
             }
 

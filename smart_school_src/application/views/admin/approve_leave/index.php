@@ -26,7 +26,7 @@
                             <?php } ?>
                             <?php echo $this->customlib->getCSRF(); ?>
                         </div>
-                        <div class="col-md-3 col-lg-3 col-sm-6">
+                        <div class="col-md-6 col-lg-3 col-sm-6">
                             <div class="form-group">
                                 <label><?php echo $this->lang->line('class'); ?></label><small class="req"> *</small>
                                 <select autofocus="" id="searchclassid" name="class_id" onchange="getSectionByClass(this.value)"  class="form-control" >
@@ -46,7 +46,7 @@
                                 <span class="class_id_error text-danger"><?php echo form_error('class_id'); ?></span>
                             </div>
                         </div>
-                        <div class="col-md-3 col-lg-3 col-sm-6">
+                        <div class="col-md-6 col-lg-3 col-sm-6">
                             <div class="form-group">
                                 <label><?php echo $this->lang->line('section'); ?></label><small class="req"> *</small>
                                 <select  id="secid" name="section_id" class="form-control" >

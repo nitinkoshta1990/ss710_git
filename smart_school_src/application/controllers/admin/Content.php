@@ -31,10 +31,10 @@ class Content extends Admin_Controller
         $content_types                  = $this->contenttype_model->get();
         $data['content_types']          = $content_types;
         $data['superadmin_restriction'] = $this->customlib->superadmin_visible();
+        $data['branch_url']             = $this->customlib->getBaseUrl();
         $this->load->view('layout/header');
         $this->load->view('admin/content/list', $data);
         $this->load->view('layout/footer');
-
     }
 
     public function upload()

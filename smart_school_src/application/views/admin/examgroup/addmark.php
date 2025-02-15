@@ -2,7 +2,7 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 ?>
-<div class="content-wrapper" style="min-height: 946px;">
+<div class="content-wrapper">
     <section class="content-header">
         <h1>
             <i class="fa fa-money"></i> <?php echo $this->lang->line('fees_collection'); ?></h1>

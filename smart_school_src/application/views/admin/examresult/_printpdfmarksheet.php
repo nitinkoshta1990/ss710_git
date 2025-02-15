@@ -1,7 +1,6 @@
  
  
 <?php 
-
 if (empty($marksheet)) {
     ?>
     <div class="alert alter-info">
@@ -40,7 +39,13 @@ $student_value=$marksheet['student'];
                             <table cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td valign="top" style="font-size: 20px; font-weight: bold; text-align: center;">
-                                    <?php echo $template->exam_name; ?></td>
+                                    <?php 
+                                    if(!empty($template->exam_name)){
+                                        echo $template->exam_name; 
+                                    }else{
+                                        echo $exam->exam;
+                                    }
+                                    ?></td>
                                 </tr>
                                   <tr><td valign="top" height="5"></td></tr>
                                 
@@ -121,7 +126,7 @@ $student_value=$marksheet['student'];
                                             if ($template->is_photo) {
 if ($student_value['image'] != '') { 
     ?>
-    <img src="<?php echo $this->media_storage->getImageURL($student_value['image']); ?>"  width="120" height="150"  >
+    <img src="<?php echo $this->media_storage->getImageURL($student_value['image']); ?>"  width="120" height="150">
                                                     <?php 
                                                 }
                                                
@@ -644,7 +649,13 @@ if ($marksheet['exam_connection'] == 1) {
                             <table cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td valign="top" style="font-size: 20px; font-weight: bold; text-align: center;">
-                                    <?php echo $template->exam_name; ?></td>
+                                    <?php 
+                                    if(!empty($template->exam_name)){
+                                        echo $template->exam_name; 
+                                    }else{
+                                        echo $exam->exam;
+                                    }
+                                    ?></td>
                                 </tr>                              
                                 
                                  <?php

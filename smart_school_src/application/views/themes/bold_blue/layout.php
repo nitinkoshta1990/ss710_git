@@ -101,7 +101,7 @@ echo date('d', strtotime($banner_notice_value['date'])) . " " . $this->lang->lin
 }
 ?>
 
-        <div class="container">
+        <div class="container spacet50 spaceb50">
             <div class="row">
                 <?php
 $page_colomn = "col-md-12";

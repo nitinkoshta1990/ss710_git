@@ -230,14 +230,15 @@ class Mailsms extends Admin_Controller
 
     public function send_individual()
     {
-        $send_type = $this->input->post('individual_send_type');
+       
         $this->form_validation->set_error_delimiters('');
         $this->form_validation->set_rules('individual_title', $this->lang->line('title'), 'required');
         $this->form_validation->set_rules('individual_message', $this->lang->line('message'), 'required');
         $this->form_validation->set_rules('user_list', $this->lang->line('recipient'), 'required');
         $this->form_validation->set_rules('individual_send_by', $this->lang->line('send_through'), 'required');
         $this->form_validation->set_rules('files', $this->lang->line('file'), 'callback_multihandle_upload[files]');
-        if ($send_type == 'individual_schedule') {
+		  $send_type = $this->input->post('individual_send_type'); 
+        if ($send_type == 'schedule') {  
             $this->form_validation->set_rules('schedule_date_time', $this->lang->line('schedule_date_time'), 'required');
         }
         if ($this->form_validation->run()) {
@@ -990,8 +991,8 @@ class Mailsms extends Admin_Controller
         }
     }
 
-    public function send_class_sms()
-    {
+    public function send_class_sms(){
+
         $send_type = $this->input->post('class_send_type');
         $this->form_validation->set_error_delimiters('');
         $this->form_validation->set_rules('class_title', $this->lang->line('title'), 'required');
@@ -1002,6 +1003,8 @@ class Mailsms extends Admin_Controller
         if ($send_type == 'schedule') {
             $this->form_validation->set_rules('schedule_date_time', $this->lang->line('schedule_date_time'), 'required');
         }
+		$this->form_validation->set_rules('send_to[]', $this->lang->line('send_to'), 'required');
+		
         $template_id = $this->input->post('class_template_id');
         if ($this->form_validation->run()) {
 
@@ -1010,20 +1013,42 @@ class Mailsms extends Admin_Controller
             $message_title = $this->input->post('class_title');
             $section       = $this->input->post('user[]');
             $class_id      = $this->input->post('class_id');
+            $send_to       = $this->input->post('send_to[]');
 
             $user_array = array();
-            foreach ($section as $section_key => $section_value) {
-                $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
-                if (!empty($userlisting)) {
-                    foreach ($userlisting as $userlisting_key => $userlisting_value) {
-                        $array = array(
-                            'user_id'  => $userlisting_value['id'],
-                            'email'    => $userlisting_value['email'],
-                            'mobileno' => $userlisting_value['mobileno'],
-                            'app_key'  => $userlisting_value['app_key'],
-                            'role'  => 'student',
-                        );
-                        $user_array[] = $array;
+            foreach($send_to as $key=>$value){
+                if($value=='student'){
+                    foreach ($section as $section_key => $section_value) {
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if (!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                'user_id'  => $userlisting_value['id'],
+                                'email'    => $userlisting_value['email'],
+                                'mobileno' => $userlisting_value['mobileno'],
+                                'app_key'  => $userlisting_value['app_key'],
+                                'role'     => 'student',
+                            );
+                            $user_array[] = $array;
+                            }
+                        }
+                    }
+                }
+                if($value=='parent'){
+                    foreach ($section as $section_key => $section_value) {
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if (!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                'user_id'   => $userlisting_value['id'],
+                                'email'     => $userlisting_value['guardian_email'],
+                                'mobileno'  => $userlisting_value['guardian_phone'],
+                                'app_key'   => $userlisting_value['parent_app_key'],
+                                'role'      => 'parent',
+                            );
+                            $user_array[] = $array;
+                            }
+                        }
                     }
                 }
             }
@@ -1041,6 +1066,7 @@ class Mailsms extends Admin_Controller
                 'send_mail'        => 0,
                 'send_sms'         => 1,
                 'user_list'        => json_encode($user_array),
+                'send_to'          => json_encode($send_to),
                 'created_at'       => date('Y-m-d H:i:s'),
             );
 
@@ -1078,13 +1104,13 @@ class Mailsms extends Admin_Controller
                 echo json_encode(array('status' => 0, 'msg' => $this->lang->line('schedule_message_successfully')));
             }
         } else {
-
             $data = array(
                 'class_title'     => form_error('class_title'),
                 'class_send_by[]' => form_error('class_send_by[]'),
                 'class_message'   => form_error('class_message'),
                 'class_id'        => form_error('class_id'),
                 'user[]'          => form_error('user[]'),
+                'send_to[]'       => form_error('send_to[]'),
             );
             if ($send_type == 'schedule') {
                 $data['schedule_date_time'] = form_error('schedule_date_time');
@@ -1093,8 +1119,8 @@ class Mailsms extends Admin_Controller
         }
     }
 
-    public function send_class()
-    {
+   public function send_class(){
+
         $send_type = $this->input->post('class_send_type');
         $this->form_validation->set_error_delimiters('');
         $this->form_validation->set_rules('class_title', $this->lang->line('title'), 'required');
@@ -1103,12 +1129,15 @@ class Mailsms extends Admin_Controller
         $this->form_validation->set_rules('user[]', $this->lang->line('section'), 'required');
         $this->form_validation->set_rules('class_send_by', $this->lang->line('send_through'), 'required');
         $this->form_validation->set_rules('files', $this->lang->line('file'), 'callback_multihandle_upload[files]');
-        if ($send_type == 'class_schedule') {
+        if ($send_type == 'schedule') {
             $this->form_validation->set_rules('schedule_date_time', $this->lang->line('schedule_date_time'), 'required');
         }
+		$this->form_validation->set_rules('send_to[]', $this->lang->line('send_to'), 'required');
         if ($this->form_validation->run()) {
 
             $sms_mail = $this->input->post('class_send_by');
+            $send_to  = $this->input->post('send_to[]');
+
             if ($sms_mail == "sms") {
                 $send_sms  = 1;
                 $send_mail = 0;
@@ -1120,19 +1149,40 @@ class Mailsms extends Admin_Controller
             $message_title = $this->input->post('class_title');
             $section       = $this->input->post('user[]');
             $class_id      = $this->input->post('class_id');
+            $user_array    = array();
 
-            $user_array = array();
-            foreach ($section as $section_key => $section_value) {
-                $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
-                if (!empty($userlisting)) {
-                    foreach ($userlisting as $userlisting_key => $userlisting_value) {
-                        $array = array(
-                            'user_id'  => $userlisting_value['id'],
-                            'email'    => $userlisting_value['email'],
-                            'mobileno' => $userlisting_value['mobileno'],
-                            'mobileno' => 'student',
-                        );
-                        $user_array[] = $array;
+            foreach($send_to as $key=>$value){
+                if($value=='student'){
+                    foreach ($section as $section_key => $section_value){
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if(!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                    'user_id'  => $userlisting_value['id'],
+                                    'email'    => $userlisting_value['email'],
+                                    'mobileno' => $userlisting_value['mobileno'],
+                                    'role'     => 'student',
+                                );
+                                $user_array[] = $array;
+                            }
+                        }
+                    }
+                }
+
+                if($value=='parent'){
+                    foreach ($section as $section_key => $section_value){
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if (!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                    'user_id'  => $userlisting_value['id'],
+                                    'email'    => $userlisting_value['guardian_email'],
+                                    'mobileno' => $userlisting_value['guardian_phone'],
+                                    'role'     => 'parent',
+                                );
+                                $user_array[] = $array;
+                            }
+                        }
                     }
                 }
             }
@@ -1147,6 +1197,7 @@ class Mailsms extends Admin_Controller
                 'schedule_class'    => $class_id,
                 'schedule_section'  => json_encode($section),
                 'user_list'         => json_encode($user_array),
+                'send_to'           => json_encode($send_to),
                 'created_at'        => date('Y-m-d H:i:s'),
             );
 
@@ -1238,6 +1289,7 @@ class Mailsms extends Admin_Controller
                 'class_send_by' => form_error('class_send_by'),
                 'user[]'        => form_error('user[]'),
                 'files'         => form_error('files'),
+                'send_to'       => form_error('send_to[]'),
             );
             if ($send_type == 'schedule') {
                 $data['schedule_date_time'] = form_error('schedule_date_time');
@@ -1957,6 +2009,7 @@ class Mailsms extends Admin_Controller
                 } elseif ($messagelist['is_class'] == '1') {
                     $data['classlist']        = $this->class_model->get();
                     $data['selected_section'] = $messagelist['schedule_section'];
+                    $data['send_to']          = $messagelist['send_to'];
 
                     $this->load->view('layout/header');
                     $this->load->view('admin/mailsms/schedule/email/edit_email_class', $data);
@@ -1996,7 +2049,11 @@ class Mailsms extends Admin_Controller
                     $this->load->view('layout/footer');
                 } elseif ($messagelist['is_class'] == '1') {
                     $data['classlist']             = $this->class_model->get();
+
                     $data['selected_section']      = $messagelist['schedule_section'];
+                    $data['send_to']               = $messagelist['send_to'];
+
+
                     $data['selected_send_through'] = json_decode($messagelist['send_through']);
                     $data['send_through_list']     = $this->send_through;
 
@@ -2271,8 +2328,8 @@ class Mailsms extends Admin_Controller
         $this->form_validation->set_rules('class_id', $this->lang->line('class'), 'required');
         $this->form_validation->set_rules('user[]', $this->lang->line('section'), 'required');
         $this->form_validation->set_rules('files', $this->lang->line('file'), 'callback_multihandle_upload[files]');
-
         $this->form_validation->set_rules('schedule_date_time', $this->lang->line('schedule_date_time'), 'required');
+        $this->form_validation->set_rules('send_to[]', $this->lang->line('send_to'), 'required');
 
         if ($this->form_validation->run()) {
 
@@ -2280,19 +2337,40 @@ class Mailsms extends Admin_Controller
             $message_title = $this->input->post('class_title');
             $section       = $this->input->post('user[]');
             $class_id      = $this->input->post('class_id');
+            $send_to       = $this->input->post('send_to[]');
 
             $user_array = array();
-            foreach ($section as $section_key => $section_value) {
-                $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
-                if (!empty($userlisting)) {
-                    foreach ($userlisting as $userlisting_key => $userlisting_value) {
-                        $array = array(
-                            'user_id'  => $userlisting_value['id'],
-                            'email'    => $userlisting_value['email'],
-                            'mobileno' => $userlisting_value['mobileno'],
-                            'role'=>'student'
-                        );
-                        $user_array[] = $array;
+            foreach($send_to as $key=>$value){
+                if($value=='student'){
+                    foreach ($section as $section_key => $section_value) {
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if (!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                'user_id'  => $userlisting_value['id'],
+                                'email'    => $userlisting_value['email'],
+                                'mobileno' => $userlisting_value['mobileno'],
+                                'role'     => 'student',
+                            );
+                            $user_array[] = $array;
+                            }
+                        }
+                    }
+                }
+                if($value=='parent'){
+                    foreach ($section as $section_key => $section_value) {
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if (!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                'user_id'   => $userlisting_value['id'],
+                                'email'     => $userlisting_value['guardian_email'],
+                                'mobileno'  => $userlisting_value['guardian_phone'],
+                                'role'      => 'parent',
+                            );
+                            $user_array[] = $array;
+                            }
+                        }
                     }
                 }
             }
@@ -2305,6 +2383,7 @@ class Mailsms extends Admin_Controller
                 'schedule_class'    => $class_id,
                 'schedule_section'  => json_encode($section),
                 'user_list'         => json_encode($user_array),
+                'send_to'           => json_encode($send_to),
                 'created_at'        => date('Y-m-d H:i:s'),
                 'sent'              => 0,
             );
@@ -2373,6 +2452,7 @@ class Mailsms extends Admin_Controller
                 'class_message' => form_error('class_message'),
                 'class_id'      => form_error('class_id'),
                 'user[]'        => form_error('user[]'),
+                'send_to[]'     => form_error('send_to[]'),
                 'files'         => form_error('files'),
             );
 
@@ -2546,6 +2626,7 @@ class Mailsms extends Admin_Controller
         $this->form_validation->set_rules('user[]', $this->lang->line('recipient'), 'required');
         $this->form_validation->set_rules('class_send_by[]', $this->lang->line('send_through'), 'required');
         $this->form_validation->set_rules('schedule_date_time', $this->lang->line('schedule_date_time'), 'required');
+        $this->form_validation->set_rules('send_to[]', $this->lang->line('send_to'), 'required');
 
         $template_id = $this->input->post('class_template_id');
         if ($this->form_validation->run()) {
@@ -2555,20 +2636,42 @@ class Mailsms extends Admin_Controller
             $message_title = $this->input->post('class_title');
             $section       = $this->input->post('user[]');
             $class_id      = $this->input->post('class_id');
+            $send_to      = $this->input->post('send_to[]');
 
             $user_array = array();
-            foreach ($section as $section_key => $section_value) {
-                $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
-                if (!empty($userlisting)) {
-                    foreach ($userlisting as $userlisting_key => $userlisting_value) {
-                        $array = array(
-                            'user_id'  => $userlisting_value['id'],
-                            'email'    => $userlisting_value['email'],
-                            'mobileno' => $userlisting_value['mobileno'],
-                            'app_key'  => $userlisting_value['app_key'],
-                            'role'=>'student'
-                        );
-                        $user_array[] = $array;
+            foreach($send_to as $key=>$value){
+                if($value=='student'){
+                    foreach ($section as $section_key => $section_value) {
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if (!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                'user_id'  => $userlisting_value['id'],
+                                'email'    => $userlisting_value['email'],
+                                'mobileno' => $userlisting_value['mobileno'],
+                                'app_key'  => $userlisting_value['app_key'],
+                                'role'     => 'student',
+                            );
+                            $user_array[] = $array;
+                            }
+                        }
+                    }
+                }
+                if($value=='parent'){
+                    foreach ($section as $section_key => $section_value) {
+                        $userlisting = $this->student_model->searchByClassSection($class_id, $section_value);
+                        if (!empty($userlisting)) {
+                            foreach ($userlisting as $userlisting_key => $userlisting_value) {
+                                $array = array(
+                                'user_id'   => $userlisting_value['id'],
+                                'email'     => $userlisting_value['guardian_email'],
+                                'mobileno'  => $userlisting_value['guardian_phone'],
+                                'app_key'   => $userlisting_value['parent_app_key'],
+                                'role'      => 'parent',
+                            );
+                            $user_array[] = $array;
+                            }
+                        }
                     }
                 }
             }
@@ -2584,6 +2687,7 @@ class Mailsms extends Admin_Controller
                 'schedule_class'   => $class_id,
                 'schedule_section' => json_encode($section),
                 'user_list'        => json_encode($user_array),
+                'send_to'          => json_encode($send_to),
                 'created_at'       => date('Y-m-d H:i:s'),
                 'sent'             => 0,
             );
@@ -2601,6 +2705,7 @@ class Mailsms extends Admin_Controller
                 'class_message'   => form_error('class_message'),
                 'class_id'        => form_error('class_id'),
                 'user[]'          => form_error('user[]'),
+                'send_to[]'       => form_error('send_to[]'),
             );
 
             $data['schedule_date_time'] = form_error('schedule_date_time');

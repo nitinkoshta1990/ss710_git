@@ -160,7 +160,6 @@ class Book extends Admin_Controller
 
     public function getAvailQuantity()
     {
-
         $book_id   = $this->input->post('book_id');
         $available = 0;
         if ($book_id != "") {
@@ -191,6 +190,13 @@ class Book extends Admin_Controller
                     $rowcount = 0;
                     if (!empty($result)) {
                         foreach ($result as $r_key => $r_value) {
+							
+							if($this->encoding_lib->toUTF8($result[$r_key]['perunitcost'])){
+								$perunitcost = convertCurrencyFormatToBaseAmount($this->encoding_lib->toUTF8($result[$r_key]['perunitcost']));
+							}else{
+								$perunitcost = 0;
+							}
+							
                             $result[$r_key]['book_title']  = $this->encoding_lib->toUTF8($result[$r_key]['book_title']);
                             $result[$r_key]['book_no']     = $this->encoding_lib->toUTF8($result[$r_key]['book_no']);
                             $result[$r_key]['isbn_no']     = $this->encoding_lib->toUTF8($result[$r_key]['isbn_no']);
@@ -199,7 +205,7 @@ class Book extends Admin_Controller
                             $result[$r_key]['publish']     = $this->encoding_lib->toUTF8($result[$r_key]['publish']);
                             $result[$r_key]['author']      = $this->encoding_lib->toUTF8($result[$r_key]['author']);
                             $result[$r_key]['qty']         = $this->encoding_lib->toUTF8($result[$r_key]['qty']);
-                            $result[$r_key]['perunitcost'] = convertCurrencyFormatToBaseAmount($this->encoding_lib->toUTF8($result[$r_key]['perunitcost']));
+                            $result[$r_key]['perunitcost'] = $perunitcost;
                             $result[$r_key]['postdate']    = $this->encoding_lib->toUTF8($result[$r_key]['postdate']);
                             $result[$r_key]['description'] = $this->encoding_lib->toUTF8($result[$r_key]['description']);
                             $rowcount++;
@@ -223,7 +229,6 @@ class Book extends Admin_Controller
 
     public function import_new()
     {
-
         if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
             $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
             if ($ext == 'csv') {
@@ -333,9 +338,7 @@ class Book extends Admin_Controller
         $this->session->set_userdata('subsub_menu', 'Reports/library/issue_returnreport');
         $data['title']        = 'Add Teacher';
         $teacher_result       = $this->teacher_model->getLibraryTeacher();
-        $data['searchlist']   = $this->customlib->get_searchtype();
-        // $issued_books         = $this->bookissue_model->getissuereturnMemberBooks();
-        // $data['issued_books'] = $issued_books;
+        $data['searchlist']   = $this->customlib->get_searchtype();        
         $this->load->view('layout/header', $data);
         $this->load->view('admin/book/issue_returnreport', $data);
         $this->load->view('layout/footer', $data);
@@ -434,27 +437,19 @@ class Book extends Admin_Controller
                 $row[] = date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value->return_date));
                 $row[] = $value->members_id;
                 $row[] = $value->library_card_no;
-
                 
                 if ($value->admission) {
-                    $admission = ' (' . $value->admission . ')';
-                    
+                    $admission = ' (' . $value->admission . ')';                    
                 } else {
-                    $admission = '';
-                    
-                }
-
-              
+                    $admission = '';                    
+                }              
                 
-                $row[] = $this->customlib->getFullName($value->fname, $value->mname, $value->lname, $sch_setting->middlename, $sch_setting->lastname) . $admission;
-                
+                $row[] = $this->customlib->getFullName($value->fname, $value->mname, $value->lname, $sch_setting->middlename, $sch_setting->lastname) . $admission;               
                 
                 $row[] = $this->lang->line($value->member_type);
 
                 $dt_data[] = $row;
-
             }
-
         }
         $json_data = array(
             "draw"            => intval($resultlist->draw),

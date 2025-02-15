@@ -53,7 +53,9 @@ class Stripe extends Studentgateway_Controller
                     $json_array = array(
                         'amount'          => $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+                        'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_strip_txn_id') . $transactionid,
                         'received_by'     => '',
@@ -72,7 +74,8 @@ class Stripe extends Studentgateway_Controller
                     //========
                 }
                 $send_to  = $params['guardian_phone'];
-                $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                //$response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                 //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();

@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class source_model extends MY_Model {
+class Source_model extends MY_Model {
 
     public function __construct() {
         parent::__construct();

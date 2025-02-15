@@ -32,11 +32,25 @@
                                             <td><?php echo $exam->exam; ?></td>
                                             <td><?php echo $exam->description; ?></td>
                                             <td class="pull-right">
-                                                <a  class="btn btn-primary btn-xs schedule_modal" data-toggle="tooltip" title="" data-examname="<?php echo $exam->exam; ?>" data-examid="<?php echo $exam->exam_group_class_batch_exam_id; ?>" >
+                                             <form method="post" action="<?php echo base_url('user/examschedule/printCard') ?>" id="printCard">
+                                                    <a  class="btn btn-primary btn-xs schedule_modal pull-right" data-toggle="tooltip" title="" data-examname="<?php echo $exam->exam; ?>" data-examid="<?php echo $exam->exam_group_class_batch_exam_id; ?>" >
                                                     <i class="fa fa-eye"></i> <?php echo $this->lang->line('view'); ?>
-                                                </a>
+                                                    </a>
+                                                    <input type="hidden" name="admitcard_template" value="<?php echo $get_active_admitcard->id; ?>">
+                                                    <input type="hidden" name="post_exam_id" value="<?php echo $exam->exam_group_class_batch_exam_id; ?>">
+                                                    <input type="hidden" name="post_exam_group_id" value="<?php echo $exam->exam_group_id; ?>">
+                                                    <input type="hidden" class="form-control"  name="exam_group_class_batch_exam_student_id[]" 
+                                                    value="<?php echo $student_id; ?>">
+                                                    <?php  if($sch_setting->download_admit_card==1){ ?>
+                                                    <button type="submit" class="btn btn-primary btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
+                                                    <i class="fa fa-download"></i>
+                                                    </button> 
+                                                    <?php } ?>
+
+                                                </form>
                                             </td>
                                         </tr>
+
                                         <?php
 $count++;
     }
@@ -60,7 +74,7 @@ $count++;
                 <div class="box-tools pull-right">
                      <div class="dt-buttons btn-group btn-group2 pt5">
                     
-                        <a class="dt-button btn btn-default btn-xs no_print" data-toggle="tooltip"  title="<?php echo $this->lang->line('print'); ?>" id="print" onclick="printDiv()" ><i class="fa fa-print"></i></a>
+                        <a class="dt-button btn btn-default btn-xs no_print" data-toggle="tooltip" data-placement="bottom" title="<?php echo $this->lang->line('print'); ?>" id="print" onclick="printDiv()" ><i class="fa fa-print"></i></a>
                      
                      </div>
                   </div>
@@ -130,4 +144,74 @@ $count++;
             }
         });
     });
+</script>
+
+
+<script>
+    $(document).on('submit', 'form#printCard', function (e) {
+        e.preventDefault();
+        var form = $(this);
+        var subsubmit_button = $(this).find(':submit');
+        var formdata = form.serializeArray();
+
+        $.ajax({
+            type: "POST",
+            url: form.attr('action'),
+            data: formdata, // serializes the form's elements.
+            dataType: "JSON", // serializes the form's elements.
+            beforeSend: function () {
+                subsubmit_button.button('loading');
+            },
+            success: function (response)
+            {
+                Popup(response.page);
+
+            },
+            error: function (xhr) { // if error occured
+
+                alert("<?php echo $this->lang->line('error_occurred_please_try_again'); ?>");
+                subsubmit_button.button('reset');
+            },
+            complete: function () {
+                subsubmit_button.button('reset');
+            }
+        });
+    });
+
+    var base_url = '<?php echo base_url() ?>';
+    function Popup(data, winload = false)
+    {
+        var frameDoc=window.open('', 'Print-Window');
+        frameDoc.document.open();
+        //Create a new HTML document.
+        frameDoc.document.write('<html>');
+        frameDoc.document.write('<head>');
+        frameDoc.document.write('<title></title>');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/bootstrap/css/bootstrap.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/font-awesome.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/ionicons.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/AdminLTE.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/dist/css/skins/_all-skins.min.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/iCheck/flat/blue.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/morris/morris.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/jvectormap/jquery-jvectormap-1.2.2.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/datepicker/datepicker3.css">');
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'backend/plugins/daterangepicker/daterangepicker-bs3.css">');
+        frameDoc.document.write('</head>');
+        frameDoc.document.write('<body onload="window.print()">');
+        frameDoc.document.write(data);
+        frameDoc.document.write('</body>');
+        frameDoc.document.write('</html>');
+        frameDoc.document.close();
+        setTimeout(function () {
+            frameDoc.close();      
+            if (winload) {
+                window.location.reload(true);
+            }
+        }, 5000);
+
+        return true;
+    }
+
+    
 </script>

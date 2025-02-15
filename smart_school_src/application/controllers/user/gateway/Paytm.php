@@ -29,7 +29,7 @@ class Paytm extends Studentgateway_Controller {
         $student_id = $params['student_id'];
         $total = $params['total'];
         $data['student_id'] = $student_id;
-        $amount=number_format((float)($params['fine_amount_balance']+$params['total']), 2, '.', '');
+        $amount=number_format((float)($params['fine_amount_balance']+$params['total'] - $params['applied_fee_discount']+ $params['gateway_processing_charge']), 2, '.', '');
         $data['total'] = $amount;
         $data['symbol'] = $params['invoice']->symbol;
         $data['currency_name'] = $params['invoice']->currency_name;
@@ -54,8 +54,8 @@ class Paytm extends Studentgateway_Controller {
  
         $paytmChecksum = $this->paytm_lib->getChecksumFromArray($paytmParams, $this->api_config->api_secret_key);
         $paytmParams["CHECKSUMHASH"] = $paytmChecksum;
-        //$transactionURL              = 'https://securegw-stage.paytm.in/order/process';//for sand-box
-        $transactionURL              = 'https://securegw.paytm.in/order/process';// for live
+        $transactionURL              = 'https://securegw-stage.paytm.in/order/process';//for sand-box
+        // $transactionURL              = 'https://securegw.paytm.in/order/process';// for live
         $data['paytmParams'] = $paytmParams;
         $data['transactionURL'] = $transactionURL;
 
@@ -72,10 +72,7 @@ class Paytm extends Studentgateway_Controller {
         
         $paytmChecksum = isset($_POST["CHECKSUMHASH"]) ? $_POST["CHECKSUMHASH"] : "";
 
-
-
         $isValidChecksum = $this->paytm_lib->verifychecksum_e($paramList, $this->api_config->api_secret_key, $paytmChecksum);
-
 
         if ($isValidChecksum == "TRUE") {
 
@@ -84,14 +81,16 @@ class Paytm extends Studentgateway_Controller {
                 $params = $this->session->userdata('params');
                 $ref_id = $_POST['TXNID'];
                 $bulk_fees=array();
-                    $params     = $this->session->userdata('params');
+                    // $params     = $this->session->userdata('params');
                  
                     foreach ($params['student_fees_master_array'] as $fee_key => $fee_value) {
                    
                      $json_array = array(
                         'amount'          =>  $fee_value['amount_balance'],
                         'date'            => date('Y-m-d'),
-                        'amount_discount' => 0,
+                        'amount_discount' => $fee_value['applied_fee_discount'],
+						'processing_charge_type'=>$params['processing_charge_type'],
+                        'gateway_processing_charge'=>$params['gateway_processing_charge'],
                         'amount_fine'     => $fee_value['fine_balance'],
                         'description'     => $this->lang->line('online_fees_deposit_through_paytm_txn_id') . $ref_id,
                         'received_by'     => '',
@@ -109,7 +108,7 @@ class Paytm extends Studentgateway_Controller {
                     //========
                     }
                     $send_to     = $params['guardian_phone'];
-                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $send_to);
+                    $response = $this->studentfeemaster_model->fee_deposit_bulk($bulk_fees, $params['fee_discount_group']);
                      //========================
                 $student_id            = $this->customlib->getStudentSessionUserID();
                 $student_current_class = $this->customlib->getStudentCurrentClsSection();
@@ -137,7 +136,6 @@ class Paytm extends Studentgateway_Controller {
                             'fee_category' => $fee_category,
                         );
 
-
                         if ($response_value['student_transport_fee_id'] != 0 && $response_value['fee_category'] == "transport") {
 
                             $data['student_fees_master_id']   = null;
@@ -153,8 +151,6 @@ class Paytm extends Studentgateway_Controller {
                             $fine_percentage[] = $mailsms_array->fine_percentage;
                             $fine_amount[]     = $mailsms_array->fine_amount;
                             $amount[]          = $mailsms_array->amount;
-
-
 
                         } else {
 
@@ -195,7 +191,6 @@ class Paytm extends Studentgateway_Controller {
                     $obj_mail['code']            = "(".implode(',', $code).")";
                     $obj_mail['fee_category']    = $fee_category;
                     $obj_mail['send_type']    = 'group';
-
 
                     $this->mailsmsconf->mailsms('fee_submission', $obj_mail);
 

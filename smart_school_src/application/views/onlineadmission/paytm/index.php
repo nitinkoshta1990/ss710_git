@@ -63,6 +63,15 @@
                                                 <span class="title"><?php echo $this->lang->line('online_admission_form_fees'); ?></span></td>
                                             <td class="text-right"><?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($amount); ?></td>
                                         </tr>
+                                         <?php
+                                        if($this->customlib->getGatewayProcessingFees($amount)>0){
+                                            ?>
+                                             <tr class="bordertoplightgray">
+                                        <td colspan="2" class="text-right"><?php echo $this->lang->line('processing_fees');?>: <?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($this->customlib->getGatewayProcessingFees($amount)); ?></td>
+                                    </tr>
+                                            <?php
+                                        }
+                                        ?>
                                     <tr class="bordertoplightgray">
                                         <td colspan="2" class="text-right"><?php echo $this->lang->line('total');?>: <?php echo $this->customlib->getSchoolCurrencyFormat() . amountFormat($amount); ?></td>
                                     </tr>

@@ -19,6 +19,28 @@
                                 <h4 class="pagetitleh2"><?php echo $this->lang->line('basic_information'); ?> </h4>
 
                                 <div class="around10">
+									
+									<?php 
+										$errors = [];
+										if (form_error('validate_staff')) {
+											$errors[] = form_error('validate_staff');
+										}
+										if (form_error('validate_storage')) {
+											$errors[] = form_error('validate_storage');
+										}
+		
+										if (!empty($errors)): ?>
+											<div class="alert alert-danger">
+												<ol>
+													<?php foreach ($errors as $error): ?>
+														<li><?php echo $error; ?></li>
+													<?php endforeach; ?>
+												</ol>
+											</div>
+										<?php endif;
+                                
+									?>
+
 
                                     <?php if ($this->session->flashdata('msg')) {
     ?>

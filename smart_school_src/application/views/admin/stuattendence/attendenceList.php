@@ -117,10 +117,10 @@
         .radio.radio-inline {
             display: inherit;
         }
-    }
+    }    
 </style>
 
-<div class="content-wrapper" style="min-height: 946px;">
+<div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
@@ -213,6 +213,8 @@
                                     ?>
                                     <form action="<?php echo site_url('admin/stuattendence/index') ?>" method="post" class="form_attendence">
                                         <?php echo $this->customlib->getCSRF(); ?>
+                                        <input type="hidden" name="is_first_time_attendance" value="<?php echo $is_first_time_attendance;?>"/>
+
                                         <div class="mailbox-controls">
                                             <div class="row">
                                                 <div class="col-md-6">                            
@@ -226,7 +228,7 @@
 
                                                         ?>
                                                             <div class="radio radio-info radio-inline">
-                                                                <input type="radio" name="attendencetype" class="default_radio" value="radio_<?php echo $type['id'] ?>" id="attendencetype<?php echo $type['id'] ?>">
+                                                                <input type="radio"  data-record_id="<?php echo $type['id'] ?>"  name="attendencetype" class="default_radio" value="radio_<?php echo $type['id'] ?>" id="attendencetype<?php echo $type['id'] ?>">
                                                                 <label for="attendencetype<?php echo $type['id'] ?>">
                                                                     <?php echo $this->lang->line($att_type); ?>
                                                                 </label>
@@ -258,8 +260,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                         </div>
                                         <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
                                         <input type="hidden" name="section_id" value="<?php echo $section_id; ?>">
@@ -269,11 +269,9 @@
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th><?php echo $this->lang->line('admission_no'); ?></th>
-                                                       
+                                                        <th><?php echo $this->lang->line('admission_no'); ?></th>                                                       
                                                         <th><?php echo $this->lang->line('roll_number'); ?></th>
-                                                        <th><?php echo $this->lang->line('name'); ?></th>
-                                                      
+                                                        <th><?php echo $this->lang->line('name'); ?></th>                                                      
                                                         <th width="30%"><?php echo $this->lang->line('attendance'); ?></th>
                                                         <?php
                                                         if ($sch_setting->biometric) {
@@ -283,6 +281,8 @@
                                                         }
                                                         ?>
                                                         <th width="10%"><?php echo $this->lang->line('source'); ?></th>
+                                                        <th width="10%"><?php echo $this->lang->line('entry_time'); ?></th>
+                                                        <th width="10%"><?php echo $this->lang->line('exit_time'); ?></th>
                                                         <th class="noteinput"><?php echo $this->lang->line('note'); ?></th>
                                                     </tr>
                                                 </thead>
@@ -300,7 +300,6 @@
                                                             <td>
                                                                 <?php echo $value['admission_no']; ?>
                                                             </td>
-                                                       
                                                             <td>
                                                                 <?php echo $value['roll_no']; ?>
                                                             </td>
@@ -308,8 +307,6 @@
                                                                 <?php
                                                                 echo $this->customlib->getFullName($value['firstname'], $value['middlename'], $value['lastname'], $sch_setting->middlename, $sch_setting->lastname); ?>
                                                             </td>
-                                                                 
-                                                      
                                                             <td>
                                                                 <?php
                                                                 $c     = 1;
@@ -320,7 +317,7 @@
                                                                     if ($value['date'] != "xxx") {
                                                                 ?>
                                                                         <div class="radio radio-info radio-inline">
-                                                                            <input <?php if ($value['attendence_type_id'] == $type['id']) {
+                                                                            <input onclick="disable_enable(this.value,<?php echo $value["student_session_id"] ?>)" <?php if ($value['attendence_type_id'] == $type['id']) {
                                                                                         echo "checked";
                                                                                     }
                                                                                     ?> type="radio" id="attendencetype<?php echo $value['student_session_id'] . "-" . $count; ?>" value="<?php echo $type['id'] ?>" class="radio_<?php echo $type['id'] ?>" name="attendencetype<?php echo $value['student_session_id']; ?>">
@@ -328,7 +325,6 @@
                                                                             <label for="attendencetype<?php echo $value['student_session_id'] . "-" . $count; ?>">
                                                                                 <?php echo $this->lang->line($att_type); ?>
                                                                             </label>
-
                                                                         </div>
                                                                     <?php
                                                                     } else {
@@ -344,7 +340,7 @@
                                                                             <?php
                                                                             } else {
                                                                             ?>
-                                                                                <input <?php if ($c == 1) {
+                                                                                <input onclick="disable_enable(this.value,<?php echo $value["student_session_id"] ?>)"  <?php if ($c == 1) {
                                                                                             echo "checked";
                                                                                         }
                                                                                         ?> type="radio" id="attendencetype<?php echo $value['student_session_id'] . "-" . $count; ?>" value="<?php echo $type['id'] ?>"  class="radio_<?php echo $type['id'] ?>"name="attendencetype<?php echo $value['student_session_id']; ?>">
@@ -369,7 +365,6 @@
                                                                 <td>
                                                                 <?php
                                                                 if ($value['biometric_attendence'] || $value['qrcode_attendance']) {
-
                                                                     echo $this->customlib->dateyyyymmddToDateTimeformat($value['attendence_dt']);
                                                                 }
                                                                 ?>
@@ -379,7 +374,6 @@
                                                             ?>
                                                             <td>
                                                             <?php
-
                                                             if (IsNullOrEmptyString($value['biometric_attendence']) && IsNullOrEmptyString($value['qrcode_attendance'])) {
                                                                 echo $this->lang->line('n_a');
                                                             } elseif (($value['biometric_attendence'] == 0) && ($value['qrcode_attendance']  == 0)) {
@@ -389,14 +383,22 @@
                                                             } elseif ($value['qrcode_attendance']) {
                                                                 echo $this->lang->line('qrcode')." / ".$this->lang->line('barcode');
                                                             }
-
                                                             ?>
                                                         </td>
-                                                            <?php if ($date == 'xxx') { ?>
-                                                                <td ><input type="text" class="noteinput" name="remark<?php echo $value["student_session_id"] ?>"></td>
-                                                            <?php } else { ?>
 
-                                                                <td ><input type="text" class="noteinput" name="remark<?php echo $value["student_session_id"] ?>" value="<?php echo $value["remark"]; ?>"></td>
+                                                        <?php
+                                                        if($value['attendence_type_id']==4 || $value['attendence_type_id']==5){
+                                                            $disable_input_attr="disabled";
+                                                        }else{
+                                                            $disable_input_attr="";
+                                                        }  ?>
+
+                                                        <td class="relative"><input type="text" value="<?php echo $this->customlib->timeFormat($value["in_time"]); ?>" name="in_time_<?php echo $value["student_session_id"] ?>" id="in_time_<?php echo $value["student_session_id"] ?>" class="form-control in_time time" <?php echo $disable_input_attr;?>></td>
+                                                        <td class="relative"><input type="text" value="<?php echo $this->customlib->timeFormat($value["out_time"]); ?>" name="out_time_<?php echo $value["student_session_id"] ?>"  id="out_time_<?php echo $value["student_session_id"] ?>" class="form-control out_time time" <?php echo $disable_input_attr;?>></td>
+                                                            <?php if ($date == 'xxx') { ?>
+                                                                <td><input type="text" class="noteinput form-control" name="remark<?php echo $value["student_session_id"] ?>"   id="remark<?php echo $value["student_session_id"] ?>"  ></td>
+                                                            <?php } else { ?>
+                                                                <td><input type="text" class="noteinput form-control" name="remark<?php echo $value["student_session_id"] ?>"  id="remark<?php echo $value["student_session_id"] ?>" value="<?php echo $value["remark"]; ?>" ></td>
                                                             <?php } ?>
                                                         </tr>
                                                     <?php
@@ -549,21 +551,6 @@
         });
     });
 
-  
-    $(document).ready(function() {
-        $('.default_radio').click(function() {
-       let radio_default=($(this).val());
-            var returnVal = confirm("<?php echo $this->lang->line('are_you_sure'); ?>");
-            if(returnVal){
-                $("input[type=radio][class='"+radio_default+"']").prop("checked", returnVal);
-            }else{
-                console.log('sdfsdfdsfs');
-                return false;
-            }
-    });
-
-    });
-
     $('form.form_attendence').on('submit', function(e) {
         $('input[type="submit"]').attr('disabled', true);
         $(this).submit(function() {
@@ -571,6 +558,102 @@
         });
         return true;
     });
+</script>
 
+
+
+<script type="text/javascript">
+    //****intime out time class***//
+    var attendance_setting = <?php echo json_encode($student_class_section_setting) ?>;
+        $(function() {
+        $('.time').datetimepicker({
+            format: 'LT'
+        });
+    });
+
+          $(function()
+        {
+            $('.time').datetimepicker().on('dp.show',function()
+            {
+                $(this).closest('.table-responsive').removeClass('table-responsive').addClass('temp');
+            }).on('dp.hide',function()
+            {
+                $(this).closest('.temp').addClass('table-responsive').removeClass('temp')
+            });
+        });
+
+    function tConvert(time) {
+        if (time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/)) {
+            const [timeWithoutPeriod, period] = time.split(" ");
+            let [hours, minutes, seconds] = timeWithoutPeriod.split(":");
+            let AM_PM = null;
+            AM_PM = hours < 12 ? 'AM' : 'PM'; // Set AM/PM
+            hours = hours % 12 || 12; // Adjust hours
+            return `${hours}:${minutes} ${AM_PM}`;
+        } else {
+            return time;
+        }
+    }
+
+
+    $(document).ready(function() {
+       $('.default_radio').click(function() {
+       let radio_default=($(this).val());
+            var returnVal = confirm("<?php echo $this->lang->line('are_you_sure'); ?>");
+            var attendance_type_id = ($(this).data('record_id'));
+            
+            if(returnVal){
+                let return_time = getAttendanceTime(attendance_type_id);
+                    $('.in_time').val("");
+                    $('.out_time').val("");
+                if (return_time) {
+                    $('.in_time').val(return_time[0]);
+                    $('.out_time').val(return_time[1]);
+                }
+               
+                $("input[type=radio][class='"+radio_default+"']").prop("checked", returnVal);
+
+              
+                if(attendance_type_id==4 || attendance_type_id==5){
+                    //absent or holiday
+                    $('.in_time').attr("disabled",true);
+                    $('.out_time').attr("disabled",true);
+                }else{
+                    $('.in_time').attr("disabled",false);
+                    $('.out_time').attr("disabled",false);
+                }
+
+            }else{               
+                return false;
+            }
+        });
+    });
+
+    let getAttendanceTime = (attendance_type_id) => {
+        let nm = (attendance_setting);
+        var returnValue = false;
+        $.each(nm, function(key, value) {
+            if (value.attendence_type_id == attendance_type_id) {
+                returnValue = [tConvert(value.entry_time_from), tConvert(value.entry_time_to)];
+                return false; // this breaks out of the each
+            }
+        });
+        return returnValue;
+    }
+
+
+let disable_enable=(type,student_session_id)=>{
+    if(type==4 || type==5){
+        $("#in_time_"+student_session_id).val("");
+        $("#out_time_"+student_session_id).val("");
+        $("#in_time_"+student_session_id).attr("disabled",true);
+        $("#out_time_"+student_session_id).attr("disabled",true);
+    }else{
+        $("#in_time_"+student_session_id).val("");
+        $("#out_time_"+student_session_id).val("");
+        $("#in_time_"+student_session_id).attr("disabled",false);
+        $("#out_time_"+student_session_id).attr("disabled",false);
+    }
+}
 
 </script>

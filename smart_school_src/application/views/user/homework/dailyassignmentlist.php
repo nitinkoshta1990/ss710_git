@@ -52,7 +52,7 @@ foreach ($dailyassignmentlist as $key => $dailyassignmentlist_value) {
                                             <?php if ($dailyassignmentlist_value["evaluated_by"] == NULL) {?>
                                                 <a class="btn btn-default btn-xs edit_modal_btn" data-toggle="tooltip" data-id ="<?php echo $dailyassignmentlist_value["id"]; ?>" data-original-title="<?php echo $this->lang->line('edit'); ?>"><i class="fa fa-pencil"></i></a>
                                                 
-                                                <a href="<?php echo base_url(); ?>user/homework/deletedailyassignment/<?php echo $dailyassignmentlist_value['id']; ?>" class='btn btn-default btn-xs mt-5 pull-right' data-toggle='tooltip' title="<?php echo $this->lang->line('delete'); ?>" onclick='return confirm("<?php echo $this->lang->line('delete_confirm'); ?>")'><i class='fa fa-remove'></i></a>
+                                                <a href="<?php echo base_url(); ?>user/homework/deletedailyassignment/<?php echo $dailyassignmentlist_value['id']; ?>" class='btn btn-default btn-xs pull-right' data-toggle='tooltip' title="<?php echo $this->lang->line('delete'); ?>" onclick='return confirm("<?php echo $this->lang->line('delete_confirm'); ?>")'><i class='fa fa-remove'></i></a>
                                             <?php }?>
 
                                             </td>

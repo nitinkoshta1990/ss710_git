@@ -591,7 +591,6 @@ class Report extends Admin_Controller
                 $condition = " date_format(exam_to,'%Y-%m-%d') between '" . $start_date . "' and '" . $end_date . "'";
             }
         } else {
-
             $condition = " date_format(created_at,'%Y-%m-%d') between '" . $start_date . "' and '" . $end_date . "'";
         }
 
@@ -837,7 +836,7 @@ class Report extends Admin_Controller
         $data['section_id']      = $section_id      = $this->input->post('section_id');
         $condition1              = "";
         $condition2              = "";
-        // $data['section_list']    = $this->section_model->getClassBySection($this->input->post('class_id'));
+        $data['section_list'] = $this->section_model->getClassBySection($this->input->post('class_id'));//added
 
         $data['search_type']  = '';
         $data['filter_label'] = '';
@@ -998,7 +997,6 @@ class Report extends Admin_Controller
                         'id'         => $value->id . '_' . $value->code,
                         'total'      => 0,
                         'name'       => $value->name,
-
                     );
                 }
 
@@ -1085,8 +1083,6 @@ class Report extends Admin_Controller
 
                 $complete   = ($subject_details[0]->complete / $subject_details[0]->total) * 100;
                 $incomplete = ($subject_details[0]->incomplete / $subject_details[0]->total) * 100;
-                // if(!is_null($subjectdata)){
-
                     if ($subjectdata['code']) {
                         $lebel = $subjectdata['name'];
                     } else {
@@ -1098,7 +1094,6 @@ class Report extends Admin_Controller
                         'incomplete' => round($incomplete),
                         'id'         => $subjectdata['id'] . '_' . $subjectdata['code'],
                     );
-                // }
                 $data['subject_complete'] = round($complete);
             } else {
 
@@ -1133,11 +1128,8 @@ class Report extends Admin_Controller
                     'summary_report' => $staff_periodsdata,
                 );
             }
-            // if(!is_null($subjectdata)){
-
-                $data['subjects_data'][$subjectdata['id']]['teachers_summary'] = $teacher_summary;
-            // }
-  
+           
+            $data['subjects_data'][$subjectdata['id']]['teachers_summary'] = $teacher_summary;            
         }
 
         $this->load->view('layout/header', $data);
@@ -1173,7 +1165,6 @@ class Report extends Admin_Controller
         $data['alumni_studets'] = $alumni_studets;
         if (!empty($data["classlist"])) {
             foreach ($data["classlist"] as $ckey => $cvalue) {
-
                 $carray[] = $cvalue["id"];
             }
         }
@@ -1210,7 +1201,6 @@ class Report extends Admin_Controller
                     $data['resultlist']  = $resultlist;
                 }
             }
-
             $this->load->view('layout/header');
             $this->load->view('reports/alumnireport', $data);
             $this->load->view('layout/footer');
@@ -1596,7 +1586,6 @@ class Report extends Admin_Controller
             foreach ($resultlist->data as $resultlist_key => $student_value) {
 
                 $exams = explode(',', $student_value->exams);
-
                 $exam_name               = "";
                 $exam_from               = "";
                 $exam_to                 = "";

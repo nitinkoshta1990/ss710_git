@@ -48,7 +48,6 @@ class Stdtransfer extends Admin_Controller
             $resultlist = $this->student_model->searchNonPromotedStudents($class, $section, $session, $class_promote, $section_promote);
 
             $data['resultlist'] = $resultlist;
-
         }
 
         $this->load->view('layout/header', $data);
@@ -129,7 +128,6 @@ class Stdtransfer extends Admin_Controller
                         $this->student_model->alumni_student_status($alumni_data);
                     }
                 }
-
             }
             echo json_encode(array('status' => 'success', 'msg' => ""));
         }

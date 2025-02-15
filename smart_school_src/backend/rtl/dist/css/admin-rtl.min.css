@@ -1262,7 +1262,7 @@
 }
 
 
-.langdiv .dropdown-menu.open{left: 0;}
+.langdiv .dropdown-menu.open{left: 0; right: auto !important;}
 #frame #sidepanel #bottom-bar {right: auto !important;left: 10px;}
 #frame #sidepanel #contacts ul li.contact .wrap img{float: right !important;margin-right: 0px !important; margin-left: 10px;}
 #frame .chatcontent .message-input .wrap button {right: auto !important;left: 5px;}

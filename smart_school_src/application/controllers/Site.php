@@ -147,6 +147,11 @@ class Site extends Public_Controller
                                                      'db_group'=>'default'
                                                     ],
                         'superadmin_restriction' => $setting_result[0]['superadmin_restriction'],
+                        'saas_key'               => $setting_result[0]['saas_key'],
+                        'admin_panel_whatsapp'   		=> $setting_result[0]['admin_panel_whatsapp'],
+                        'admin_panel_whatsapp_mobile'   => $setting_result[0]['admin_panel_whatsapp_mobile'],
+                        'admin_panel_whatsapp_from'   	=> $setting_result[0]['admin_panel_whatsapp_from'],
+                        'admin_panel_whatsapp_to'  		=> $setting_result[0]['admin_panel_whatsapp_to'],						
                     );
 
                     $this->session->set_userdata('admin', $session_data);
@@ -300,9 +305,9 @@ class Site extends Public_Controller
     {
         $data               = array();
         $id                 = $this->enc_lib->dycrypt($key);
+        $data['branch_url']             = $this->customlib->getBaseUrl();
         $data['share_data'] = $this->sharecontent_model->getShareContentWithDocuments($id);       
         $this->load->view('share', $data);
-
     }
     
     //reset password - final step for forgotten password
@@ -411,12 +416,22 @@ class Site extends Public_Controller
         }
     }
 
-    public function userlogin()
-    {
+   public function userlogin(){
+    
         $school = $this->setting_model->get();
 
-        if (!$school[0]['student_panel_login']) {
-            redirect('site/login', 'refresh');
+        if($school[0]['student_panel_login']==0) {
+            $student_login_status=0;
+        }else{
+            $student_login_status=1;
+        }
+        if($school[0]['parent_panel_login']==0){
+            $parent_login_status=0;
+        }else{
+            $parent_login_status=1;
+        }
+        if($student_login_status==0 && $parent_login_status==0){
+             redirect('site/login', 'refresh');
         }
 
         if ($this->auth->user_logged_in()) {
@@ -424,8 +439,8 @@ class Site extends Public_Controller
         }
         
         if ($this->module_lib->hasModule('google_authenticator') 
-            && $this->module_lib->hasActive('google_authenticator')) {             
-			redirect('gauthenticate/userlogin');     
+            && $this->module_lib->hasActive('google_authenticator')) {
+                redirect('gauthenticate/userlogin');     
         }
 
         $data               = array();
@@ -465,18 +480,18 @@ class Site extends Public_Controller
                 $user = $login_details[0];
 
                 if ($user->is_active == "yes") {
-                    if ($user->role == "student") {
+                    if ($user->role == "student" && $student_login_status==1) {
                         $result = $this->user_model->read_user_information($user->id);
 
-                    } else if ($user->role == "parent") {
+                    } else if ($user->role == "parent" && $parent_login_status==1) {
                         if ($school[0]['parent_panel_login']) {
                             $result = $this->user_model->checkLoginParent($login_post);
-
-
                         } else {
                             $result = false;
-
                         }
+                    }else{
+                         $data['error_message'] = $this->lang->line('account_suspended');
+                         $result = false;
                     } 
 
                     if ($result != false) {
@@ -539,6 +554,10 @@ class Site extends Public_Controller
                                                      'db_group'=>'default'
                                                     ],
                             'superadmin_restriction' => $setting_result[0]['superadmin_restriction'],
+							'admin_panel_whatsapp'   		=> $setting_result[0]['admin_panel_whatsapp'],
+							'admin_panel_whatsapp_mobile'   => $setting_result[0]['admin_panel_whatsapp_mobile'],
+							'admin_panel_whatsapp_from'   	=> $setting_result[0]['admin_panel_whatsapp_from'],
+							'admin_panel_whatsapp_to'  		=> $setting_result[0]['admin_panel_whatsapp_to'],	
 
                         );
 

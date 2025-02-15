@@ -26,7 +26,9 @@ class Roles extends Admin_Controller
         $this->session->set_userdata('sub_menu', 'admin/roles');
 
         $this->form_validation->set_rules(
-            'name', $this->lang->line('name'), array(
+            'name',
+            $this->lang->line('name'),
+            array(
                 'required',
                 array('check_exists', array($this->role_model, 'valid_check_exists')),
             )
@@ -61,7 +63,7 @@ class Roles extends Admin_Controller
 
         $data['role_permission'] = $role_permission;
 
-        if ($this->input->server('REQUEST_METHOD') == "POST") {
+        if ($this->input->server('REQUEST_METHOD') == "POST") {        
 
             $per_cat_post = $this->input->post('per_cat');
             $role_id      = $this->input->post('role_id');
@@ -106,6 +108,38 @@ class Roles extends Admin_Controller
         $this->load->view('layout/footer');
     }
 
+    public function savecheck()
+    {
+        $this->form_validation->set_error_delimiters('<p>', '</p>');
+        $this->form_validation->set_rules('action', $this->lang->line('class'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('per_cat', $this->lang->line('section'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('role_id', $this->lang->line('subject'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('add_remove', $this->lang->line('session'), 'required|trim|xss_clean');
+
+        if ($this->form_validation->run() == false) {
+            $data = array(
+                'action'   => form_error('action'),
+                'per_cat' => form_error('per_cat'),
+                'role_id' => form_error('role_id'),
+                'add_remove' => form_error('add_remove'),
+            );
+            $array = array('status' => 0, 'error' => $data);
+            echo json_encode($array);
+        } else {
+
+                $update_array=[
+                    'action'=>$this->input->post('action'),
+                    'perm_cat_id'=>$this->input->post('per_cat'),
+                    'role_id'=>$this->input->post('role_id'),
+                    'value'=>$this->input->post('add_remove')
+                ];
+ 
+            $this->role_model->updatePermission($update_array);
+            $array = array('status' => 1, 'error' => '', 'message' => $this->lang->line('permission_updated_successfully'));
+            echo json_encode($array);
+        }
+    }
+
     public function edit($id)
     {
         if (!$this->rbac->hasPrivilege('superadmin', 'can_view')) {
@@ -118,7 +152,9 @@ class Roles extends Admin_Controller
         $data['name']     = $editrole["name"];
 
         $this->form_validation->set_rules(
-            'name', $this->lang->line('name'), array(
+            'name',
+            $this->lang->line('name'),
+            array(
                 'required',
                 array('check_exists', array($this->role_model, 'valid_check_exists')),
             )
@@ -146,5 +182,4 @@ class Roles extends Admin_Controller
         $this->role_model->remove($id);
         redirect('admin/roles/index');
     }
-
 }

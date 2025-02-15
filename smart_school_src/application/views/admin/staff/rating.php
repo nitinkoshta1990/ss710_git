@@ -29,7 +29,7 @@
                                 </div>
                             </div>
                         </div></div>
-                    <div class="box-body table-responsive overflow-visible">
+                    <div class="box-body table-responsive">
                         <div class="mailbox-controls">
                             <div class="pull-right">
                             </div>

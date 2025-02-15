@@ -166,7 +166,12 @@ class Pickuppoint_model extends MY_Model
 
     public function route_pickup_point()
     {
-        $this->db->select('route_pickup_point.transport_route_id,pickup_point.name as pickup_point,transport_route.route_title')->from('route_pickup_point')->join('transport_route', 'route_pickup_point.transport_route_id=transport_route.id')->join('pickup_point', 'pickup_point.id=route_pickup_point.pickup_point_id')->group_by('route_pickup_point.transport_route_id');
+        $this->db->select('route_pickup_point.transport_route_id,pickup_point.name as pickup_point,transport_route.route_title')
+        ->from('route_pickup_point')
+        ->where('session_id',$this->current_session)
+        ->join('transport_route', 'route_pickup_point.transport_route_id=transport_route.id')
+        ->join('pickup_point', 'pickup_point.id=route_pickup_point.pickup_point_id')
+        ->group_by('route_pickup_point.transport_route_id');
         $route_pickup_point = $this->db->get();
 
         $result = $route_pickup_point->result_array();
@@ -254,7 +259,7 @@ class Pickuppoint_model extends MY_Model
  
     public function getPickupPointsByvehrouteId($vehroute_id)
     {
-        $sql   = "SELECT vehicle_routes.*,transport_route.route_title,transport_route.id as `transport_route_id`,route_pickup_point.id as `route_pickup_point_id`,route_pickup_point.fees,route_pickup_point.destination_distance,pickup_point.name FROM `vehicle_routes` INNER JOIN transport_route on transport_route.id=vehicle_routes.route_id INNER JOIN route_pickup_point on route_pickup_point.transport_route_id=transport_route.id  INNER JOIN pickup_point on pickup_point.id= route_pickup_point.pickup_point_id WHERE vehicle_routes.id=" . $this->db->escape($vehroute_id) . " ORDER by route_pickup_point.order_number asc";
+        $sql   = "SELECT vehicle_routes.*,transport_route.route_title,transport_route.id as `transport_route_id`,route_pickup_point.id as `route_pickup_point_id`,route_pickup_point.fees,route_pickup_point.destination_distance,pickup_point.name FROM `vehicle_routes` INNER JOIN transport_route on transport_route.id=vehicle_routes.route_id INNER JOIN route_pickup_point on route_pickup_point.transport_route_id=transport_route.id  INNER JOIN pickup_point on pickup_point.id= route_pickup_point.pickup_point_id WHERE vehicle_routes.id=" . $this->db->escape($vehroute_id) . " and route_pickup_point.session_id=".$this->current_session." ORDER by route_pickup_point.order_number asc";
         $query = $this->db->query($sql);
 
         return $query->result();

@@ -107,10 +107,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <table class="table table-striped table-bordered table-hover">
                                                     <thead class="header">
                                                         <tr>                 
-                                                            <th align="left"><?php echo $this->lang->line('fees_group'); ?></th>
-                                                            <th align="left"><?php echo $this->lang->line('fees_code'); ?></th>
-                                                            <th align="left" class="text text-left"><?php echo $this->lang->line('due_date'); ?></th>
-                                                            <th align="left" class="text text-left"><?php echo $this->lang->line('status'); ?></th>
+                                                            <th class="text text-left" align="left"><?php echo $this->lang->line('fees_group'); ?></th>
+                                                            <th class="text text-left" align="left"><?php echo $this->lang->line('fees_code'); ?></th>
+                                                            <th class="text text-left" align="left" class="text text-left"><?php echo $this->lang->line('due_date'); ?></th>
+                                                            <th class="text text-left" align="left" class="text text-left"><?php echo $this->lang->line('status'); ?></th>
                                                             <th class="text text-right"><?php echo $this->lang->line('amount') ?> <span><?php echo "(" . $currency_symbol . ")"; ?></span></th>  <th class="text text-left"><?php echo $this->lang->line('payment_id'); ?></th>                                 
                                                             <th class="text text-left"><?php echo $this->lang->line('mode'); ?></th>
                                                             <th  class="text text-left"><?php echo $this->lang->line('date'); ?></th>
@@ -132,7 +132,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                         foreach ($student_value['fees_list'] as $fee_key => $fee_value) {
                                                             if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != NULL) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
 
-                                                                $total_fees_fine_amount+=$fee_value->fine_amount;
+                                                               // $total_fees_fine_amount+=$fee_value->fine_amount;
                                                             }
                                                             //======================
                                                             $fee_paid = 0;
@@ -149,13 +149,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                                 }
                                                             }
                                                             
- $fee_type_amount=($fee_value->is_system)? $fee_value->previous_amount: $fee_value->amount;
-                             $feetype_balance = $fee_type_amount - ($fee_paid + $fee_discount);
-                             $total_amount+=$fee_type_amount;
-                             $total_discount_amount +=$fee_discount;
-                             $total_fine_amount +=$fee_fine;
-                             $total_deposite_amount+=$fee_paid;
-                             $total_balance_amount+=$feetype_balance;
+                                                                    $fee_type_amount=($fee_value->is_system)? $fee_value->previous_amount: $fee_value->amount;
+                                                                    $feetype_balance = $fee_type_amount - ($fee_paid + $fee_discount);
+                                                                    $total_amount+=$fee_type_amount;
+                                                                    $total_discount_amount +=$fee_discount;
+                                                                    $total_fine_amount +=$fee_fine;
+                                                                    $total_deposite_amount+=$fee_paid;
+                                                                    $total_balance_amount+=$feetype_balance;
 
                                                             //===============================
                                                             ?>
@@ -206,21 +206,46 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                                     <?php
                                                                     echo amountFormat($fee_type_amount);
                                                                     if (($fee_value->due_date != "0000-00-00" && $fee_value->due_date != NULL) && (strtotime($fee_value->due_date) < strtotime(date('Y-m-d')))) {
+																		
+																			// get cumulative fine amount as delay days 
+                                                                            if($fee_value->fine_type=='cumulative'){
+                                                                                $date1=date_create("$fee_value->due_date");
+                                                                                $date2=date_create(date('Y-m-d'));
+                                                                                $diff=date_diff($date1,$date2);
+                                                                                $due_days= $diff->format("%a");;
+                                                                                
+                                                                                if($this->customlib->get_cumulative_fine_amount($fee_value->id,$due_days)){
+                                                                                    $due_fine_amount=$this->customlib->get_cumulative_fine_amount($fee_value->id,$due_days);
+                                                                                }else{
+                                                                                    $due_fine_amount=0;
+                                                                                }
+                                                                                $fees_fine_amount   = $due_fine_amount;
+                                                                                $total_fees_fine_amount+=$due_fine_amount;
+                                                                
+                                                                            }else if($fee_value->fine_type=='fix' || $fee_value->fine_type=='percentage'){
+                                                                                $fees_fine_amount   = $fee_value->fine_amount;
+                                                                                $total_fees_fine_amount+=$fee_value->fine_amount;
+                                                                            }
+                                                                            // get cumulative fine amount as delay days
+																		
+																		
+																		
                                                                         ?>
-<span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . (amountFormat($fee_value->fine_amount)); ?></span>
-<div class="fee_detail_popover" style="display: none">
-    <?php
-    if ($fee_value->fine_amount != "") {
-        ?>
-        <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
-        <?php
-    } 
-    ?>
-</div>
-                                                                        <?php
-                                                                    }
+                                                                            <span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . (amountFormat($fees_fine_amount)); ?></span>
+                                                                            <div class="fee_detail_popover" style="display: none">
+                                                                                <?php
+                                                                                if ($fees_fine_amount != "") {
+                                                                                    ?>
+                                                                                    <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
+                                                                                    <?php
+                                                                                } 
+                                                                                ?>
+                                                                            </div>
+                                                                                                                                                    <?php
+                                                                                                                                                }
                                                                     ?>
-                                                                </td>                                     <td class="text text-left"></td>                        
+                                                                </td>                                  
+                                                                <td class="text text-left"></td>                        
                                                                 <td class="text text-left"></td>
                                                                 <td class="text text-left"></td>
                                                                 <td class="text text-right"><?php
@@ -258,6 +283,12 @@ if (!empty($student_value['transport_fees'])) {
         $fees_fine_amount = 0;
         $feetype_balance  = 0;
 
+        $tmp_fee_paid         = 0;
+        $tmp_fee_discount     = 0;
+        $tmp_fee_fine         = 0;
+
+
+
         if (!empty($transport_fee_value->amount_detail)) {
             $fee_deposits = json_decode(($transport_fee_value->amount_detail));
             foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
@@ -267,143 +298,155 @@ if (!empty($student_value['transport_fees'])) {
             }
         }
 
-        $feetype_balance = $transport_fee_value->fees - ($fee_paid + $fee_discount);
+    
 
-        if (($transport_fee_value->due_date != "0000-00-00" && $transport_fee_value->due_date != null) && (strtotime($transport_fee_value->due_date) < strtotime(date('Y-m-d')))) {
-            $fees_fine_amount       = is_null($transport_fee_value->fine_percentage) ? $transport_fee_value->fine_amount : percentageAmount($transport_fee_value->fees, $transport_fee_value->fine_percentage);
-            $total_fees_fine_amount = $total_fees_fine_amount + $fees_fine_amount;
-        }
+         $feetype_balance = $transport_fee_value->fees - ($fee_paid + $fee_discount);
 
-        $total_amount += $transport_fee_value->fees;
-        $total_discount_amount += $fee_discount;
-        $total_deposite_amount += $fee_paid;
-        $total_fine_amount += $fee_fine;
-        $total_balance_amount += $feetype_balance;
+         
+if($feetype_balance > 0){
 
-        if (strtotime($transport_fee_value->due_date) < strtotime(date('Y-m-d'))) {
-            ?>
-                                                <tr class="danger font12">
-                                                    <?php
-} else {
-            ?>
-                                                <tr class="dark-gray">
-                                                    <?php
-}
+
+    if (($transport_fee_value->due_date != "0000-00-00" && $transport_fee_value->due_date != null) && (strtotime($transport_fee_value->due_date) < strtotime(date('Y-m-d')))) {
+        $fees_fine_amount       = is_null($transport_fee_value->fine_percentage) ? $transport_fee_value->fine_amount : percentageAmount($transport_fee_value->fees, $transport_fee_value->fine_percentage);
+        $total_fees_fine_amount = $total_fees_fine_amount + $fees_fine_amount;
+    }
+
+    $total_amount += $transport_fee_value->fees;
+    $total_discount_amount += $fee_discount;
+    $total_deposite_amount += $fee_paid;
+    $total_fine_amount += $fee_fine;
+    $total_balance_amount += $feetype_balance;
+
+    if (strtotime($transport_fee_value->due_date) < strtotime(date('Y-m-d'))) {
         ?>
-                
-                                                <td align="left" class="text-rtl-right"><?php echo $this->lang->line('transport_fees'); ?></td>
-                                                <td align="left" class="text-rtl-right"><?php echo $transport_fee_value->month; ?></td>
-                                                <td align="left" class="text text-left">
+                                            <tr class="danger font12">
+                                                <?php
+} else {
+        ?>
+                                            <tr class="dark-gray">
+                                                <?php
+}
+    ?>
+            
+                                            <td align="left" class="text-rtl-right"><?php echo $this->lang->line('transport_fees'); ?></td>
+                                            <td align="left" class="text-rtl-right"><?php echo $transport_fee_value->month; ?></td>
+                                            <td align="left" class="text text-left">
 <?php echo $this->customlib->dateformat($transport_fee_value->due_date); ?>                                             </td>
-                                                     <td align="left" class="text text-left width85">
-                                                    <?php
+                                                 <td align="left" class="text text-left width85">
+                                                <?php
 if ($feetype_balance == 0) {
-            ?><span class="label label-success"><?php echo $this->lang->line('paid'); ?></span><?php
+        ?><span class="label label-success"><?php echo $this->lang->line('paid'); ?></span><?php
 } else if (!empty($transport_fee_value->amount_detail)) {
-            ?><span class="label label-warning"><?php echo $this->lang->line('partial'); ?></span><?php
+        ?><span class="label label-warning"><?php echo $this->lang->line('partial'); ?></span><?php
 } else {
-            ?><span class="label label-danger"><?php echo $this->lang->line('unpaid'); ?></span><?php
+        ?><span class="label label-danger"><?php echo $this->lang->line('unpaid'); ?></span><?php
 }
+    ?>
+                                            </td>
+        <td class="text text-right">
+            <?php
+
+    echo amountFormat($transport_fee_value->fees);
+
+    if (($transport_fee_value->due_date != "0000-00-00" && $transport_fee_value->due_date != null) && (strtotime($transport_fee_value->due_date) < strtotime(date('Y-m-d')))) {
+        $tr_fine_amount = $transport_fee_value->fine_amount;
+        if ($transport_fee_value->fine_type != "" && $transport_fee_value->fine_type == "percentage") {
+
+            $tr_fine_amount = percentageAmount($transport_fee_value->fees, $transport_fee_value->fine_percentage);
+        }
         ?>
-                                                </td>
-            <td class="text text-right">
-                <?php
-
-        echo amountFormat($transport_fee_value->fees);
-
-        if (($transport_fee_value->due_date != "0000-00-00" && $transport_fee_value->due_date != null) && (strtotime($transport_fee_value->due_date) < strtotime(date('Y-m-d')))) {
-            $tr_fine_amount = $transport_fee_value->fine_amount;
-            if ($transport_fee_value->fine_type != "" && $transport_fee_value->fine_type == "percentage") {
-
-                $tr_fine_amount = percentageAmount($transport_fee_value->fees, $transport_fee_value->fine_percentage);
-            }
-            ?>
 
 <span data-toggle="popover" class="text text-danger detail_popover"><?php echo " + " . amountFormat($tr_fine_amount); ?></span>
 <div class="fee_detail_popover" style="display: none">
-    <?php
+<?php
 if ($tr_fine_amount != "") {
-                ?>
-        <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
-        <?php
-}
             ?>
-</div>
+    <p class="text text-danger"><?php echo $this->lang->line('fine'); ?></p>
     <?php
 }
-        ?>   </td>
-                                               
-                                                <td class="text text-left"></td>
-                                                 <td class="text text-left"></td>
-                                                <td class="text text-left"></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_discount);
-        ?></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_fine);
-        ?></td>
-                                                <td class="text text-right"><?php
-echo amountFormat($fee_paid);
-        ?></td>
-                                                  <td class="text text-right"><?php
-$display_none = "ss-none";
-        if ($feetype_balance > 0) {
-            $display_none = "";
-
-            echo amountFormat($feetype_balance);
-        }
         ?>
-                                                </td>
-                                               
-                                            </tr>
+</div>
+<?php
+}
+    ?>   </td>
+                                           
+                                            <td class="text text-left"></td>
+                                             <td class="text text-left"></td>
+                                            <td class="text text-left"></td>
+                                            <td class="text text-right"><?php
+echo amountFormat($fee_discount);
+    ?></td>
+                                            <td class="text text-right"><?php
+echo amountFormat($fee_fine);
+    ?></td>
+                                            <td class="text text-right"><?php
+echo amountFormat($fee_paid);
+    ?></td>
+                                              <td class="text text-right"><?php
+$display_none = "ss-none";
+    if ($feetype_balance > 0) {
+        $display_none = "";
 
-                                             <?php
+        echo amountFormat($feetype_balance);
+    }
+    ?>
+                                            </td>
+                                           
+                                        </tr>
+
+                                         <?php
 if (!empty($transport_fee_value->amount_detail)) {
 
-            $fee_deposits = json_decode(($transport_fee_value->amount_detail));
+        $fee_deposits = json_decode(($transport_fee_value->amount_detail));
 
-            foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
-                ?>
-                                                    <tr class="white-td">
-                                                        
-                                                        <td align="left"></td>
-                                                        <td align="left"></td>
-                                                        <td align="left"></td>
-                                                        <td align="left"></td>
-                                                        <td class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
-                                                       <td class="text text-left">
+        foreach ($fee_deposits as $fee_deposits_key => $fee_deposits_value) {
+            ?>
+                                                <tr class="white-td">
+                                                    
+                                                    <td align="left"></td>
+                                                    <td align="left"></td>
+                                                    <td align="left"></td>
+                                                    <td align="left"></td>
+                                                    <td class="text-right"><img src="<?php echo base_url(); ?>backend/images/table-arrow.png" alt="" /></td>
+                                                   <td class="text text-left">
 
-                                                            <a href="#" data-toggle="popover" class="detail_popover" > <?php echo $transport_fee_value->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?></a>
-                                                            <div class="fee_detail_popover" style="display: none">
-                                                                <?php
+                                                        <a href="#" data-toggle="popover" class="detail_popover" > <?php echo $transport_fee_value->student_fees_deposite_id . "/" . $fee_deposits_value->inv_no; ?></a>
+                                                        <div class="fee_detail_popover" style="display: none">
+                                                            <?php
 if ($fee_deposits_value->description == "") {
-                    ?>
-                                                                    <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
-                                                                    <?php
-} else {
-                    ?>
-                                                                    <p class="text text-info"><?php echo $fee_deposits_value->description; ?></p>
-                                                                    <?php
-}
                 ?>
-                                                            </div>
-                                                        </td>
-                                                        <td class="text text-left"><?php echo $this->lang->line(strtolower($fee_deposits_value->payment_mode)); ?></td>
-                                                        <td class="text text-left">
-                                                            <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); ?>
-                                                        </td>
-                                                        <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></td>
-                                                        <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_fine); ?></td>
-                                                        <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount); ?></td>
-                                                        <td></td>
-                                                       
-                                                    </tr>
-                                                    <?php
+                                                                <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
+                                                                <?php
+} else {
+                ?>
+                                                                <p class="text text-info"><?php echo $fee_deposits_value->description; ?></p>
+                                                                <?php
 }
-        }
-        ?>
+            ?>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text text-left"><?php echo $this->lang->line(strtolower($fee_deposits_value->payment_mode)); ?></td>
+                                                    <td class="text text-left">
+                                                        <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($fee_deposits_value->date)); ?>
+                                                    </td>
+                                                    <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_discount); ?></td>
+                                                    <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount_fine); ?></td>
+                                                    <td class="text text-right"><?php echo amountFormat($fee_deposits_value->amount); ?></td>
+                                                    <td></td>
+                                                   
+                                                </tr>
+                                                <?php
+}
+    }
+    ?>
 
 <?php
+    
+}
+ 
+
+
+
 }
 }
 

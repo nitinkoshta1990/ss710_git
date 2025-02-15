@@ -38,7 +38,7 @@ class Paypal extends OnlineAdmission_Controller
                 $total = $this->amount;
                 $online_data = $this->onlinestudent_model->getAdmissionData($reference);
                 $data["id"]             = $reference;
-                $data['total']          = convertBaseAmountCurrencyFormat($total);
+                $data['total']          = convertBaseAmountCurrencyFormat($this->customlib->getGatewayProcessingFees($this->amount)+$this->amount);
                 $data['productinfo']    = "Online Admission Fees";
                 $data['guardian_phone'] = "";
                 $data['name']           = $online_data->firstname." ".$online_data->lastname;
@@ -71,7 +71,7 @@ class Paypal extends OnlineAdmission_Controller
         $total = $this->amount;
         $online_data = $this->onlinestudent_model->getAdmissionData($reference);
         $data["id"]             = $reference;
-        $data['total']          = $total;
+        $data['total']          = $this->customlib->getGatewayProcessingFees($this->amount)+$this->amount;
         $data['productinfo']    = "Online Admission Fees";
         $data['guardian_phone'] = "";
         $data['name']           = $online_data->firstname." ".$online_data->lastname;
@@ -104,6 +104,8 @@ class Paypal extends OnlineAdmission_Controller
                     $gateway_response['transaction_id'] = $ref_id;
                     $gateway_response['payment_mode']   = 'paypal';
                     $gateway_response['payment_type']   = 'online';
+                    $gateway_response['processing_charge_type']   = $this->pay_method->charge_type;
+            $gateway_response['processing_charge_value']   = $this->customlib->getGatewayProcessingFees($this->amount);
                     $gateway_response['note']           = $this->lang->line('online_fees_deposit_through_paypal_txn_id') . $ref_id;
                     $gateway_response['date']           = date("Y-m-d H:i:s");
                     $return_detail                      = $this->onlinestudent_model->paymentSuccess($gateway_response);

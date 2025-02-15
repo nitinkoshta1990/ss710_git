@@ -1,3 +1,21 @@
+<style type="text/css">
+    .attendance_section {
+            color: #0d6efd;
+            ;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 15px 15px 15px 15px;
+            margin: 10px 0px 10px 0px;
+            background-color: #f5f5f5;
+            border-radius: .25rem !important;
+            box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+            text-align: center;
+            border-radius: .25rem !important;
+            /* background-color: #fff !important; */
+            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+    }
+</style>
+
 <div class="content-wrapper" style="min-height: 348px;">  
     <section class="content">
         <div class="row">
@@ -39,6 +57,8 @@
                                             </div>
                                         </div>
                                     </div>
+
+
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-4"> <?php echo $this->lang->line('qrcode') .' / '. $this->lang->line('barcode') .' / '. $this->lang->line('biometric_attendance'); ?></label>
@@ -105,7 +125,7 @@
                 </div>
                 <div class="box box-primary hide" id="save_class_time_hide_show">
                     <div class="box-header ptbnull">
-                        <h3 class="box-title titlefix"><?php echo $this->lang->line('class_attendance_time_for_auto_attendance_submission'); ?></h3>
+                        <h3 class="box-title titlefix"><?php echo $this->lang->line('class_attendance_time_for_auto_attendance_submission'); ?> (<?php echo $this->lang->line('day_wise_with_cron_setting'); ?>)</h3>
                         <div class="box-tools pull-right">
                         </div><!-- /.box-tools -->
                     </div><!-- /.box-header -->
@@ -191,11 +211,368 @@ foreach ($class_value['sections'] as $section_key => $section_value) {
                 </div>
             </div><!--/.col (left) -->
             <!-- right column -->
+
+            <!-- staff attandance settings -->
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+				
+					<div class="nav-tabs-custom theme-shadow">
+						<ul class="nav nav-tabs"  id="myTab">
+							<li class="<?php if($classid==0){ echo "active";}else{ echo ""; }  ?>" ><a href="#staff" data-toggle="tab" aria-expanded="true"><?php echo $this->lang->line('staff'); ?></a></li>
+							<li class="<?php if($classid>0 || $classid==""){ echo "active";}  ?>" > <a href="#student" data-toggle="tab" aria-expanded="true"><?php echo $this->lang->line('student'); ?></a></li>
+						</ul>
+                        <div class="tab-content pb0">
+                        <div class="tab-pane <?php if($classid==0){ echo "active";}else{ echo ""; }  ?>" id="staff">
+							<div class="box box-primary">
+								<div class="box-header with-border">
+									<h3 class="box-title"><?php echo $this->lang->line('staff_attendance_setting'); ?></h3>
+								</div>
+								<div class="box-body">
+								<?php
+									if (!empty($list_attendance)){  ?>
+										<div class="row">
+											<?php  foreach ($list_attendance as $list_key => $list_value){ ?>
+												<div class="col-md-12">
+													<form method="POST" action="<?php echo site_url('schsettings/savestaffsetting'); ?>" class="update">
+														<div class="panel panel-info">
+														<div class="panel-footer panel-fo border-0">
+															<div class="row d-flex align-items-center justify-content-between">
+																<div class="col-lg-8 col-md-8 col-sm-6 col-xs-12">
+																		<strong>                                                                
+																			<?php echo $this->lang->line('role'); ?>: <?php  echo $list_value['role'];  ?>
+																		</strong>
+																	</div>
+																	<div class="col-lg-4 col-md-8 col-sm-6">
+																			<button type="submit" class="btn btn-primary btn-sm pull-right" data-loading-text="<i class='fa fa-spinner fa-spin '></i><?php echo $this->lang->line('update'); ?>"><?php echo $this->lang->line('update'); ?></button>
+																	</div>
+																</div>
+															</div>
+															<div class="panel-body pr-05 ps-5">
+																<div class="row">
+																	<div class="col-sm-12 col-lg-12 col-md-12">
+																		<div class="col-sm-3 col-lg-3 col-md-3">
+																		    <label for="email"><?php echo $this->lang->line('attendance_type'); ?></label>
+																		</div>
+																		<div class="col-sm-9 col-lg-9 col-md-9">
+																			<div class="row">
+																				<div class="col-sm-4 col-lg-4 col-md-4">
+																					<label for="email"><?php echo $this->lang->line('entry_from'); ?> (hh:mm:ss)</label>
+																				</div>
+																				<div class="col-sm-4 col-lg-4 col-md-4">
+																					<label for="email"><?php echo $this->lang->line('entry_upto'); ?> (hh:mm:ss)</label>
+																				</div>
+																				<div class="col-sm-4 col-lg-4 col-md-4">
+																					<label for="email"><?php echo $this->lang->line('total_hour'); ?></label>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																
+																<div class="append_row paddA10">
+																	<?php
+																	$row = 1;
+																	if (!empty($list_value['schedule'])) {
+																		$count = 1;
+																	?>
+																		<div class="row">
+																			<div class="col-md-12">
+																				<?php
+																				if (!empty($attendance_type)) {
+																					foreach ($attendance_type as $att_type_key => $att_type_value) {
+																						$return_value = get_input_value($list_value['schedule'], $att_type_value->id);
+																					
+																				?>
+																						<input type="hidden" name="row[]" value="<?php echo $row; ?>">
+																						<input type="hidden" name="attendance_type_id_<?php echo $row; ?>" value="<?php echo $att_type_value->id; ?>">
+																						<input type="hidden" name="role_id_<?php echo $row; ?>" value="<?php echo $list_value['role_id']; ?>">
+																						<div class="row">
+																							<div class="col-sm-3 col-lg-3 col-md-3">
+																								<?php  
+                                                                                                echo $this->lang->line($att_type_value->long_lang_name) . " (" . $att_type_value->key_value . ")"; ?>
+																							</div>
+																							<div class="col-sm-9 col-lg-9 col-md-9">
+																								<div class="row">
+																									<div class="col-sm-4 col-lg-4 col-md-4">
+																										<div class="form-group">
+																											
+																											<div class="input-group">
+																												<input type="text" name="entry_time_from_<?php echo $row; ?>" class="form-control entry_time_from time valid" id="entry_time_from" value="<?php echo $return_value['entry_time_from'] ?>">
+																												<div class="input-group-addon">
+																													<span class="fa fa-clock-o"></span>
+																												</div>
+																											</div>
+																										</div>
+																									</div>
+																									<div class="col-sm-4 col-lg-4 col-md-4">
+																										<div class="form-group">
+																											
+																											<div class="input-group">
+																												<input type="text" name="entry_time_to_<?php echo $row; ?>" class="form-control entry_time_to time valid" id="time_to" value="<?php echo $return_value['entry_time_to'] ?>">
+																												<div class="input-group-addon">
+																													<span class="fa fa-clock-o"></span>
+																												</div>
+																											</div>
+																										</div>
+																									</div>
+																									<div class="col-sm-4 col-lg-4 col-md-4">
+																										<div class="form-group">
+																											
+																											<div class="input-group">
+																												<input type="text" name="total_institute_hour_<?php echo $row; ?>" class="form-control total_institute_hour time_hour valid" id="total_institute_hour" value="<?php echo $return_value['total_institute_hour'] ?>">
+																												<div class="input-group-addon">
+																													<span class="fa fa-clock-o"></span>
+																												</div>
+																											</div>
+																										</div>
+																									</div>
+																								</div>
+																							</div>                                                                            
+																						</div>
+																				<?php
+																				$row++;
+																				}
+																		}
+																		?>
+																			</div>
+																		</div>
+																	<?php  $count++;   }  ?>
+																</div>
+															</div>
+														
+														</div>
+													</form>
+												</div>
+											<?php   }      ?>
+										</div>
+									<?php   }    ?>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane <?php if($classid>0 || $classid==""){ echo "active";}  ?>" id="student">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+                                <form method="post" action="<?php echo base_url('schsettings/attendancetype');?>"  >
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <h3 class="box-title"><?php echo $this->lang->line('student_attendance_setting'); ?></h3>
+                                        </div>
+                                        <div class="col-md-2">
+                                        <select autofocus="" id="class_id" name="class_id" class="form-control" onchange="this.form.submit()">
+                                        <option value=""><?php echo $this->lang->line('all_classes'); ?></option>
+                                        <?php
+                                        foreach ($classlist as $class) {  ?>
+                                        <option value="<?php echo $class['id'] ?>" <?php echo set_select('class_id', $class['id']); ?>><?php echo $class['class'] ?></option>
+                                        <?php } ?>
+                                        </select>
+                                        </div>
+                                    </div>
+                                </form>
+
+								</div>
+                                 <div class="box-body">
+                        <?php
+                        if (!empty($student_list_attendance)) {
+                        ?>
+                            <div class="row">
+                                <?php
+                                foreach ($student_list_attendance as $list_key => $list_value) {
+                                ?>
+                                    <div class="col-md-12">
+                                        <form method="POST" action="<?php echo site_url('admin/stuattendence/savestudentsetting'); ?>" class="student_update">
+                                            <div class="panel panel-info">
+												<div class="panel-footer panel-fo border-0">
+															<div class="row d-flex align-items-center justify-content-between">
+																<div class="col-lg-8 col-md-8 col-sm-6 col-xs-12">
+																		<strong>                                                                
+																			<?php echo $this->lang->line('class'); ?>: <?php  echo $list_value['class'];  ?>
+																		</strong>
+																</div>
+																	<div class="col-lg-4 col-md-8 col-sm-6">																	<?php if ($this->rbac->hasPrivilege('multi_class_student', 'can_edit')) { ?>
+																		<button type="submit" class="btn btn-primary btn-sm pull-right" data-loading-text="<i class='fa fa-spinner fa-spin '></i> <?php echo $this->lang->line('update'); ?>"><?php echo $this->lang->line('update'); ?></button>
+																		<?php } ?>													
+																	</div>
+																</div>
+															</div>
+															
+                                                <div class="panel-body panelheight">													
+                                                    <div class="append_row paddA10">
+                                                        <?php
+                                                        $row = 1;
+                                                        if (!empty($list_value['sections'])) {
+                                                            $count = 1;
+                                                            foreach ($list_value['sections'] as $student_session_key => $student_session_value) { ?>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">																	
+																		<h4><center><?php echo $this->lang->line('section'); ?>: <?php echo $student_session_value['section']; ?></center></h4>
+																		
+																		    <div class="row">													
+																				<div class="col-sm-3 col-lg-3 col-md-3">
+																					<label for="email"><?php echo $this->lang->line('attendance_type'); ?></label>
+																				</div>
+																				<div class="col-sm-9 col-lg-9 col-md-9">
+																					<div class="row">
+																						<div class="col-sm-4 col-lg-4 col-md-4">
+																							<label for="email"><?php echo $this->lang->line('entry_from'); ?> (hh:mm:ss)</label>
+																						</div>
+																						<div class="col-sm-4 col-lg-4 col-md-4">
+																							<label for="email"><?php echo $this->lang->line('entry_upto'); ?> (hh:mm:ss)</label>
+																						</div>
+																						<div class="col-sm-4 col-lg-4 col-md-4">
+																							<label for="email"><?php echo $this->lang->line('total_hour'); ?></label>
+																						</div>
+																					</div>
+																				</div>														
+																			</div>
+																			 
+														
+                                                                        <?php
+                                                                        if (!empty($student_attendance_type)) {
+                                                                            foreach ($student_attendance_type as $att_type_key => $att_type_value) {
+                                                                                $return_value = get_student_input_value($student_session_value['student_schedule'], $att_type_value->id);?>
+                                                                                <input type="hidden" name="row[]" value="<?php echo $row; ?>">
+                                                                                <input type="hidden" name="attendance_type_id_<?php echo $row; ?>" value="<?php echo $att_type_value->id; ?>">
+                                                                                <input type="hidden" name="class_section_id_<?php echo $row; ?>" value="<?php echo $student_session_value['class_section_id']; ?>">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3 col-lg-3 col-md-3">
+                                                                                        <?php echo $this->lang->line($att_type_value->long_lang_name)." (" .$att_type_value->key_value . ")"; ?>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9 col-lg-9 col-md-9">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-4 col-lg-4 col-md-4">
+                                                                                                <div class="form-group">                                                                       
+                                                                                                    <div class="input-group">
+                                                                                                        <input type="text" name="entry_time_from_<?php echo $row; ?>" class="form-control entry_time_from time valid" id="entry_time_from" value="<?php echo $return_value['entry_time_from']?>">
+                                                                                                        <div class="input-group-addon">
+                                                                                                            <span class="fa fa-clock-o"></span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-4 col-lg-4 col-md-4">
+                                                                                                <div class="form-group">
+                                                                                                    
+                                                                                                    <div class="input-group">
+                                                                                                        <input type="text" name="entry_time_to_<?php echo $row; ?>" class="form-control entry_time_to time valid" id="time_to" value="<?php echo $return_value['entry_time_to']?>">
+                                                                                                        <div class="input-group-addon">
+                                                                                                            <span class="fa fa-clock-o"></span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-4 col-lg-4 col-md-4">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="input-group">
+                                                                                                        <input type="text" name="total_institute_hour_<?php echo $row; ?>" class="form-control total_institute_hour time_hour valid" id="total_institute_hour" value="<?php echo $return_value['total_institute_hour']?>">
+                                                                                                        <div class="input-group-addon">
+                                                                                                            <span class="fa fa-clock-o"></span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+																				
+
+
+                                                                        <?php
+
+                                                                                $row++; 
+                                                                            } 
+                                                                        }
+                                                                        ?>
+
+
+
+                                                                    </div>
+                                                                </div>
+                                                        <?php
+                                                                $count++;
+                                                            }
+                                                        }
+                                                        ?>
+
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                        </form>
+
+                                    </div>
+
+                                <?php
+                                }
+
+                                ?>
+                            </div>
+                        <?php
+                        }
+                        ?>
+                    </div>
+								
+							</div>
+						</div>
+
+                        </div>
+					</div>
+                
+            </div>
+            <!-- staff attandance settings -->
+
+
         </div>
     </section><!-- /.content -->
 </div><!-- /.content-wrapper -->
 <!-- new END -->
 </div><!-- /.content-wrapper -->
+
+
+
+<?php
+function get_input_value($array, $find_time){
+    if (!empty($array)) {
+        foreach ($array as $array_key => $array_value) {
+            if ($array_value->staff_attendence_type_id == $find_time) {
+                return [
+                    'entry_time_from' => $array_value->entry_time_from,
+                    'entry_time_to' => $array_value->entry_time_to,
+                    'total_institute_hour' => $array_value->total_institute_hour,                  
+                ];
+            }
+        }
+        return [
+            'entry_time_from' => '',
+            'entry_time_to' => '',
+            'total_institute_hour' => '',          
+        ];
+    }
+} ?>
+
+<?php
+
+function get_student_input_value($array, $find_time)
+{
+    if (!empty($array)) {
+        foreach ($array as $array_key => $array_value) {
+            if ($array_value->attendence_type_id == $find_time) {
+                return [
+                    'entry_time_from' => $array_value->entry_time_from,
+                    'entry_time_to' => $array_value->entry_time_to,
+                    'total_institute_hour' =>$array_value->total_institute_hour,
+                    
+                ];
+            }
+        }
+        return [
+            'entry_time_from' => '',
+            'entry_time_to' => '',
+            'total_institute_hour' => ''
+
+        ];
+    }
+}
+?>
+
 
 <script type="text/javascript">
      $('input[type=radio][name=biometric]').change(function() {
@@ -311,4 +688,97 @@ $(document).on('submit','#form_timetable',function(e){
             
         }
     });
+</script>
+
+
+
+<script type="text/javascript">
+    //****staff attendance settings****//
+    $(function() {
+        $('.time').datetimepicker({
+            format: 'HH:mm:ss'
+        });
+    });
+    $(function() {
+        $('.time_hour').datetimepicker({
+            format: 'HH:mm:ss'
+        });
+    });
+
+    $(document).on('submit', '.update', function(e) {
+        var submit_btn = $(this).find("button[type=submit]");
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(), // serializes the form's elements.
+            dataType: "json",
+            beforeSend: function() {
+                submit_btn.button('loading');
+            },
+            success: function(data) {
+                if (data.status == 1) {
+                    successMsg(data.message);
+                } else {
+                    var message = "";
+                    $.each(data.error, function(index, value) {
+
+                        message += value;
+                    });
+                    errorMsg(message);
+                }
+                submit_btn.button('reset');
+            },
+            error: function(xhr) { // if error occured
+                alert("<?php echo $this->lang->line('error_occurred_please_try_again'); ?>");
+
+            },
+            complete: function() {
+                submit_btn.button('reset');
+            }
+        });
+    });
+
+      $(document).on('submit', '.student_update', function(e) {
+        var submit_btn = $(this).find("button[type=submit]");
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(), // serializes the form's elements.
+            dataType: "json",
+            beforeSend: function() {
+                submit_btn.button('loading');
+            },
+            success: function(data) {
+                if (data.status == 1) {
+                    successMsg(data.message);
+                } else {
+                    var message = "";
+                    $.each(data.error, function(index, value) {
+
+                        message += value;
+                    });
+                    errorMsg(message);
+                }
+                submit_btn.button('reset');
+            },
+            error: function(xhr) { // if error occured
+                alert("<?php echo $this->lang->line('error_occurred_please_try_again'); ?>");
+
+            },
+            complete: function() {
+                submit_btn.button('reset');
+            }
+        });
+    });
+
 </script>

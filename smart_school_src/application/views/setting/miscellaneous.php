@@ -83,7 +83,8 @@
                                     <div class="col-md-12">
                                         <div class="col-md-12">
                                             <div class="settinghr"></div>
-                                            <h4 class="session-head"><?php echo $this->lang->line('exam_result_in_front_site'); ?></h4>
+                                            <h4 class="session-head">
+                                                <?php echo $this->lang->line('examinations'); ?></h4>
                                         </div>
                                     </div><!--./col-md-12-->
                                     <div class="col-md-12">
@@ -101,6 +102,28 @@
                                                     <label class="radio-inline">
                                                         <input type="radio" name="exam_result" value="1" <?php
                                                         if ($result->exam_result == 1) {
+                                                            echo "checked";
+                                                        }
+                                                        ?> ><?php echo $this->lang->line('enabled'); ?>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-4"><?php echo $this->lang->line('download_admit_card_in_student_parent_panel'); ?></label>
+                                                <div class="col-sm-8">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="download_admit_card" value="0" <?php
+                                                        if ($result->download_admit_card == 0) {
+                                                            echo "checked";
+                                                        }
+                                                        ?>  ><?php echo $this->lang->line('disabled'); ?>
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="download_admit_card" value="1" <?php
+                                                        if ($result->download_admit_card == 1) {
                                                             echo "checked";
                                                         }
                                                         ?> ><?php echo $this->lang->line('enabled'); ?>

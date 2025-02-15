@@ -163,7 +163,8 @@ if (!empty($cartdata)) {
                         
                         }else{ if ($setting_data[0]['student_panel_login']) { ?>
                             <a class="complainbtn" href="<?php echo base_url(); ?>site/userlogin"><?php echo $this->lang->line('login'); ?></a>
-                        <?php } } ?>                  
+                        <?php } } ?> 
+						
                         </li>                      
 
                     </ul>
@@ -335,6 +336,13 @@ if($layout_type){
                     <a href="#" class="pull-left forgotbtn" data-toggle="modal" data-target="#forgotmodal"><i class="fa fa-key"></i> <?php echo $this->lang->line('forgot_password'); ?></a>
                     <button type="button" class="signup modalclosebtn btn mdbtn" data-dismiss="modal"><?php echo $this->lang->line('signup'); ?> </button>
                     <button type="submit" id="loginformbtn" class="onlineformbtn mdbtn" ><?php echo $this->lang->line('submit'); ?></button>
+					
+					<div class="col-lg-12 col-md-12">
+                        <div class="admin-text">
+                            <a href="<?php echo site_url('site/userlogin') ?>" target="_blank" ><i class="fa fa-users"></i><?php echo $this->lang->line('student_parent_login'); ?></a>
+                        </div>      
+                    </div>
+					
                 </div>
             </form>
             <form action="<?php echo site_url('course/user_submit_login') ?>" method="post" class="gauthenticate-form" id="gauthenticate-form">

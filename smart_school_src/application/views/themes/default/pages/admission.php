@@ -31,6 +31,7 @@ if ($this->session->flashdata('msg')) {
         </div>
     </div>
    <form id="form1" class="spaceb60 spacet40 onlineform" action="<?php echo current_url() ?>"  id="employeeform" name="employeeform" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+     <?php echo $this->customlib->getCSRF(); ?>     
         <?php if ($online_admission_instruction != "") {?>
         <div class="printcontent">
         <div class="row">

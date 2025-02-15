@@ -34,10 +34,8 @@ class Attendencereports extends Admin_Controller
         $this->load->view('layout/footer');
     }
 
-
     public function staffdaywiseattendancereport()
     {
-
         if (!$this->rbac->hasPrivilege('attendance_report', 'can_view')) {
             access_denied();
         }
@@ -75,7 +73,6 @@ class Attendencereports extends Admin_Controller
 
     public function daywiseattendancereport()
     {
-
         if (!$this->rbac->hasPrivilege('attendance_report', 'can_view')) {
             access_denied();
         }
@@ -110,8 +107,6 @@ class Attendencereports extends Admin_Controller
             $resultlist                  = $this->stuattendence_model->searchAttendenceClassSectionWithMode($class, $section, date('Y-m-d', $this->customlib->datetostrtotime($date)),$attendance_mode);
             $data['resultlist']          = $resultlist;
         }
-
-
 
         $this->load->view('layout/header', $data);
         $this->load->view('attendencereports/daywiseattendancereport', $data);
@@ -376,26 +371,30 @@ class Attendencereports extends Admin_Controller
 
         $resultlist     = array();
         $data['result'] = $this->stuattendence_model->get_attendancebydate($date);
+		 
         if (!empty($data['result'])) {
             $all_student = $all_present = $all_absent = 0;
             foreach ($data['result'] as $key => $value) {
                 $total_present = $value->present + $value->excuse + $value->late + $value->half_day;
                 $total_student = $total_present + $value->absent;
+				
                 if ($total_present > 0) {
                     $presnt_percent = round(($total_present / $total_student) * 100);
                 } else {
-                    $presnt_percent = 0;
+                    $presnt_percent = 0; 
                 }
+				
                 if ($value->absent > 0) {
                     $presnt_absent = round(($value->absent / $total_student) * 100);
                 } else {
                     $presnt_absent = 0;
                 }
+				
                 $all_student += $total_student;
                 $all_present += $total_present;
                 $all_absent += $value->absent;
 
-                $data['resultlist'][] = array('class_section' => $value->class_name . " (" . $value->section_name . ")", 'total_present' => $total_present, 'total_absent' => $value->absent, 'present_percent' => $presnt_percent . "%", 'absent_persent' => $presnt_absent . "%");
+                $data['resultlist'][] = array('class_section' => $value->class_name . " (" . $value->section_name . ")", 'total_present' => $total_present, 'total_absent' => $value->absent, 'present_percent' => $presnt_percent . "%", 'absent_persent' => $presnt_absent . "%", 'total_male_present' => $value->male_present, 'total_female_present' => $value->female_present, 'total_male_absent' => $value->male_absent, 'total_female_absent' => $value->female_absent);
                 # code...
             }
             $data['all_student'] = $all_student;
@@ -433,10 +432,15 @@ class Attendencereports extends Admin_Controller
         $data['monthlist']           = $this->customlib->getMonthDropdown();
         $data['yearlist']            = $this->staffattendancemodel->attendanceYearCount();
         $data['date']                = "";
-        $data['month_selected']      = "";
         $data["role_selected"]       = "";
         $role                        = $this->input->post("role");
+        $month                       = $this->input->post('month');
+        $searchyear                  = $this->input->post('year');
+        $data['month_selected']      = $month;
+        $data['year_selected']       = $searchyear;
+
         $this->form_validation->set_rules('month', $this->lang->line('month'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('year', $this->lang->line('year'), 'trim|required|xss_clean');
 
         if ($this->form_validation->run() == false) {
             $this->load->view('layout/header', $data);
@@ -444,9 +448,8 @@ class Attendencereports extends Admin_Controller
             $this->load->view('layout/footer', $data);
         } else {
             $resultlist             = array();
-            $month                  = $this->input->post('month');
-            $searchyear             = $this->input->post('year');
             $data['month_selected'] = $month;
+            $data['year_selected']  = $searchyear;
             $data["role_selected"]  = $role;
             $stafflist              = $this->staff_model->getEmployee($role);
             $session_current        = $this->setting_model->getCurrentSessionName();

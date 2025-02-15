@@ -66,8 +66,7 @@ class Examresult extends Admin_Controller
         $this->session->set_userdata('sub_menu', 'Examinations/examresult/admitcard');
         $examgroup_result      = $this->examgroup_model->get();
         $data['examgrouplist'] = $examgroup_result;
-        $admitcard_result      = $this->admitcard_model->get();
-        $data['admitcardlist'] = $admitcard_result;
+    
         $class                 = $this->class_model->get();
         $data['title']         = 'Add Batch';
         $data['title_list']    = 'Recent Batch';
@@ -75,12 +74,13 @@ class Examresult extends Admin_Controller
         $data['classlist']     = $class;
         $session               = $this->session_model->get();
         $data['sessionlist']   = $session;
+        $data['get_active_admitcard']  = $this->admitcard_model->get_active_admitcard();
+
         $this->form_validation->set_rules('class_id', $this->lang->line('class'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('section_id', $this->lang->line('section'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('session_id', $this->lang->line('session'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('exam_group_id', $this->lang->line('exam_group'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('exam_id', $this->lang->line('exam'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('admitcard', $this->lang->line('admit_card_template'), 'trim|required|xss_clean');
 
         if ($this->form_validation->run() == false) {
 
@@ -90,13 +90,8 @@ class Examresult extends Admin_Controller
             $session_id                 = $this->input->post('session_id');
             $class_id                   = $this->input->post('class_id');
             $section_id                 = $this->input->post('section_id');
-            $admitcard_template         = $this->input->post('admitcard');
-            $data['admitcard_template'] = $admitcard_template;
-
             $data['studentList'] = $this->examgroupstudent_model->searchExamStudents($exam_group_id, $exam_id, $class_id, $section_id, $session_id);
-
             $data['examList'] = $this->examgroup_model->getExamByExamGroup($exam_group_id, true);
-
             $data['exam_id']       = $exam_id;
             $data['exam_group_id'] = $exam_group_id;
         }
@@ -185,7 +180,6 @@ class Examresult extends Admin_Controller
             $mpdf->SetDefaultBodyCSS('background-image-resize', 6);
         }
         $mpdf->WriteHTML($stylesheet, 1); // Writing style to pdf
-        // $mpdf->SetWatermarkText($this->sch_setting_detail->name, .2);
 		$mpdf->SetWatermarkText("", .2); // add watermark text to be show in marksheet
         $mpdf->SetDisplayMode('fullpage');
         $mpdf->showWatermarkText = true;
@@ -266,7 +260,6 @@ class Examresult extends Admin_Controller
                 $mpdf->SetDefaultBodyCSS('background-image-resize', 6);
             }
             $mpdf->WriteHTML($stylesheet, 1); // Writing style to pdf
-            // $mpdf->SetWatermarkText($this->sch_setting_detail->name, .2);
 			$mpdf->SetWatermarkText("", .2); // add watermark text to be show in marksheet
             $mpdf->SetDisplayMode('fullpage');
             $mpdf->showWatermarkText = true;
